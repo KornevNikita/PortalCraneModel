@@ -10,6 +10,7 @@ double dt, t_start, t_stop; //
 int drawStCount; //
 bool inDinamic; // параметры расчета
 double xMax, yMax; // параметры масштаба
+vector<double> reg(4); // регулятор
 
 void mult(std::vector<std::vector<double>>& op1,
   std::vector<std::vector<double>>& op2,
@@ -34,21 +35,21 @@ void mult(std::vector<std::vector<double>>& op1,
 
 void f(const std::vector<double>& _X, std::vector<double>& _k)
 {
-  //static double v, k1 = 1, k2 = 1, k3 = 1, k4 = 1; // regulator
-  //v = k1 * _X[0] + k2 * _X[1] + k3 * _X[2] + k4 * _X[3];
+  static double v; // regulator
+  v = reg[0] * _X[0] + reg[1] * _X[1] + reg[2] * _X[2] + reg[3] * _X[3];
   _k[0] = _X[1]; // fi
 
   _k[1] = -_X[1] * (M + m) * h_fi / (M * m * l * l)
     - _X[0] * (M + m) * g / (M * l)
     + _X[3] * (gamma * E / (R * Beta) + h_x) / (M * l)
-    - gamma / (M * R * l); // * v; // dfi_dt
+    - gamma / (M * R * l) * v; // dfi_dt
 
   _k[2] = _X[3]; // x
 
   _k[3] = _X[1] * h_fi / (M * l)
     + _X[0] * m * g / M
     - _X[3] * (gamma * E / (R * Beta) + h_x) / M
-    + gamma / (M * R); //* v; // dx_dt
+    + gamma / (M * R) * v; // dx_dt
 }
 
 point TDinModel::RK4()
@@ -79,11 +80,11 @@ void SetModelParams(double _M, double _m, double _l, double _R, double _g, doubl
 
   //regulator
   vector<complex<double>> p(4); // заданные корни
-  vector<complex<double>> coeff_g(4); // коэффициенты полинома g0 + g1*p + g2*p^2 + g3*p^3 + p^4, которые будем искать (при p^4 нет коэфф, т.к. он = 1)
+  vector<double> coeff_g(4); // коэффициенты полинома g0 + g1*p + g2*p^2 + g3*p^3 + p^4, которые будем искать (при p^4 нет коэфф, т.к. он = 1)
   p[0] = (1, 1);
-  p[1] = (2, 2);
-  p[2] = (3, 3);
-  p[3] = (4, 4);
+  p[1] = (1, -1);
+  p[2] = (-1, 1);
+  p[3] = (-1, -1);
   calc_coeffs(p, coeff_g); // находим коэффициенты желаемого хар. полинома по заданным корням c помощью т. Виетта
   vector<double> a(4); // коэффициенты исходного полинома
   double a21 = -(M + m) * g / (M * l), // коэффициенты исходной матрицы А и вектора В
@@ -174,9 +175,14 @@ void SetModelParams(double _M, double _m, double _l, double _R, double _g, doubl
   //transp(P, P_T);
 
   // k = P_T * (a - g)
-  vector<complex<double>> a_g(4, complex<double>(1));
+  vector<vector<double>> a_g(4);
   for (int i = 0; i < 4; i++)
-    a_g = a[i] - coeff_g[i];
+    a_g[i][0] = a[i] - coeff_g[i];
+
+  vector<vector<double>> temp_k(4, vector<double>(1));
+  mult(P, a_g, temp_k);
+  for (int i = 0; i < 4; i++)
+    reg[i] = temp_k[i][0];
 }
 
 void SetInitParams(double _fi, double _dfi_dt, double _x, double _dx_dt)
@@ -225,23 +231,27 @@ void GetAllDrawPoints(TAllDrawPoints* allDrawData)
 }
 
 //регулятор
-void calc_coeffs(const vector<complex<double>>& p, vector<complex<double>>& g)
+void calc_coeffs(const vector<complex<double>>& p, vector<double>& g)
 {
   // хар. полином - a0 + a1*p + a2*p^2 + a3*p^3 + a4*p^4
-  g[0] = p[0] * p[1] * p[2] * p[3]; // p0*p1*p2*p3 = a0/a4
-  g[1] = (-1.0) *
+  complex<double> temp;
+  temp = p[0] * p[1] * p[2] * p[3];
+  g[0] = temp.real(); // p0*p1*p2*p3 = a0/a4
+  temp = (-1.0) *
     (p[0] * p[1] * p[2] +
       p[0] * p[1] * p[3] +
       p[0] * p[2] * p[3] +
       p[1] * p[2] * p[3]); // p0*p1*p2 + p0*p1*p3 + p0*p2*p3 + p1*p2*p3 = (-a1)/a4
-  g[2] =
-    p[0] * p[1] +
+  g[1] = temp.real(); 
+  temp = p[0] * p[1] +
     p[0] * p[2] +
     p[0] * p[3] +
     p[1] * p[2] +
     p[1] * p[3] +
     p[2] * p[3]; // p0*p1 + p0*p2 + p0*p3 + p1*p2 * p1*p3 + p2*p3 = a2/a4
-  g[3] = (-1.0) * (p[0] + p[1] + p[2] + p[3]); // p0 + p1 + p2 + p3 = (-a3) / a4
+  g[2] = temp.real();
+  temp = (-1.0) * (p[0] + p[1] + p[2] + p[3]); // p0 + p1 + p2 + p3 = (-a3) / a4
+  g[3] = temp.real();
   //g[4] = 1; // a4
 }
 

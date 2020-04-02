@@ -51,7 +51,7 @@ void mult(std::vector<std::vector<double>>& op1,
   std::vector<std::vector<double>>& res);
 
 void f(const std::vector<double>& _X, std::vector<double>& _k);
-void calc_coeffs(const vector<complex<double>>& p, vector<complex<double>>& g);
+void calc_coeffs(const vector<complex<double>>& p, vector<double>& g);
 vector<vector<double>> inv(const vector<vector<double>>& A);
 void transp(const vector<vector<double>>& P, vector<complex<double>>& P_T);
 
