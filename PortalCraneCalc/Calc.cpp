@@ -344,7 +344,7 @@ vector<vector<double>> inv(const vector<vector<double>>& _A)
 
 void transp(const vector<vector<double>>& P, vector<vector<double>>& P_T)
 {
-  int n = P.size();
+  int n = static_cast<int>(P.size());
   for (int i = 0; i < P.size(); i++)
     for (int j = 0; j < P.size(); j++)
       P_T[i][j] = P[j][i];
