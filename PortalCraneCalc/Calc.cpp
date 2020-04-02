@@ -2,6 +2,7 @@
 #include "Calc.h"
 #include <fstream>
 #include <complex>
+#include <fstream>
 using namespace std;
 
 double M, m, l, R, g, h_fi, h_x, Beta, gamma, E; // параметры модели
@@ -42,14 +43,14 @@ void f(const std::vector<double>& _X, std::vector<double>& _k)
   _k[1] = -_X[1] * (M + m) * h_fi / (M * m * l * l)
     - _X[0] * (M + m) * g / (M * l)
     + _X[3] * (gamma * E / (R * Beta) + h_x) / (M * l)
-    - gamma / (M * R * l) * v; // dfi_dt
+    - gamma * v / (M * R * l); // dfi_dt
 
   _k[2] = _X[3]; // x
 
   _k[3] = _X[1] * h_fi / (M * l)
     + _X[0] * m * g / M
     - _X[3] * (gamma * E / (R * Beta) + h_x) / M
-    + gamma / (M * R) * v; // dx_dt
+    + gamma * v / (M * R); // dx_dt
 }
 
 point TDinModel::RK4()
@@ -81,10 +82,10 @@ void SetModelParams(double _M, double _m, double _l, double _R, double _g, doubl
   //regulator
   vector<complex<double>> p(4); // заданные корни
   vector<double> coeff_g(4); // коэффициенты полинома g0 + g1*p + g2*p^2 + g3*p^3 + p^4, которые будем искать (при p^4 нет коэфф, т.к. он = 1)
-  p[0] = (1, 1);
-  p[1] = (2, 2);
-  p[2] = (3, 3);
-  p[3] = (4, 4);
+  p[0] = (1, 0);
+  p[1] = (1, 0);
+  p[2] = (-1, 0);
+  p[3] = (-1, 0);
   calc_coeffs(p, coeff_g); // находим коэффициенты желаемого хар. полинома по заданным корням c помощью т. Виетта
   vector<double> a(4); // коэффициенты исходного полинома
   double a21 = -(M + m) * g / (M * l), // коэффициенты исходной матрицы А и вектора В
@@ -175,13 +176,18 @@ void SetModelParams(double _M, double _m, double _l, double _R, double _g, doubl
   //transp(P, P_T);
 
   // k = P_T * (a - g)
-  vector<vector<double>> a_g(4, vector<double>(1)), temp_reg(4, vector<double>(4));
+  vector<vector<double>> a_g(4, vector<double>(1)), temp_reg(4, vector<double>(1));
   for (int i = 0; i < 4; i++)
     a_g[i][0] = a[i] - coeff_g[i];
   
   mult(P, a_g, temp_reg);
   for (int i = 0; i < 4; i++)
     reg[i] = temp_reg[i][0];
+
+  std::ofstream fout;
+  fout.open("reg.txt", ios_base::trunc);
+  for (int i = 0; i < 4; i++)
+    fout << reg[i] << " ";
 }
 
 void SetInitParams(double _fi, double _dfi_dt, double _x, double _dx_dt)
@@ -222,10 +228,13 @@ void GetAllDrawPoints(TAllDrawPoints* allDrawData)
   point drawPoint(fi, dfi_dt, x, dx_dt, t_start);
   TDinModel model(4, drawPoint);
   allDrawData->allDrawPoints[0] = drawPoint;
-
+  std::ofstream fout;
+  fout.open("values.txt", ios_base::trunc);
   for (int i = 1; i < allDrawData->drawCount; i++)
   {
-    allDrawData->allDrawPoints[i] = model.RK4();
+    drawPoint = model.RK4();
+    allDrawData->allDrawPoints[i] = drawPoint;
+    fout << drawPoint.fi << " " << drawPoint.dfi_dt << " " << drawPoint.x << " " << drawPoint.dx_dt << endl;
   }
 }
 
