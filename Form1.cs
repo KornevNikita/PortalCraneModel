@@ -118,10 +118,10 @@ namespace PortalCraneModel
     private Label label18;
     private Label label17;
     private Label root1;
-    private TextBox textBox4;
-    private TextBox textBox1;
-    private TextBox textBox3;
-    private TextBox textBox2;
+    private TextBox tbox_lambda4;
+    private TextBox tbox_lambda1;
+    private TextBox tbox_lambda3;
+    private TextBox tbox_lambda2;
         private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
         private Chart chart2;
         private Chart chart3;
@@ -632,10 +632,10 @@ namespace PortalCraneModel
             this.label18 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
             this.root1 = new System.Windows.Forms.Label();
-            this.textBox4 = new System.Windows.Forms.TextBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.tbox_lambda4 = new System.Windows.Forms.TextBox();
+            this.tbox_lambda1 = new System.Windows.Forms.TextBox();
+            this.tbox_lambda3 = new System.Windows.Forms.TextBox();
+            this.tbox_lambda2 = new System.Windows.Forms.TextBox();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.chart2 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.chart3 = new System.Windows.Forms.DataVisualization.Charting.Chart();
@@ -1397,10 +1397,10 @@ namespace PortalCraneModel
             this.roots_gbox.Controls.Add(this.label18);
             this.roots_gbox.Controls.Add(this.label17);
             this.roots_gbox.Controls.Add(this.root1);
-            this.roots_gbox.Controls.Add(this.textBox4);
-            this.roots_gbox.Controls.Add(this.textBox1);
-            this.roots_gbox.Controls.Add(this.textBox3);
-            this.roots_gbox.Controls.Add(this.textBox2);
+            this.roots_gbox.Controls.Add(this.tbox_lambda4);
+            this.roots_gbox.Controls.Add(this.tbox_lambda1);
+            this.roots_gbox.Controls.Add(this.tbox_lambda3);
+            this.roots_gbox.Controls.Add(this.tbox_lambda2);
             this.roots_gbox.Location = new System.Drawing.Point(149, 310);
             this.roots_gbox.Name = "roots_gbox";
             this.roots_gbox.Size = new System.Drawing.Size(190, 121);
@@ -1444,33 +1444,37 @@ namespace PortalCraneModel
             this.root1.TabIndex = 33;
             this.root1.Text = "lambda1:";
             // 
-            // textBox4
+            // tbox_lambda4
             // 
-            this.textBox4.Location = new System.Drawing.Point(111, 95);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(73, 20);
-            this.textBox4.TabIndex = 15;
+            this.tbox_lambda4.Location = new System.Drawing.Point(111, 95);
+            this.tbox_lambda4.Name = "tbox_lambda4";
+            this.tbox_lambda4.Size = new System.Drawing.Size(73, 20);
+            this.tbox_lambda4.TabIndex = 15;
+            this.tbox_lambda4.Text = "-1";
             // 
-            // textBox1
+            // tbox_lambda1
             // 
-            this.textBox1.Location = new System.Drawing.Point(111, 18);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(73, 20);
-            this.textBox1.TabIndex = 12;
+            this.tbox_lambda1.Location = new System.Drawing.Point(111, 18);
+            this.tbox_lambda1.Name = "tbox_lambda1";
+            this.tbox_lambda1.Size = new System.Drawing.Size(73, 20);
+            this.tbox_lambda1.TabIndex = 12;
+            this.tbox_lambda1.Text = "1";
             // 
-            // textBox3
+            // tbox_lambda3
             // 
-            this.textBox3.Location = new System.Drawing.Point(111, 70);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(73, 20);
-            this.textBox3.TabIndex = 14;
+            this.tbox_lambda3.Location = new System.Drawing.Point(111, 70);
+            this.tbox_lambda3.Name = "tbox_lambda3";
+            this.tbox_lambda3.Size = new System.Drawing.Size(73, 20);
+            this.tbox_lambda3.TabIndex = 14;
+            this.tbox_lambda3.Text = "1";
             // 
-            // textBox2
+            // tbox_lambda2
             // 
-            this.textBox2.Location = new System.Drawing.Point(111, 44);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(73, 20);
-            this.textBox2.TabIndex = 13;
+            this.tbox_lambda2.Location = new System.Drawing.Point(111, 44);
+            this.tbox_lambda2.Name = "tbox_lambda2";
+            this.tbox_lambda2.Size = new System.Drawing.Size(73, 20);
+            this.tbox_lambda2.TabIndex = 13;
+            this.tbox_lambda2.Text = "-1";
             // 
             // chart1
             // 
