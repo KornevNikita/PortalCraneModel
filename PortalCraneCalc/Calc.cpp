@@ -2,15 +2,16 @@
 #include "Calc.h"
 #include <fstream>
 #include <complex>
+#include <fstream>
 using namespace std;
 
-double M, m, l, R, g, h_fi, h_x, Beta, gamma, E; // параметры модели
-double fi, dfi_dt, x, dx_dt; // начальное состояние
+double M, m, l, R, g, h_fi, h_x, Beta, gamma, E; // ГЇГ Г°Г Г¬ГҐГІГ°Г» Г¬Г®Г¤ГҐГ«ГЁ
+double fi, dfi_dt, x, dx_dt; // Г­Г Г·Г Г«ГјГ­Г®ГҐ Г±Г®Г±ГІГ®ГїГ­ГЁГҐ
 double dt, t_start, t_stop; //
 int drawStCount; //
-bool inDinamic; // параметры расчета
-double xMax, yMax; // параметры масштаба
-vector<double> reg(4); // регулятор
+bool inDinamic; // ГЇГ Г°Г Г¬ГҐГІГ°Г» Г°Г Г±Г·ГҐГІГ 
+double xMax, yMax; // ГЇГ Г°Г Г¬ГҐГІГ°Г» Г¬Г Г±ГёГІГ ГЎГ 
+vector<double> reg(4);
 
 void mult(std::vector<std::vector<double>>& op1,
   std::vector<std::vector<double>>& op2,
@@ -35,21 +36,22 @@ void mult(std::vector<std::vector<double>>& op1,
 
 void f(const std::vector<double>& _X, std::vector<double>& _k)
 {
-  static double v; // regulator
+  double v; // regulator
+
   v = reg[0] * _X[0] + reg[1] * _X[1] + reg[2] * _X[2] + reg[3] * _X[3];
   _k[0] = _X[1]; // fi
 
   _k[1] = -_X[1] * (M + m) * h_fi / (M * m * l * l)
     - _X[0] * (M + m) * g / (M * l)
     + _X[3] * (gamma * E / (R * Beta) + h_x) / (M * l)
-    - gamma / (M * R * l) * v; // dfi_dt
+    - gamma * v / (M * R * l); // dfi_dt
 
   _k[2] = _X[3]; // x
 
   _k[3] = _X[1] * h_fi / (M * l)
     + _X[0] * m * g / M
     - _X[3] * (gamma * E / (R * Beta) + h_x) / M
-    + gamma / (M * R) * v; // dx_dt
+    + gamma * v / (M * R); // dx_dt
 }
 
 point TDinModel::RK4()
@@ -79,15 +81,17 @@ void SetModelParams(double _M, double _m, double _l, double _R, double _g, doubl
   M = _M, m = _m, l = _l, R = _R, g = _g, h_fi = _h_fi, h_x = _h_x, Beta = _Beta, gamma = _gamma, E = _E;
 
   //regulator
-  vector<complex<double>> p(4); // заданные корни
-  vector<double> coeff_g(4); // коэффициенты полинома g0 + g1*p + g2*p^2 + g3*p^3 + p^4, которые будем искать (при p^4 нет коэфф, т.к. он = 1)
+  vector<complex<double>> p(4); // Г§Г Г¤Г Г­Г­Г»ГҐ ГЄГ®Г°Г­ГЁ
+  vector<double> coeff_g(4); // ГЄГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІГ» ГЇГ®Г«ГЁГ­Г®Г¬Г  g0 + g1*p + g2*p^2 + g3*p^3 + p^4, ГЄГ®ГІГ®Г°Г»ГҐ ГЎГіГ¤ГҐГ¬ ГЁГ±ГЄГ ГІГј (ГЇГ°ГЁ p^4 Г­ГҐГІ ГЄГ®ГЅГґГґ, ГІ.ГЄ. Г®Г­ = 1)
+  
   p[0] = (1, 1);
   p[1] = (1, -1);
   p[2] = (-1, 1);
   p[3] = (-1, -1);
-  calc_coeffs(p, coeff_g); // находим коэффициенты желаемого хар. полинома по заданным корням c помощью т. Виетта
-  vector<double> a(4); // коэффициенты исходного полинома
-  double a21 = -(M + m) * g / (M * l), // коэффициенты исходной матрицы А и вектора В
+
+  calc_coeffs(p, coeff_g); // Г­Г ГµГ®Г¤ГЁГ¬ ГЄГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІГ» Г¦ГҐГ«Г ГҐГ¬Г®ГЈГ® ГµГ Г°. ГЇГ®Г«ГЁГ­Г®Г¬Г  ГЇГ® Г§Г Г¤Г Г­Г­Г»Г¬ ГЄГ®Г°Г­ГїГ¬ c ГЇГ®Г¬Г®Г№ГјГѕ ГІ. Г‚ГЁГҐГІГІГ 
+  vector<double> a(4); // ГЄГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІГ» ГЁГ±ГµГ®Г¤Г­Г®ГЈГ® ГЇГ®Г«ГЁГ­Г®Г¬Г 
+  double a21 = -(M + m) * g / (M * l), // ГЄГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІГ» ГЁГ±ГµГ®Г¤Г­Г®Г© Г¬Г ГІГ°ГЁГ¶Г» ГЂ ГЁ ГўГҐГЄГІГ®Г°Г  Г‚
     a22 = -(M + m) * h_fi / (M * m * l * l),
     a24 = 1 / (M * l) * (gamma * E / (R * Beta) + h_x),
     a41 = m * g / M,
@@ -98,9 +102,9 @@ void SetModelParams(double _M, double _m, double _l, double _R, double _g, doubl
   a[0] = 0;
   a[1] = a21 * a44 - a24 * a41;
   a[2] = a22 * a44 - a24 * a42 - a21;
-  a[3] = -a22 - a44; // коэффициенты исходного полинома, полученного из |A - pE|
+  a[3] = -a22 - a44; // ГЄГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІГ» ГЁГ±ГµГ®Г¤Г­Г®ГЈГ® ГЇГ®Г«ГЁГ­Г®Г¬Г , ГЇГ®Г«ГіГ·ГҐГ­Г­Г®ГЈГ® ГЁГ§ |A - pE|
   vector<vector<double>> A(4, vector<double>(4)), B(4, vector<double>(1));
-  vector<vector<double>> delta_A(4, vector<double>(4)), delta_B(4, vector<double>(1)); // A и B, приведенные к канон. виду
+  vector<vector<double>> delta_A(4, vector<double>(4)), delta_B(4, vector<double>(1)); // A ГЁ B, ГЇГ°ГЁГўГҐГ¤ГҐГ­Г­Г»ГҐ ГЄ ГЄГ Г­Г®Г­. ГўГЁГ¤Гі
 
   A[0][1] = 1;
   A[1][0] = a21;
@@ -122,7 +126,7 @@ void SetModelParams(double _M, double _m, double _l, double _R, double _g, doubl
   delta_A[3][3] = -a[3];
   delta_B[3][0] = 1;
 
-  // теперь надо посчитать R и delta_R, начнем с R
+  // ГІГҐГЇГҐГ°Гј Г­Г Г¤Г® ГЇГ®Г±Г·ГЁГІГ ГІГј R ГЁ delta_R, Г­Г Г·Г­ГҐГ¬ Г± R
   // R = (B; AB; A^2B; A^3B)
   // ~R = (~B; ~A~B; ~A^2~B; ~A^3~B);
   vector<vector<double>> matrix_R(4, vector<double>(4)), delta_R(4, vector<double>(4)); // regulator
@@ -167,7 +171,7 @@ void SetModelParams(double _M, double _m, double _l, double _R, double _g, doubl
     delta_R[i][3] = delta_tempvec[i][0];
   }
 
-  //ищем P: = ~R * R^-1
+  //ГЁГ№ГҐГ¬ P: = ~R * R^-1
   vector<vector<double>> P(4, vector<double>(4)), matrix_R_inv(4, vector<double>(4));
   matrix_R_inv = inv(matrix_R);
   mult(delta_R, matrix_R_inv, P);
@@ -175,14 +179,19 @@ void SetModelParams(double _M, double _m, double _l, double _R, double _g, doubl
   //transp(P, P_T);
 
   // k = P_T * (a - g)
-  vector<vector<double>> a_g(4);
+
+  vector<vector<double>> a_g(4, vector<double>(1)), temp_reg(4, vector<double>(1));
   for (int i = 0; i < 4; i++)
     a_g[i][0] = a[i] - coeff_g[i];
-
-  vector<vector<double>> temp_k(4, vector<double>(1));
-  mult(P, a_g, temp_k);
+  
+  mult(P, a_g, temp_reg);
   for (int i = 0; i < 4; i++)
-    reg[i] = temp_k[i][0];
+    reg[i] = temp_reg[i][0];
+
+  std::ofstream fout;
+  fout.open("reg.txt", ios_base::trunc);
+  for (int i = 0; i < 4; i++)
+    fout << reg[i] << " ";
 }
 
 void SetInitParams(double _fi, double _dfi_dt, double _x, double _dx_dt)
@@ -206,43 +215,46 @@ int GetAllDrawPointsCount()
   return static_cast<int>((t_stop - t_start) / (drawStCount * dt));
 }
 
-//Выделение памяти под внутренний массив структуры TAllDrawPoints
-//Размер массива должен быть уже заложен в поле drawCount
+//Г‚Г»Г¤ГҐГ«ГҐГ­ГЁГҐ ГЇГ Г¬ГїГІГЁ ГЇГ®Г¤ ГўГ­ГіГІГ°ГҐГ­Г­ГЁГ© Г¬Г Г±Г±ГЁГў Г±ГІГ°ГіГЄГІГіГ°Г» TAllDrawPoints
+//ГђГ Г§Г¬ГҐГ° Г¬Г Г±Г±ГЁГўГ  Г¤Г®Г«Г¦ГҐГ­ ГЎГ»ГІГј ГіГ¦ГҐ Г§Г Г«Г®Г¦ГҐГ­ Гў ГЇГ®Г«ГҐ drawCount
 void InitAllPointsArray(TAllDrawPoints* allDrawData)
 {
   allDrawData->AllocMem(allDrawData->drawCount);
 }
-//Освобождение памяти от внутреннего массива в структуре TAllDrawPoints
+//ГЋГ±ГўГ®ГЎГ®Г¦Г¤ГҐГ­ГЁГҐ ГЇГ Г¬ГїГІГЁ Г®ГІ ГўГ­ГіГІГ°ГҐГ­Г­ГҐГЈГ® Г¬Г Г±Г±ГЁГўГ  Гў Г±ГІГ°ГіГЄГІГіГ°ГҐ TAllDrawPoints
 void DeleteAllPointsArray(TAllDrawPoints* allDrawData)
 {
   allDrawData->FreeMem();
 }
-//Заполнение массива всеми отображаемыми точками (count штук)
+//Г‡Г ГЇГ®Г«Г­ГҐГ­ГЁГҐ Г¬Г Г±Г±ГЁГўГ  ГўГ±ГҐГ¬ГЁ Г®ГІГ®ГЎГ°Г Г¦Г ГҐГ¬Г»Г¬ГЁ ГІГ®Г·ГЄГ Г¬ГЁ (count ГёГІГіГЄ)
 void GetAllDrawPoints(TAllDrawPoints* allDrawData)
 {
   point drawPoint(fi, dfi_dt, x, dx_dt, t_start);
   TDinModel model(4, drawPoint);
   allDrawData->allDrawPoints[0] = drawPoint;
-
+  std::ofstream fout;
+  fout.open("values.txt", ios_base::trunc);
   for (int i = 1; i < allDrawData->drawCount; i++)
   {
-    allDrawData->allDrawPoints[i] = model.RK4();
+    drawPoint = model.RK4();
+    allDrawData->allDrawPoints[i] = drawPoint;
+    fout << drawPoint.fi << " " << drawPoint.dfi_dt << " " << drawPoint.x << " " << drawPoint.dx_dt << endl;
   }
 }
 
-//регулятор
+//Г°ГҐГЈГіГ«ГїГІГ®Г°
 void calc_coeffs(const vector<complex<double>>& p, vector<double>& g)
 {
-  // хар. полином - a0 + a1*p + a2*p^2 + a3*p^3 + a4*p^4
+  // ГµГ Г°. ГЇГ®Г«ГЁГ­Г®Г¬ - a0 + a1*p + a2*p^2 + a3*p^3 + a4*p^4
   complex<double> temp;
-  temp = p[0] * p[1] * p[2] * p[3];
-  g[0] = temp.real(); // p0*p1*p2*p3 = a0/a4
+  temp = p[0] * p[1] * p[2] * p[3]; // p0*p1*p2*p3 = a0/a4
+  g[0] = temp.real();
   temp = (-1.0) *
     (p[0] * p[1] * p[2] +
       p[0] * p[1] * p[3] +
       p[0] * p[2] * p[3] +
       p[1] * p[2] * p[3]); // p0*p1*p2 + p0*p1*p3 + p0*p2*p3 + p1*p2*p3 = (-a1)/a4
-  g[1] = temp.real(); 
+  g[1] = temp.real();
   temp = p[0] * p[1] +
     p[0] * p[2] +
     p[0] * p[3] +
@@ -250,19 +262,19 @@ void calc_coeffs(const vector<complex<double>>& p, vector<double>& g)
     p[1] * p[3] +
     p[2] * p[3]; // p0*p1 + p0*p2 + p0*p3 + p1*p2 * p1*p3 + p2*p3 = a2/a4
   g[2] = temp.real();
-  temp = (-1.0) * (p[0] + p[1] + p[2] + p[3]); // p0 + p1 + p2 + p3 = (-a3) / a4
-  g[3] = temp.real();
+  temp = (-1.0) * (p[0] + p[1] + p[2] + p[3]);
+  g[3] = temp.real();  // p0 + p1 + p2 + p3 = (-a3) / a4
   //g[4] = 1; // a4
 }
 
-// поиск обратной матрица
+// ГЇГ®ГЁГ±ГЄ Г®ГЎГ°Г ГІГ­Г®Г© Г¬Г ГІГ°ГЁГ¶Г 
 vector<vector<double>> inv(const vector<vector<double>>& _A)
 {
   size_t n = _A.size();
   std::ofstream fout;
   fout.open("inv.txt", ios_base::trunc);
 
-  // выведем исходную матрицу
+  // ГўГ»ГўГҐГ¤ГҐГ¬ ГЁГ±ГµГ®Г¤Г­ГіГѕ Г¬Г ГІГ°ГЁГ¶Гі
   fout << "Ishodnaya:" << endl << "size = " << n << endl;
   for (int i = 0; i < n; i++)
   {
@@ -272,19 +284,19 @@ vector<vector<double>> inv(const vector<vector<double>>& _A)
   }
   fout << endl;
 
-  // нахождение определителя по Гауссу
+  // Г­Г ГµГ®Г¦Г¤ГҐГ­ГЁГҐ Г®ГЇГ°ГҐГ¤ГҐГ«ГЁГІГҐГ«Гї ГЇГ® ГѓГ ГіГ±Г±Гі
   vector<vector<double>> A(_A);
   vector<vector<double>> E(n, vector<double>(n));
   for (int i = 0; i < n; i++)
     E[i][i] = 1;
 
-  // прямой ход
+  // ГЇГ°ГїГ¬Г®Г© ГµГ®Г¤
   for (size_t i = 0; i < n; i++)
   {
     double pivot;
     pivot = A[i][i];
 
-    if (pivot == 0) // если элемент на диагонали = 0, ищем в этом столбце не равный 0
+    if (pivot == 0) // ГҐГ±Г«ГЁ ГЅГ«ГҐГ¬ГҐГ­ГІ Г­Г  Г¤ГЁГ ГЈГ®Г­Г Г«ГЁ = 0, ГЁГ№ГҐГ¬ Гў ГЅГІГ®Г¬ Г±ГІГ®Г«ГЎГ¶ГҐ Г­ГҐ Г°Г ГўГ­Г»Г© 0
     {
       for (int j = 0; j < n; j++)
       {
@@ -297,7 +309,7 @@ vector<vector<double>> inv(const vector<vector<double>>& _A)
           break;
         }
       }
-      if (pivot == 0) // если не 0 не найден, ==> обратной матрицы нет
+      if (pivot == 0) // ГҐГ±Г«ГЁ Г­ГҐ 0 Г­ГҐ Г­Г Г©Г¤ГҐГ­, ==> Г®ГЎГ°Г ГІГ­Г®Г© Г¬Г ГІГ°ГЁГ¶Г» Г­ГҐГІ
         throw("no inv matrix");
     }
 
@@ -318,7 +330,7 @@ vector<vector<double>> inv(const vector<vector<double>>& _A)
     }
   }
 
-  // обратный
+  // Г®ГЎГ°Г ГІГ­Г»Г©
   for (int i = static_cast<int>(n) - 1; i > 0; i--)
   {
     for (int j = i - 1; j >= 0; j--)
