@@ -110,16 +110,16 @@ namespace PortalCraneModel
     private Label label14;
     private Label label15;
     private Label label16;
-        private GroupBox roots_gbox;
-        private Label label19;
-        private Label label18;
-        private Label label17;
-        private Label root1;
-        private TextBox textBox4;
-        private TextBox textBox1;
-        private TextBox textBox3;
-        private TextBox textBox2;
-        private Label textBox_run_time;
+    private GroupBox roots_gbox;
+    private Label label19;
+    private Label label18;
+    private Label label17;
+    private Label root1;
+    private TextBox textBox4;
+    private TextBox textBox1;
+    private TextBox textBox3;
+    private TextBox textBox2;
+    private Label textBox_run_time;
 
     [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
     public static extern void SetModelParams(double _M, double _m, double _l, double _R, double _g, double _h_fi, double _h_x, double _B, double _gamma, double _E);
@@ -535,14 +535,14 @@ namespace PortalCraneModel
             this.label14 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.roots_gbox = new System.Windows.Forms.GroupBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.textBox4 = new System.Windows.Forms.TextBox();
-            this.root1 = new System.Windows.Forms.Label();
-            this.label17 = new System.Windows.Forms.Label();
-            this.label18 = new System.Windows.Forms.Label();
             this.label19 = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
+            this.label17 = new System.Windows.Forms.Label();
+            this.root1 = new System.Windows.Forms.Label();
+            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.textBox2 = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -581,9 +581,9 @@ namespace PortalCraneModel
             this.groupBox1.Controls.Add(this.textBox_M);
             this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.groupBox1.Location = new System.Drawing.Point(9, 10);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(2);
             this.groupBox1.Size = new System.Drawing.Size(135, 270);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
@@ -593,7 +593,7 @@ namespace PortalCraneModel
             // Button_setParam
             // 
             this.Button_setParam.Location = new System.Drawing.Point(55, 245);
-            this.Button_setParam.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Button_setParam.Margin = new System.Windows.Forms.Padding(2);
             this.Button_setParam.Name = "Button_setParam";
             this.Button_setParam.Size = new System.Drawing.Size(75, 19);
             this.Button_setParam.TabIndex = 27;
@@ -605,7 +605,7 @@ namespace PortalCraneModel
             // textBox_E
             // 
             this.textBox_E.Location = new System.Drawing.Point(55, 222);
-            this.textBox_E.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_E.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_E.Name = "textBox_E";
             this.textBox_E.Size = new System.Drawing.Size(76, 20);
             this.textBox_E.TabIndex = 26;
@@ -615,7 +615,7 @@ namespace PortalCraneModel
             // textBox_gamma
             // 
             this.textBox_gamma.Location = new System.Drawing.Point(55, 199);
-            this.textBox_gamma.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_gamma.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_gamma.Name = "textBox_gamma";
             this.textBox_gamma.Size = new System.Drawing.Size(76, 20);
             this.textBox_gamma.TabIndex = 25;
@@ -745,7 +745,7 @@ namespace PortalCraneModel
             // textBox_h_fi
             // 
             this.textBox_h_fi.Location = new System.Drawing.Point(55, 131);
-            this.textBox_h_fi.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_h_fi.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_h_fi.Name = "textBox_h_fi";
             this.textBox_h_fi.Size = new System.Drawing.Size(76, 20);
             this.textBox_h_fi.TabIndex = 7;
@@ -755,7 +755,7 @@ namespace PortalCraneModel
             // textBox_g
             // 
             this.textBox_g.Location = new System.Drawing.Point(55, 108);
-            this.textBox_g.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_g.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_g.Name = "textBox_g";
             this.textBox_g.Size = new System.Drawing.Size(76, 20);
             this.textBox_g.TabIndex = 3;
@@ -765,7 +765,7 @@ namespace PortalCraneModel
             // textBox_B
             // 
             this.textBox_B.Location = new System.Drawing.Point(55, 176);
-            this.textBox_B.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_B.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_B.Name = "textBox_B";
             this.textBox_B.Size = new System.Drawing.Size(76, 20);
             this.textBox_B.TabIndex = 6;
@@ -775,7 +775,7 @@ namespace PortalCraneModel
             // textBox_R
             // 
             this.textBox_R.Location = new System.Drawing.Point(55, 85);
-            this.textBox_R.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_R.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_R.Name = "textBox_R";
             this.textBox_R.Size = new System.Drawing.Size(76, 20);
             this.textBox_R.TabIndex = 2;
@@ -785,7 +785,7 @@ namespace PortalCraneModel
             // textBox_l
             // 
             this.textBox_l.Location = new System.Drawing.Point(55, 63);
-            this.textBox_l.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_l.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_l.Name = "textBox_l";
             this.textBox_l.Size = new System.Drawing.Size(76, 20);
             this.textBox_l.TabIndex = 5;
@@ -795,7 +795,7 @@ namespace PortalCraneModel
             // textBox_h_x
             // 
             this.textBox_h_x.Location = new System.Drawing.Point(55, 154);
-            this.textBox_h_x.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_h_x.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_h_x.Name = "textBox_h_x";
             this.textBox_h_x.Size = new System.Drawing.Size(76, 20);
             this.textBox_h_x.TabIndex = 4;
@@ -805,7 +805,7 @@ namespace PortalCraneModel
             // textBox_mmal
             // 
             this.textBox_mmal.Location = new System.Drawing.Point(55, 40);
-            this.textBox_mmal.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_mmal.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_mmal.Name = "textBox_mmal";
             this.textBox_mmal.Size = new System.Drawing.Size(76, 20);
             this.textBox_mmal.TabIndex = 1;
@@ -815,7 +815,7 @@ namespace PortalCraneModel
             // textBox_M
             // 
             this.textBox_M.Location = new System.Drawing.Point(55, 17);
-            this.textBox_M.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_M.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_M.Name = "textBox_M";
             this.textBox_M.Size = new System.Drawing.Size(76, 20);
             this.textBox_M.TabIndex = 0;
@@ -825,7 +825,7 @@ namespace PortalCraneModel
             // textBox_fi
             // 
             this.textBox_fi.Location = new System.Drawing.Point(55, 17);
-            this.textBox_fi.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_fi.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_fi.Name = "textBox_fi";
             this.textBox_fi.Size = new System.Drawing.Size(76, 20);
             this.textBox_fi.TabIndex = 8;
@@ -834,16 +834,16 @@ namespace PortalCraneModel
             // textBox_x
             // 
             this.textBox_x.Location = new System.Drawing.Point(55, 63);
-            this.textBox_x.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_x.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_x.Name = "textBox_x";
             this.textBox_x.Size = new System.Drawing.Size(76, 20);
             this.textBox_x.TabIndex = 9;
-            this.textBox_x.Text = "0";
+            this.textBox_x.Text = "5";
             // 
             // textBox_dfi_dt
             // 
             this.textBox_dfi_dt.Location = new System.Drawing.Point(55, 40);
-            this.textBox_dfi_dt.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_dfi_dt.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_dfi_dt.Name = "textBox_dfi_dt";
             this.textBox_dfi_dt.Size = new System.Drawing.Size(76, 20);
             this.textBox_dfi_dt.TabIndex = 10;
@@ -852,7 +852,7 @@ namespace PortalCraneModel
             // textBox_dx_dt
             // 
             this.textBox_dx_dt.Location = new System.Drawing.Point(55, 85);
-            this.textBox_dx_dt.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_dx_dt.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_dx_dt.Name = "textBox_dx_dt";
             this.textBox_dx_dt.Size = new System.Drawing.Size(76, 20);
             this.textBox_dx_dt.TabIndex = 11;
@@ -870,9 +870,9 @@ namespace PortalCraneModel
             this.groupBox2.Controls.Add(this.textBox_x);
             this.groupBox2.Controls.Add(this.textBox_dfi_dt);
             this.groupBox2.Location = new System.Drawing.Point(9, 284);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(2);
             this.groupBox2.Size = new System.Drawing.Size(135, 134);
             this.groupBox2.TabIndex = 12;
             this.groupBox2.TabStop = false;
@@ -881,7 +881,7 @@ namespace PortalCraneModel
             // Button_setInitVal
             // 
             this.Button_setInitVal.Location = new System.Drawing.Point(55, 108);
-            this.Button_setInitVal.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Button_setInitVal.Margin = new System.Windows.Forms.Padding(2);
             this.Button_setInitVal.Name = "Button_setInitVal";
             this.Button_setInitVal.Size = new System.Drawing.Size(75, 19);
             this.Button_setInitVal.TabIndex = 25;
@@ -944,9 +944,9 @@ namespace PortalCraneModel
             this.groupBox3.Controls.Add(this.textBox_t_start);
             this.groupBox3.Controls.Add(this.textBox_step);
             this.groupBox3.Location = new System.Drawing.Point(148, 102);
-            this.groupBox3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox3.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox3.Padding = new System.Windows.Forms.Padding(2);
             this.groupBox3.Size = new System.Drawing.Size(191, 179);
             this.groupBox3.TabIndex = 13;
             this.groupBox3.TabStop = false;
@@ -975,7 +975,7 @@ namespace PortalCraneModel
             // Button_setCalcParam
             // 
             this.Button_setCalcParam.Location = new System.Drawing.Point(4, 130);
-            this.Button_setCalcParam.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Button_setCalcParam.Margin = new System.Windows.Forms.Padding(2);
             this.Button_setCalcParam.Name = "Button_setCalcParam";
             this.Button_setCalcParam.Size = new System.Drawing.Size(75, 19);
             this.Button_setCalcParam.TabIndex = 9;
@@ -987,7 +987,7 @@ namespace PortalCraneModel
             // 
             this.checkBox_dinDraw.AutoSize = true;
             this.checkBox_dinDraw.Location = new System.Drawing.Point(7, 108);
-            this.checkBox_dinDraw.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.checkBox_dinDraw.Margin = new System.Windows.Forms.Padding(2);
             this.checkBox_dinDraw.Name = "checkBox_dinDraw";
             this.checkBox_dinDraw.Size = new System.Drawing.Size(136, 17);
             this.checkBox_dinDraw.TabIndex = 8;
@@ -1037,7 +1037,7 @@ namespace PortalCraneModel
             // textBox_drawStCount
             // 
             this.textBox_drawStCount.Location = new System.Drawing.Point(112, 85);
-            this.textBox_drawStCount.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_drawStCount.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_drawStCount.Name = "textBox_drawStCount";
             this.textBox_drawStCount.Size = new System.Drawing.Size(76, 20);
             this.textBox_drawStCount.TabIndex = 3;
@@ -1046,7 +1046,7 @@ namespace PortalCraneModel
             // textBox_t_stop
             // 
             this.textBox_t_stop.Location = new System.Drawing.Point(112, 63);
-            this.textBox_t_stop.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_t_stop.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_t_stop.Name = "textBox_t_stop";
             this.textBox_t_stop.Size = new System.Drawing.Size(76, 20);
             this.textBox_t_stop.TabIndex = 2;
@@ -1055,7 +1055,7 @@ namespace PortalCraneModel
             // textBox_t_start
             // 
             this.textBox_t_start.Location = new System.Drawing.Point(112, 40);
-            this.textBox_t_start.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_t_start.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_t_start.Name = "textBox_t_start";
             this.textBox_t_start.Size = new System.Drawing.Size(76, 20);
             this.textBox_t_start.TabIndex = 1;
@@ -1064,7 +1064,7 @@ namespace PortalCraneModel
             // textBox_step
             // 
             this.textBox_step.Location = new System.Drawing.Point(112, 17);
-            this.textBox_step.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_step.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_step.Name = "textBox_step";
             this.textBox_step.Size = new System.Drawing.Size(76, 20);
             this.textBox_step.TabIndex = 0;
@@ -1078,9 +1078,9 @@ namespace PortalCraneModel
             this.groupBox4.Controls.Add(this.textBox_yMax);
             this.groupBox4.Controls.Add(this.textBox_xMax);
             this.groupBox4.Location = new System.Drawing.Point(148, 10);
-            this.groupBox4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox4.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox4.Padding = new System.Windows.Forms.Padding(2);
             this.groupBox4.Size = new System.Drawing.Size(191, 88);
             this.groupBox4.TabIndex = 14;
             this.groupBox4.TabStop = false;
@@ -1089,7 +1089,7 @@ namespace PortalCraneModel
             // Button_setScale
             // 
             this.Button_setScale.Location = new System.Drawing.Point(22, 62);
-            this.Button_setScale.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Button_setScale.Margin = new System.Windows.Forms.Padding(2);
             this.Button_setScale.Name = "Button_setScale";
             this.Button_setScale.Size = new System.Drawing.Size(75, 19);
             this.Button_setScale.TabIndex = 4;
@@ -1120,7 +1120,7 @@ namespace PortalCraneModel
             // textBox_yMax
             // 
             this.textBox_yMax.Location = new System.Drawing.Point(22, 40);
-            this.textBox_yMax.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_yMax.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_yMax.Name = "textBox_yMax";
             this.textBox_yMax.Size = new System.Drawing.Size(76, 20);
             this.textBox_yMax.TabIndex = 1;
@@ -1129,7 +1129,7 @@ namespace PortalCraneModel
             // textBox_xMax
             // 
             this.textBox_xMax.Location = new System.Drawing.Point(22, 17);
-            this.textBox_xMax.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBox_xMax.Margin = new System.Windows.Forms.Padding(2);
             this.textBox_xMax.Name = "textBox_xMax";
             this.textBox_xMax.Size = new System.Drawing.Size(76, 20);
             this.textBox_xMax.TabIndex = 0;
@@ -1138,7 +1138,7 @@ namespace PortalCraneModel
             // Button_runCalc
             // 
             this.Button_runCalc.Location = new System.Drawing.Point(148, 286);
-            this.Button_runCalc.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Button_runCalc.Margin = new System.Windows.Forms.Padding(2);
             this.Button_runCalc.Name = "Button_runCalc";
             this.Button_runCalc.Size = new System.Drawing.Size(191, 19);
             this.Button_runCalc.TabIndex = 19;
@@ -1156,7 +1156,7 @@ namespace PortalCraneModel
             this.PictureBox1.BackColor = System.Drawing.SystemColors.Window;
             this.PictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.PictureBox1.Location = new System.Drawing.Point(387, 16);
-            this.PictureBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.PictureBox1.Margin = new System.Windows.Forms.Padding(2);
             this.PictureBox1.Name = "PictureBox1";
             this.PictureBox1.Size = new System.Drawing.Size(283, 209);
             this.PictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -1169,7 +1169,7 @@ namespace PortalCraneModel
             this.PictureBox2.BackColor = System.Drawing.SystemColors.Window;
             this.PictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.PictureBox2.Location = new System.Drawing.Point(726, 16);
-            this.PictureBox2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.PictureBox2.Margin = new System.Windows.Forms.Padding(2);
             this.PictureBox2.Name = "PictureBox2";
             this.PictureBox2.Size = new System.Drawing.Size(283, 209);
             this.PictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
@@ -1182,7 +1182,7 @@ namespace PortalCraneModel
             this.PictureBox3.BackColor = System.Drawing.SystemColors.Window;
             this.PictureBox3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.PictureBox3.Location = new System.Drawing.Point(387, 273);
-            this.PictureBox3.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.PictureBox3.Margin = new System.Windows.Forms.Padding(2);
             this.PictureBox3.Name = "PictureBox3";
             this.PictureBox3.Size = new System.Drawing.Size(283, 209);
             this.PictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -1195,7 +1195,7 @@ namespace PortalCraneModel
             this.PictureBox4.BackColor = System.Drawing.SystemColors.Window;
             this.PictureBox4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.PictureBox4.Location = new System.Drawing.Point(726, 273);
-            this.PictureBox4.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.PictureBox4.Margin = new System.Windows.Forms.Padding(2);
             this.PictureBox4.Name = "PictureBox4";
             this.PictureBox4.Size = new System.Drawing.Size(283, 209);
             this.PictureBox4.TabIndex = 23;
@@ -1307,51 +1307,14 @@ namespace PortalCraneModel
             this.roots_gbox.TabStop = false;
             this.roots_gbox.Text = "Желаемые корни";
             // 
-            // textBox1
+            // label19
             // 
-            this.textBox1.Location = new System.Drawing.Point(111, 18);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(73, 20);
-            this.textBox1.TabIndex = 12;
-            // 
-            // textBox2
-            // 
-            this.textBox2.Location = new System.Drawing.Point(111, 44);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(73, 20);
-            this.textBox2.TabIndex = 13;
-            // 
-            // textBox3
-            // 
-            this.textBox3.Location = new System.Drawing.Point(111, 70);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(73, 20);
-            this.textBox3.TabIndex = 14;
-            // 
-            // textBox4
-            // 
-            this.textBox4.Location = new System.Drawing.Point(111, 95);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(73, 20);
-            this.textBox4.TabIndex = 15;
-            // 
-            // root1
-            // 
-            this.root1.AutoSize = true;
-            this.root1.Location = new System.Drawing.Point(6, 21);
-            this.root1.Name = "root1";
-            this.root1.Size = new System.Drawing.Size(50, 13);
-            this.root1.TabIndex = 33;
-            this.root1.Text = "lambda1:";
-            // 
-            // label17
-            // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(6, 47);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(50, 13);
-            this.label17.TabIndex = 34;
-            this.label17.Text = "lambda2:";
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(6, 98);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(50, 13);
+            this.label19.TabIndex = 36;
+            this.label19.Text = "lambda4:";
             // 
             // label18
             // 
@@ -1362,14 +1325,51 @@ namespace PortalCraneModel
             this.label18.TabIndex = 35;
             this.label18.Text = "lambda3:";
             // 
-            // label19
+            // label17
             // 
-            this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(6, 98);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(50, 13);
-            this.label19.TabIndex = 36;
-            this.label19.Text = "lambda4:";
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(6, 47);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(50, 13);
+            this.label17.TabIndex = 34;
+            this.label17.Text = "lambda2:";
+            // 
+            // root1
+            // 
+            this.root1.AutoSize = true;
+            this.root1.Location = new System.Drawing.Point(6, 21);
+            this.root1.Name = "root1";
+            this.root1.Size = new System.Drawing.Size(50, 13);
+            this.root1.TabIndex = 33;
+            this.root1.Text = "lambda1:";
+            // 
+            // textBox4
+            // 
+            this.textBox4.Location = new System.Drawing.Point(111, 95);
+            this.textBox4.Name = "textBox4";
+            this.textBox4.Size = new System.Drawing.Size(73, 20);
+            this.textBox4.TabIndex = 15;
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(111, 18);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(73, 20);
+            this.textBox1.TabIndex = 12;
+            // 
+            // textBox3
+            // 
+            this.textBox3.Location = new System.Drawing.Point(111, 70);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(73, 20);
+            this.textBox3.TabIndex = 14;
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(111, 44);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(73, 20);
+            this.textBox2.TabIndex = 13;
             // 
             // PortalCraneModel
             // 
@@ -1395,7 +1395,7 @@ namespace PortalCraneModel
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "PortalCraneModel";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.Text = "PortalCraneModel";
