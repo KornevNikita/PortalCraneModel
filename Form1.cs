@@ -45,7 +45,14 @@ namespace PortalCraneModel
     public double dt;
     public double t_start;
     public double t_stop;
-    public int drawStCount;
+
+        public double lambda1_re;
+        public double lambda1_im;
+        public double lambda3_re;
+        public double lambda3_im;
+
+
+        public int drawStCount;
     public bool inDinamic;
     private IContainer components;
     private GroupBox groupBox1;
@@ -118,18 +125,20 @@ namespace PortalCraneModel
     private Label label18;
     private Label label17;
     private Label root1;
-    private TextBox tbox_lambda4;
-    private TextBox tbox_lambda1;
-    private TextBox tbox_lambda3;
-    private TextBox tbox_lambda2;
+    private TextBox tbox_lambda3_im;
+    private TextBox tbox_lambda1_re;
+    private TextBox tbox_lambda3_re;
+    private TextBox tbox_lambda1_im;
         private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
         private Chart chart2;
         private Chart chart3;
         private Chart chart4;
+        private Button btn_clear;
         private Label textBox_run_time;
 
     [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
-    public static extern void SetModelParams(double _M, double _m, double _l, double _R, double _g, double _h_fi, double _h_x, double _B, double _gamma, double _E);
+    public static extern void SetModelParams(double _M, double _m, double _l, double _R, double _g, double _h_fi, double _h_x, double _B, double _gamma, double _E,
+        double _p1_re, double _p1_im, double _p2_re, double _p2_im);
     
     [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
     public static extern void SetCalcParams(double _dt, double _t_start, double _t_stop, int _drawStCount, bool _inDinamic);
@@ -301,18 +310,18 @@ namespace PortalCraneModel
             chart3.Series[buildCount.ToString()].ChartType = SeriesChartType.Spline;
             chart4.Series[buildCount.ToString()].ChartType = SeriesChartType.Spline;
 
-            chart1.Series[buildCount.ToString()].BorderWidth = 2;
-            chart2.Series[buildCount.ToString()].BorderWidth = 2;
-            chart3.Series[buildCount.ToString()].BorderWidth = 2;
-            chart4.Series[buildCount.ToString()].BorderWidth = 2;
+            chart1.Series[buildCount.ToString()].BorderWidth = 1;
+            chart2.Series[buildCount.ToString()].BorderWidth = 1;
+            chart3.Series[buildCount.ToString()].BorderWidth = 1;
+            chart4.Series[buildCount.ToString()].BorderWidth = 1;
 
                 chart3.ChartAreas[0].AxisX.Minimum = t_start;
                 chart4.ChartAreas[0].AxisX.Minimum = t_start;
 
-                chart1.Series[buildCount.ToString()].Color = Color.Green;
-                chart2.Series[buildCount.ToString()].Color = Color.Red;
-                chart3.Series[buildCount.ToString()].Color = Color.Orange;
-                chart4.Series[buildCount.ToString()].Color = Color.Blue;
+                chart1.Series[buildCount.ToString()].Color = Color.FromArgb(rand.Next() % 256, rand.Next() % 256, rand.Next() % 256);
+                chart2.Series[buildCount.ToString()].Color = Color.FromArgb(rand.Next() % 256, rand.Next() % 256, rand.Next() % 256);
+                chart3.Series[buildCount.ToString()].Color = Color.FromArgb(rand.Next() % 256, rand.Next() % 256, rand.Next() % 256);
+                chart4.Series[buildCount.ToString()].Color = Color.FromArgb(rand.Next() % 256, rand.Next() % 256, rand.Next() % 256);
 
                 for (int i = 0; i < DrawPoints.Length; i += 5)
                     chart1.Series[buildCount.ToString()].Points.AddXY(DrawPoints[i], DrawPoints[i + 1]);
@@ -346,7 +355,12 @@ namespace PortalCraneModel
       this.B = double.Parse(this.textBox_B.Text);
       this.gamma = double.Parse(this.textBox_gamma.Text);
       this.E = double.Parse(this.textBox_E.Text);
-      PortalCraneModel.SetModelParams(this.M, this.m, this.l, this.R, this.g, this.h_fi, this.h_x, this.B, this.gamma, this.E);
+            lambda1_re = double.Parse(tbox_lambda1_re.Text);
+            lambda1_im = double.Parse(tbox_lambda1_im.Text);
+            lambda3_re = double.Parse(tbox_lambda3_re.Text);
+            lambda3_im = double.Parse(tbox_lambda3_im.Text);
+            PortalCraneModel.SetModelParams(this.M, this.m, this.l, this.R, this.g, this.h_fi, this.h_x, this.B, this.gamma, this.E,
+                lambda1_re, lambda1_im, lambda3_re, lambda3_im);
     }
 
     private void SetInitVal()
@@ -549,18 +563,18 @@ namespace PortalCraneModel
     private void InitializeComponent()
     {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea7 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend7 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea8 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend8 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.Button_setParam = new System.Windows.Forms.Button();
             this.textBox_E = new System.Windows.Forms.TextBox();
@@ -632,14 +646,15 @@ namespace PortalCraneModel
             this.label18 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
             this.root1 = new System.Windows.Forms.Label();
-            this.tbox_lambda4 = new System.Windows.Forms.TextBox();
-            this.tbox_lambda1 = new System.Windows.Forms.TextBox();
-            this.tbox_lambda3 = new System.Windows.Forms.TextBox();
-            this.tbox_lambda2 = new System.Windows.Forms.TextBox();
+            this.tbox_lambda3_im = new System.Windows.Forms.TextBox();
+            this.tbox_lambda1_re = new System.Windows.Forms.TextBox();
+            this.tbox_lambda3_re = new System.Windows.Forms.TextBox();
+            this.tbox_lambda1_im = new System.Windows.Forms.TextBox();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.chart2 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.chart3 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.chart4 = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.btn_clear = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -1238,10 +1253,10 @@ namespace PortalCraneModel
             // 
             // Button_runCalc
             // 
-            this.Button_runCalc.Location = new System.Drawing.Point(148, 286);
+            this.Button_runCalc.Location = new System.Drawing.Point(152, 412);
             this.Button_runCalc.Margin = new System.Windows.Forms.Padding(2);
             this.Button_runCalc.Name = "Button_runCalc";
-            this.Button_runCalc.Size = new System.Drawing.Size(191, 19);
+            this.Button_runCalc.Size = new System.Drawing.Size(191, 23);
             this.Button_runCalc.TabIndex = 19;
             this.Button_runCalc.Text = "Рассчитать";
             this.Button_runCalc.UseVisualStyleBackColor = true;
@@ -1397,11 +1412,11 @@ namespace PortalCraneModel
             this.roots_gbox.Controls.Add(this.label18);
             this.roots_gbox.Controls.Add(this.label17);
             this.roots_gbox.Controls.Add(this.root1);
-            this.roots_gbox.Controls.Add(this.tbox_lambda4);
-            this.roots_gbox.Controls.Add(this.tbox_lambda1);
-            this.roots_gbox.Controls.Add(this.tbox_lambda3);
-            this.roots_gbox.Controls.Add(this.tbox_lambda2);
-            this.roots_gbox.Location = new System.Drawing.Point(149, 310);
+            this.roots_gbox.Controls.Add(this.tbox_lambda3_im);
+            this.roots_gbox.Controls.Add(this.tbox_lambda1_re);
+            this.roots_gbox.Controls.Add(this.tbox_lambda3_re);
+            this.roots_gbox.Controls.Add(this.tbox_lambda1_im);
+            this.roots_gbox.Location = new System.Drawing.Point(152, 286);
             this.roots_gbox.Name = "roots_gbox";
             this.roots_gbox.Size = new System.Drawing.Size(190, 121);
             this.roots_gbox.TabIndex = 32;
@@ -1413,136 +1428,146 @@ namespace PortalCraneModel
             this.label19.AutoSize = true;
             this.label19.Location = new System.Drawing.Point(6, 98);
             this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(50, 13);
+            this.label19.Size = new System.Drawing.Size(63, 13);
             this.label19.TabIndex = 36;
-            this.label19.Text = "lambda4:";
+            this.label19.Text = "lambda3_im";
             // 
             // label18
             // 
             this.label18.AutoSize = true;
             this.label18.Location = new System.Drawing.Point(6, 73);
             this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(50, 13);
+            this.label18.Size = new System.Drawing.Size(65, 13);
             this.label18.TabIndex = 35;
-            this.label18.Text = "lambda3:";
+            this.label18.Text = "lambda3_re:";
             // 
             // label17
             // 
             this.label17.AutoSize = true;
             this.label17.Location = new System.Drawing.Point(6, 47);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(50, 13);
+            this.label17.Size = new System.Drawing.Size(66, 13);
             this.label17.TabIndex = 34;
-            this.label17.Text = "lambda2:";
+            this.label17.Text = "lambda1_im:";
             // 
             // root1
             // 
             this.root1.AutoSize = true;
             this.root1.Location = new System.Drawing.Point(6, 21);
             this.root1.Name = "root1";
-            this.root1.Size = new System.Drawing.Size(50, 13);
+            this.root1.Size = new System.Drawing.Size(65, 13);
             this.root1.TabIndex = 33;
-            this.root1.Text = "lambda1:";
+            this.root1.Text = "lambda1_re:";
             // 
-            // tbox_lambda4
+            // tbox_lambda3_im
             // 
-            this.tbox_lambda4.Location = new System.Drawing.Point(111, 95);
-            this.tbox_lambda4.Name = "tbox_lambda4";
-            this.tbox_lambda4.Size = new System.Drawing.Size(73, 20);
-            this.tbox_lambda4.TabIndex = 15;
-            this.tbox_lambda4.Text = "-1";
+            this.tbox_lambda3_im.Location = new System.Drawing.Point(111, 95);
+            this.tbox_lambda3_im.Name = "tbox_lambda3_im";
+            this.tbox_lambda3_im.Size = new System.Drawing.Size(31, 20);
+            this.tbox_lambda3_im.TabIndex = 15;
+            this.tbox_lambda3_im.Text = "2";
             // 
-            // tbox_lambda1
+            // tbox_lambda1_re
             // 
-            this.tbox_lambda1.Location = new System.Drawing.Point(111, 18);
-            this.tbox_lambda1.Name = "tbox_lambda1";
-            this.tbox_lambda1.Size = new System.Drawing.Size(73, 20);
-            this.tbox_lambda1.TabIndex = 12;
-            this.tbox_lambda1.Text = "1";
+            this.tbox_lambda1_re.Location = new System.Drawing.Point(111, 18);
+            this.tbox_lambda1_re.Name = "tbox_lambda1_re";
+            this.tbox_lambda1_re.Size = new System.Drawing.Size(31, 20);
+            this.tbox_lambda1_re.TabIndex = 12;
+            this.tbox_lambda1_re.Text = "1";
             // 
-            // tbox_lambda3
+            // tbox_lambda3_re
             // 
-            this.tbox_lambda3.Location = new System.Drawing.Point(111, 70);
-            this.tbox_lambda3.Name = "tbox_lambda3";
-            this.tbox_lambda3.Size = new System.Drawing.Size(73, 20);
-            this.tbox_lambda3.TabIndex = 14;
-            this.tbox_lambda3.Text = "1";
+            this.tbox_lambda3_re.Location = new System.Drawing.Point(111, 70);
+            this.tbox_lambda3_re.Name = "tbox_lambda3_re";
+            this.tbox_lambda3_re.Size = new System.Drawing.Size(31, 20);
+            this.tbox_lambda3_re.TabIndex = 14;
+            this.tbox_lambda3_re.Text = "2";
             // 
-            // tbox_lambda2
+            // tbox_lambda1_im
             // 
-            this.tbox_lambda2.Location = new System.Drawing.Point(111, 44);
-            this.tbox_lambda2.Name = "tbox_lambda2";
-            this.tbox_lambda2.Size = new System.Drawing.Size(73, 20);
-            this.tbox_lambda2.TabIndex = 13;
-            this.tbox_lambda2.Text = "-1";
+            this.tbox_lambda1_im.Location = new System.Drawing.Point(111, 44);
+            this.tbox_lambda1_im.Name = "tbox_lambda1_im";
+            this.tbox_lambda1_im.Size = new System.Drawing.Size(31, 20);
+            this.tbox_lambda1_im.TabIndex = 13;
+            this.tbox_lambda1_im.Text = "1";
             // 
             // chart1
             // 
-            chartArea1.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea1);
-            legend1.Enabled = false;
-            legend1.Name = "Legend1";
-            this.chart1.Legends.Add(legend1);
+            chartArea5.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea5);
+            legend5.Enabled = false;
+            legend5.Name = "Legend1";
+            this.chart1.Legends.Add(legend5);
             this.chart1.Location = new System.Drawing.Point(1065, 20);
             this.chart1.Name = "chart1";
-            series1.ChartArea = "ChartArea1";
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            this.chart1.Series.Add(series1);
+            series5.ChartArea = "ChartArea1";
+            series5.Legend = "Legend1";
+            series5.Name = "Series1";
+            this.chart1.Series.Add(series5);
             this.chart1.Size = new System.Drawing.Size(284, 209);
             this.chart1.TabIndex = 33;
             this.chart1.Text = "chart1";
             // 
             // chart2
             // 
-            chartArea2.Name = "ChartArea1";
-            this.chart2.ChartAreas.Add(chartArea2);
-            legend2.Enabled = false;
-            legend2.Name = "Legend1";
-            this.chart2.Legends.Add(legend2);
+            chartArea6.Name = "ChartArea1";
+            this.chart2.ChartAreas.Add(chartArea6);
+            legend6.Enabled = false;
+            legend6.Name = "Legend1";
+            this.chart2.Legends.Add(legend6);
             this.chart2.Location = new System.Drawing.Point(1355, 18);
             this.chart2.Name = "chart2";
-            series2.ChartArea = "ChartArea1";
-            series2.Legend = "Legend1";
-            series2.Name = "Series1";
-            this.chart2.Series.Add(series2);
+            series6.ChartArea = "ChartArea1";
+            series6.Legend = "Legend1";
+            series6.Name = "Series1";
+            this.chart2.Series.Add(series6);
             this.chart2.Size = new System.Drawing.Size(286, 209);
             this.chart2.TabIndex = 34;
             this.chart2.Text = "chart2";
             // 
             // chart3
             // 
-            chartArea3.Name = "ChartArea1";
-            this.chart3.ChartAreas.Add(chartArea3);
-            legend3.Enabled = false;
-            legend3.Name = "Legend1";
-            this.chart3.Legends.Add(legend3);
+            chartArea7.Name = "ChartArea1";
+            this.chart3.ChartAreas.Add(chartArea7);
+            legend7.Enabled = false;
+            legend7.Name = "Legend1";
+            this.chart3.Legends.Add(legend7);
             this.chart3.Location = new System.Drawing.Point(1065, 273);
             this.chart3.Name = "chart3";
-            series3.ChartArea = "ChartArea1";
-            series3.Legend = "Legend1";
-            series3.Name = "Series1";
-            this.chart3.Series.Add(series3);
+            series7.ChartArea = "ChartArea1";
+            series7.Legend = "Legend1";
+            series7.Name = "Series1";
+            this.chart3.Series.Add(series7);
             this.chart3.Size = new System.Drawing.Size(284, 209);
             this.chart3.TabIndex = 33;
             this.chart3.Text = "chart1";
             // 
             // chart4
             // 
-            chartArea4.Name = "ChartArea1";
-            this.chart4.ChartAreas.Add(chartArea4);
-            legend4.Enabled = false;
-            legend4.Name = "Legend1";
-            this.chart4.Legends.Add(legend4);
+            chartArea8.Name = "ChartArea1";
+            this.chart4.ChartAreas.Add(chartArea8);
+            legend8.Enabled = false;
+            legend8.Name = "Legend1";
+            this.chart4.Legends.Add(legend8);
             this.chart4.Location = new System.Drawing.Point(1355, 273);
             this.chart4.Name = "chart4";
-            series4.ChartArea = "ChartArea1";
-            series4.Legend = "Legend1";
-            series4.Name = "Series1";
-            this.chart4.Series.Add(series4);
+            series8.ChartArea = "ChartArea1";
+            series8.Legend = "Legend1";
+            series8.Name = "Series1";
+            this.chart4.Series.Add(series8);
             this.chart4.Size = new System.Drawing.Size(286, 209);
             this.chart4.TabIndex = 33;
             this.chart4.Text = "chart1";
+            // 
+            // btn_clear
+            // 
+            this.btn_clear.Location = new System.Drawing.Point(152, 440);
+            this.btn_clear.Name = "btn_clear";
+            this.btn_clear.Size = new System.Drawing.Size(191, 23);
+            this.btn_clear.TabIndex = 35;
+            this.btn_clear.Text = "Очистить";
+            this.btn_clear.UseVisualStyleBackColor = true;
+            this.btn_clear.Click += new System.EventHandler(this.Btn_clear_Click);
             // 
             // PortalCraneModel
             // 
@@ -1550,6 +1575,7 @@ namespace PortalCraneModel
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(1718, 523);
+            this.Controls.Add(this.btn_clear);
             this.Controls.Add(this.chart2);
             this.Controls.Add(this.chart4);
             this.Controls.Add(this.chart3);
@@ -1614,5 +1640,19 @@ namespace PortalCraneModel
       public double dx_dt;
       public double t;
     }
-  }
+
+        private void Btn_clear_Click(object sender, EventArgs e)
+        {
+            chart1.Series.Clear();
+            chart1.Legends.Clear();
+            chart2.Series.Clear();
+            chart2.Legends.Clear();
+            chart3.Series.Clear();
+            chart3.Legends.Clear();
+            chart4.Series.Clear();
+            chart4.Legends.Clear();
+
+            buildCount = 0;
+        }
+    }
 }
