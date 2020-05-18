@@ -76,8 +76,10 @@ point TDinModel::RK4()
   return res;
 }
 
-void SetModelParams(double _M, double _m, double _l, double _R, double _g, double _h_fi, double _h_x, double _Beta, double _gamma, double _E,
-  double _p1_re, double _p1_im, double _p2_re, double _p2_im)
+void SetModelParams(double _M, double _m, double _l, double _R, double _g, 
+  double _h_fi, double _h_x, double _Beta, double _gamma, double _E,
+  double _p1_re, double _p1_im, double _p2_re, double _p2_im,
+  double _p3_re, double _p3_im, double _p4_re, double _p4_im)
 {
   M = _M, m = _m, l = _l, R = _R, g = _g, h_fi = _h_fi, h_x = _h_x, Beta = _Beta, gamma = _gamma, E = _E;
 
@@ -86,9 +88,9 @@ void SetModelParams(double _M, double _m, double _l, double _R, double _g, doubl
   vector<double> coeff_g(4); // êîýôôèöèåíòû ïîëèíîìà g0 + g1*p + g2*p^2 + g3*p^3 + p^4, êîòîðûå áóäåì èñêàòü (ïðè p^4 íåò êîýôô, ò.ê. îí = 1)
   
   p[0] = (_p1_re, _p1_im);
-  p[1] = (_p1_re, _p1_im * (-1));
-  p[2] = (_p2_re, _p2_im);
-  p[3] = (_p2_re, _p2_im * (-1));
+  p[1] = (_p2_re, _p2_im);
+  p[2] = (_p3_re, _p3_im);
+  p[3] = (_p4_re, _p4_im);
 
   calc_coeffs(p, coeff_g); // íàõîäèì êîýôôèöèåíòû æåëàåìîãî õàð. ïîëèíîìà ïî çàäàííûì êîðíÿì c ïîìîùüþ ò. Âèåòòà
   vector<double> a(4); // êîýôôèöèåíòû èñõîäíîãî ïîëèíîìà

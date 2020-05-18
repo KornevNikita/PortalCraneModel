@@ -14,101 +14,105 @@ using System.Windows.Forms.DataVisualization.Charting;
 
 namespace PortalCraneModel
 {
-  public class PortalCraneModel : Form
-  {
+    public class PortalCraneModel : Form
+    {
         Random rand = new Random();
         public int buildCount = 0;
-    const string dll = "PortalCraneCalc.dll";
-    public double[] DrawPoints;
-    public IntPtr ptrTAllDrawPoints;
-    public PortalCraneModel.TAllDrawPoints allPoints;
-    public PortalCraneModel.TStatePoint CurrentPoint;
-    public IntPtr PtrNextPoint;
-    public int dinPointsCount;
-    public double[] roots; // zhelaemie korni
-    public double M;
-    public double m;
-    public double l;
-    public double R;
-    public double g;
-    public double h_fi;
-    public double h_x;
-    public double B;
-    public double gamma;
-    public double E;
-    public double fi;
-    public double dfi_dt;
-    public double x;
-    public double dx_dt;
-    public double xMax;
-    public double yMax;
-    public double dt;
-    public double t_start;
-    public double t_stop;
+        const string dll = "PortalCraneCalc.dll";
+        public double[] DrawPoints;
+        public IntPtr ptrTAllDrawPoints;
+        public PortalCraneModel.TAllDrawPoints allPoints;
+        public PortalCraneModel.TStatePoint CurrentPoint;
+        public IntPtr PtrNextPoint;
+        public int dinPointsCount;
+        public double[] roots; // zhelaemie korni
+        public double M;
+        public double m;
+        public double l;
+        public double R;
+        public double g;
+        public double h_fi;
+        public double h_x;
+        public double B;
+        public double gamma;
+        public double E;
+        public double fi;
+        public double dfi_dt;
+        public double x;
+        public double dx_dt;
+        public double xMax;
+        public double yMax;
+        public double dt;
+        public double t_start;
+        public double t_stop;
 
         public double lambda1_re;
         public double lambda1_im;
+        public double lambda2_re;
+        public double lambda2_im;
         public double lambda3_re;
         public double lambda3_im;
+        public double lambda4_re;
+        public double lambda4_im;
 
 
         public int drawStCount;
-    public bool inDinamic;
-    private IContainer components;
-    private GroupBox groupBox1;
-    private TextBox textBox_h_fi;
-    private TextBox textBox_B;
-    private TextBox textBox_l;
-    private TextBox textBox_h_x;
-    private TextBox textBox_mmal;
-    private TextBox textBox_M;
-    private TextBox textBox_R;
-    private TextBox textBox_g;
-    private Label label_B;
-    private Label label7;
-    private Label label_h_fi;
-    private Label label_g;
-    private Label label_R;
-    private Label label_l;
-    private Label label_mmal;
-    private Label label_M;
-    private TextBox textBox_fi;
-    private TextBox textBox_x;
-    private TextBox textBox_dfi_dt;
-    private TextBox textBox_dx_dt;
-    private GroupBox groupBox2;
-    private Label labelfi;
-    private Label labeldfi_dt;
-    private Label labelx;
-    private Label labeldx_dt;
-    private Label label_h_x;
-    private TextBox textBox_E;
-    private TextBox textBox_gamma;
-    private Label label_gamma;
-    private Label label_E;
-    private Button Button_setParam;
-    private Button Button_setInitVal;
-    private GroupBox groupBox3;
-    private Button Button_setCalcParam;
-    private CheckBox checkBox_dinDraw;
-    private Label label4;
-    private Label label3;
-    private Label label2;
-    private Label label1;
-    private TextBox textBox_drawStCount;
-    private TextBox textBox_t_stop;
-    private TextBox textBox_t_start;
-    private TextBox textBox_step;
-    private Button Button_runCalc;
-    private Timer Timer1;
-    private Label label16;
-    private GroupBox roots_gbox;
-    private Label label18;
-    private Label root1;
-    private TextBox tbox_lambda3_im;
-    private TextBox tbox_lambda1_re;
-    private TextBox tbox_lambda3_re;
-    private TextBox tbox_lambda1_im;
+        public bool inDinamic;
+        private IContainer components;
+        private GroupBox groupBox1;
+        private TextBox textBox_h_fi;
+        private TextBox textBox_B;
+        private TextBox textBox_l;
+        private TextBox textBox_h_x;
+        private TextBox textBox_mmal;
+        private TextBox textBox_M;
+        private TextBox textBox_R;
+        private TextBox textBox_g;
+        private Label label_B;
+        private Label label7;
+        private Label label_h_fi;
+        private Label label_g;
+        private Label label_R;
+        private Label label_l;
+        private Label label_mmal;
+        private Label label_M;
+        private TextBox textBox_fi;
+        private TextBox textBox_x;
+        private TextBox textBox_dfi_dt;
+        private TextBox textBox_dx_dt;
+        private GroupBox groupBox2;
+        private Label labelfi;
+        private Label labeldfi_dt;
+        private Label labelx;
+        private Label labeldx_dt;
+        private Label label_h_x;
+        private TextBox textBox_E;
+        private TextBox textBox_gamma;
+        private Label label_gamma;
+        private Label label_E;
+        private Button Button_setParam;
+        private Button Button_setInitVal;
+        private GroupBox groupBox3;
+        private Button Button_setCalcParam;
+        private CheckBox checkBox_dinDraw;
+        private Label label4;
+        private Label label3;
+        private Label label2;
+        private Label label1;
+        private TextBox textBox_drawStCount;
+        private TextBox textBox_t_stop;
+        private TextBox textBox_t_start;
+        private TextBox textBox_step;
+        private Button Button_runCalc;
+        private Timer Timer1;
+        private Label label16;
+        private GroupBox roots_gbox;
+        private Label label18;
+        private Label root1;
+        private TextBox tbox_lambda3_im;
+        private TextBox tbox_lambda1_re;
+        private TextBox tbox_lambda3_re;
+        private TextBox tbox_lambda1_im;
         private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
         private Chart chart2;
         private Chart chart3;
@@ -145,37 +149,40 @@ namespace PortalCraneModel
         private TextBox textBox8;
         private TextBox textBox9;
         private TextBox textBox10;
+        private Button button2;
         private Label textBox_run_time;
 
-    [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
-    public static extern void SetModelParams(double _M, double _m, double _l, double _R, double _g, double _h_fi, double _h_x, double _B, double _gamma, double _E,
-        double _p1_re, double _p1_im, double _p2_re, double _p2_im);
-    
-    [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
-    public static extern void SetCalcParams(double _dt, double _t_start, double _t_stop, int _drawStCount, bool _inDinamic);
+        [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetModelParams(double _M, double _m, double _l, double _R, double _g,
+            double _h_fi, double _h_x, double _B, double _gamma, double _E,
+            double _p1_re, double _p1_im, double _p2_re, double _p2_im,
+            double _p3_re, double _p3_im, double _p4_re, double _p4_im);
 
-    [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
-    public static extern void SetInitParams(double _fi, double _dfi_dt, double _x, double _dx_dt);
+        [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetCalcParams(double _dt, double _t_start, double _t_stop, int _drawStCount, bool _inDinamic);
 
-    [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
-    public static extern void SetScaleParams(double _xMax, double _yMax);
+        [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetInitParams(double _fi, double _dfi_dt, double _x, double _dx_dt);
 
-    [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
-    public static extern int GetAllDrawPointsCount();
+        [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetScaleParams(double _xMax, double _yMax);
 
-    [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
-    public static extern void InitAllPointsArray(IntPtr allDrawData);
-         
-    [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
-    public static extern void DeleteAllPointsArray(IntPtr allDrawData);
+        [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int GetAllDrawPointsCount();
 
-    [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
-    public static extern void GetAllDrawPoints(IntPtr ptrAllDrawPoints);
+        [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void InitAllPointsArray(IntPtr allDrawData);
 
-    public PortalCraneModel()
-    {
-      this.InitializeComponent();
-      this.allPoints = new PortalCraneModel.TAllDrawPoints();
+        [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void DeleteAllPointsArray(IntPtr allDrawData);
+
+        [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void GetAllDrawPoints(IntPtr ptrAllDrawPoints);
+
+        public PortalCraneModel()
+        {
+            this.InitializeComponent();
+            this.allPoints = new PortalCraneModel.TAllDrawPoints();
             chart1.ChartAreas[0].AxisX.RoundAxisValues();
             chart1.ChartAreas[0].AxisY.RoundAxisValues();
             //chart1.ChartAreas[0].AxisX.MajorGrid.Enabled = false;
@@ -214,111 +221,111 @@ namespace PortalCraneModel
         }
 
         private void Timer1_Tick(object sender, EventArgs e)
-    {
-      if (this.dinPointsCount == this.allPoints.drawCount)
-      {
-        this.Timer1.Enabled = false;
-        Marshal.FreeHGlobal(this.PtrNextPoint);
-      }
-      else
-      {
-        Marshal.StructureToPtr(this.CurrentPoint, this.PtrNextPoint, false);
-        // PortalCraneModel.GetNextDrawPoint(this.PtrNextPoint);
-        this.CurrentPoint = (PortalCraneModel.TStatePoint) Marshal.PtrToStructure(this.PtrNextPoint, typeof (PortalCraneModel.TStatePoint));
-        this.DrawPoints[this.dinPointsCount * 5] = this.CurrentPoint.fi;
-        this.DrawPoints[this.dinPointsCount * 5 + 1] = this.CurrentPoint.dfi_dt;
-        this.DrawPoints[this.dinPointsCount * 5 + 2] = this.CurrentPoint.x;
-        this.DrawPoints[this.dinPointsCount * 5 + 3] = this.CurrentPoint.dx_dt;
-        this.DrawPoints[this.dinPointsCount * 5 + 4] = this.CurrentPoint.t;
-        ++this.dinPointsCount;
-        //this.PictureBox1.Refresh();
-        //this.PictureBox2.Refresh();
-        //this.PictureBox3.Refresh();
-        //this.PictureBox4.Refresh();
-      }
-    }
-
-    private void PortalCraneModel_Load(object sender, EventArgs e)
-    {
-    }
-
-    private void Button_setParam_Click(object sender, EventArgs e)
-    {
-      this.SetParam();
-    }
-
-    private void Button_setInitVal_Click(object sender, EventArgs e)
-    {
-      this.SetInitVal();
-    }
-
-    private void Button_setCalcParam_Click(object sender, EventArgs e)
-    {
-      this.SetCalcParam();
-    }
-
-    private void Button_runCalc_Click(object sender, EventArgs e)
-    {
-        Stopwatch stopwatch = new Stopwatch();
-        stopwatch.Start();
-        // считываем:
-        this.SetParam(); // параметры модели
-        this.SetCalcParam(); // параметры расчета
-        this.SetInitVal(); // начальное состояние системы
-
-        // определяем количество точек, которые будут отрисованы
-        this.allPoints.drawCount = GetAllDrawPointsCount();
-        // создаем управляемое хранилище
-        this.DrawPoints = new double[allPoints.drawCount * 5];
-           
-        if (this.inDinamic)
         {
-            this.CurrentPoint.fi = this.fi;
-            this.CurrentPoint.dfi_dt = this.dfi_dt;
-            this.CurrentPoint.x = this.x;
-            this.CurrentPoint.dx_dt = this.dx_dt;
-            this.CurrentPoint.t = this.t_start;
-            this.DrawPoints[0] = this.fi;
-            this.DrawPoints[1] = this.dfi_dt;
-            this.DrawPoints[2] = this.x;
-            this.DrawPoints[3] = this.dx_dt;
-            this.DrawPoints[4] = this.t_start;
-            this.dinPointsCount = 0;
-            this.PtrNextPoint = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(PortalCraneModel.TStatePoint)));
-            this.Timer1.Enabled = true;
+            if (this.dinPointsCount == this.allPoints.drawCount)
+            {
+                this.Timer1.Enabled = false;
+                Marshal.FreeHGlobal(this.PtrNextPoint);
+            }
+            else
+            {
+                Marshal.StructureToPtr(this.CurrentPoint, this.PtrNextPoint, false);
+                // PortalCraneModel.GetNextDrawPoint(this.PtrNextPoint);
+                this.CurrentPoint = (PortalCraneModel.TStatePoint)Marshal.PtrToStructure(this.PtrNextPoint, typeof(PortalCraneModel.TStatePoint));
+                this.DrawPoints[this.dinPointsCount * 5] = this.CurrentPoint.fi;
+                this.DrawPoints[this.dinPointsCount * 5 + 1] = this.CurrentPoint.dfi_dt;
+                this.DrawPoints[this.dinPointsCount * 5 + 2] = this.CurrentPoint.x;
+                this.DrawPoints[this.dinPointsCount * 5 + 3] = this.CurrentPoint.dx_dt;
+                this.DrawPoints[this.dinPointsCount * 5 + 4] = this.CurrentPoint.t;
+                ++this.dinPointsCount;
+                //this.PictureBox1.Refresh();
+                //this.PictureBox2.Refresh();
+                //this.PictureBox3.Refresh();
+                //this.PictureBox4.Refresh();
+            }
         }
 
-        else
+        private void PortalCraneModel_Load(object sender, EventArgs e)
         {
-            int sizeStruct = Marshal.SizeOf(typeof(PortalCraneModel.TAllDrawPoints)); // определяем размер управляемой структуры
-            this.ptrTAllDrawPoints = Marshal.AllocHGlobal(sizeStruct); // выделяем память под неуправляемую структуру
-            Marshal.StructureToPtr(this.allPoints, this.ptrTAllDrawPoints, false); // копируем данные из неуправляемой в управляемую
-            PortalCraneModel.InitAllPointsArray(this.ptrTAllDrawPoints); // выделяем память под внутренний неуправляемый массив в неупр структуре
-            PortalCraneModel.GetAllDrawPoints(this.ptrTAllDrawPoints);
-            this.allPoints = (PortalCraneModel.TAllDrawPoints)Marshal.PtrToStructure(this.ptrTAllDrawPoints, typeof(PortalCraneModel.TAllDrawPoints));
-            Marshal.Copy(this.allPoints.allDrawPoints, this.DrawPoints, 0, this.allPoints.drawCount * 5);
-            PortalCraneModel.DeleteAllPointsArray(this.ptrTAllDrawPoints);
-            Marshal.FreeHGlobal(this.ptrTAllDrawPoints);
-            //this.PictureBox1.Refresh();
-            //this.PictureBox2.Refresh();
-            //this.PictureBox3.Refresh();
-            //this.PictureBox4.Refresh();
+        }
 
-            chart1.Series.Add(buildCount.ToString());
-            chart2.Series.Add(buildCount.ToString());
-            chart3.Series.Add(buildCount.ToString());
-            chart4.Series.Add(buildCount.ToString());
+        private void Button_setParam_Click(object sender, EventArgs e)
+        {
+            this.SetParam();
+        }
+
+        private void Button_setInitVal_Click(object sender, EventArgs e)
+        {
+            this.SetInitVal();
+        }
+
+        private void Button_setCalcParam_Click(object sender, EventArgs e)
+        {
+            this.SetCalcParam();
+        }
+
+        private void Button_runCalc_Click(object sender, EventArgs e)
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            // считываем:
+            this.SetParam(); // параметры модели
+            this.SetCalcParam(); // параметры расчета
+            this.SetInitVal(); // начальное состояние системы
+
+            // определяем количество точек, которые будут отрисованы
+            this.allPoints.drawCount = GetAllDrawPointsCount();
+            // создаем управляемое хранилище
+            this.DrawPoints = new double[allPoints.drawCount * 5];
+
+            if (this.inDinamic)
+            {
+                this.CurrentPoint.fi = this.fi;
+                this.CurrentPoint.dfi_dt = this.dfi_dt;
+                this.CurrentPoint.x = this.x;
+                this.CurrentPoint.dx_dt = this.dx_dt;
+                this.CurrentPoint.t = this.t_start;
+                this.DrawPoints[0] = this.fi;
+                this.DrawPoints[1] = this.dfi_dt;
+                this.DrawPoints[2] = this.x;
+                this.DrawPoints[3] = this.dx_dt;
+                this.DrawPoints[4] = this.t_start;
+                this.dinPointsCount = 0;
+                this.PtrNextPoint = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(PortalCraneModel.TStatePoint)));
+                this.Timer1.Enabled = true;
+            }
+
+            else
+            {
+                int sizeStruct = Marshal.SizeOf(typeof(PortalCraneModel.TAllDrawPoints)); // определяем размер управляемой структуры
+                this.ptrTAllDrawPoints = Marshal.AllocHGlobal(sizeStruct); // выделяем память под неуправляемую структуру
+                Marshal.StructureToPtr(this.allPoints, this.ptrTAllDrawPoints, false); // копируем данные из неуправляемой в управляемую
+                PortalCraneModel.InitAllPointsArray(this.ptrTAllDrawPoints); // выделяем память под внутренний неуправляемый массив в неупр структуре
+                PortalCraneModel.GetAllDrawPoints(this.ptrTAllDrawPoints);
+                this.allPoints = (PortalCraneModel.TAllDrawPoints)Marshal.PtrToStructure(this.ptrTAllDrawPoints, typeof(PortalCraneModel.TAllDrawPoints));
+                Marshal.Copy(this.allPoints.allDrawPoints, this.DrawPoints, 0, this.allPoints.drawCount * 5);
+                PortalCraneModel.DeleteAllPointsArray(this.ptrTAllDrawPoints);
+                Marshal.FreeHGlobal(this.ptrTAllDrawPoints);
+                //this.PictureBox1.Refresh();
+                //this.PictureBox2.Refresh();
+                //this.PictureBox3.Refresh();
+                //this.PictureBox4.Refresh();
+
+                chart1.Series.Add(buildCount.ToString());
+                chart2.Series.Add(buildCount.ToString());
+                chart3.Series.Add(buildCount.ToString());
+                chart4.Series.Add(buildCount.ToString());
 
 
-            chart1.Series[buildCount.ToString()].ChartType = SeriesChartType.Spline;
-            chart2.Series[buildCount.ToString()].ChartType = SeriesChartType.Spline;
-            chart3.Series[buildCount.ToString()].ChartType = SeriesChartType.Spline;
-            chart4.Series[buildCount.ToString()].ChartType = SeriesChartType.Spline;
+                chart1.Series[buildCount.ToString()].ChartType = SeriesChartType.Spline;
+                chart2.Series[buildCount.ToString()].ChartType = SeriesChartType.Spline;
+                chart3.Series[buildCount.ToString()].ChartType = SeriesChartType.Spline;
+                chart4.Series[buildCount.ToString()].ChartType = SeriesChartType.Spline;
 
-            chart1.Series[buildCount.ToString()].BorderWidth = 2;
-            chart2.Series[buildCount.ToString()].BorderWidth = 2;
-            chart3.Series[buildCount.ToString()].BorderWidth = 2;
-            chart4.Series[buildCount.ToString()].BorderWidth = 2;
+                chart1.Series[buildCount.ToString()].BorderWidth = 2;
+                chart2.Series[buildCount.ToString()].BorderWidth = 2;
+                chart3.Series[buildCount.ToString()].BorderWidth = 2;
+                chart4.Series[buildCount.ToString()].BorderWidth = 2;
 
                 //chart2.ChartAreas[0].AxisX.Minimum = DrawPoints[DrawPoints.Length - 3];
                 chart3.ChartAreas[0].AxisX.Minimum = t_start;
@@ -345,223 +352,228 @@ namespace PortalCraneModel
 
 
                 stopwatch.Stop();
-            this.textBox_run_time.Text = stopwatch.Elapsed.TotalSeconds.ToString();
-            this.textBox_run_time.BackColor = Color.Yellow;
+                this.textBox_run_time.Text = stopwatch.Elapsed.TotalSeconds.ToString();
+                this.textBox_run_time.BackColor = Color.Yellow;
+            }
         }
-    }
 
-    private void SetParam()
-    {
-      this.M = double.Parse(this.textBox_M.Text);
-      this.m = double.Parse(this.textBox_mmal.Text);
-      this.l = double.Parse(this.textBox_l.Text);
-      this.R = double.Parse(this.textBox_R.Text);
-      this.g = double.Parse(this.textBox_g.Text);
-      this.h_fi = double.Parse(this.textBox_h_fi.Text);
-      this.h_x = double.Parse(this.textBox_h_x.Text);
-      this.B = double.Parse(this.textBox_B.Text);
-      this.gamma = double.Parse(this.textBox_gamma.Text);
-      this.E = double.Parse(this.textBox_E.Text);
+        private void SetParam()
+        {
+            this.M = double.Parse(this.textBox_M.Text);
+            this.m = double.Parse(this.textBox_mmal.Text);
+            this.l = double.Parse(this.textBox_l.Text);
+            this.R = double.Parse(this.textBox_R.Text);
+            this.g = double.Parse(this.textBox_g.Text);
+            this.h_fi = double.Parse(this.textBox_h_fi.Text);
+            this.h_x = double.Parse(this.textBox_h_x.Text);
+            this.B = double.Parse(this.textBox_B.Text);
+            this.gamma = double.Parse(this.textBox_gamma.Text);
+            this.E = double.Parse(this.textBox_E.Text);
             lambda1_re = double.Parse(tbox_lambda1_re.Text);
             lambda1_im = double.Parse(tbox_lambda1_im.Text);
+            lambda2_re = double.Parse(tbox_lambda2_re.Text);
+            lambda2_im = double.Parse(tbox_lambda2_im.Text);
             lambda3_re = double.Parse(tbox_lambda3_re.Text);
             lambda3_im = double.Parse(tbox_lambda3_im.Text);
+            lambda4_re = double.Parse(tbox_lambda4_re.Text);
+            lambda4_im = double.Parse(tbox_lambda4_im.Text);
             PortalCraneModel.SetModelParams(this.M, this.m, this.l, this.R, this.g, this.h_fi, this.h_x, this.B, this.gamma, this.E,
-                lambda1_re, lambda1_im, lambda3_re, lambda3_im);
-    }
-
-    private void SetInitVal()
-    {
-      this.fi = double.Parse(this.textBox_fi.Text);
-      this.dfi_dt = double.Parse(this.textBox_dfi_dt.Text);
-      this.x = double.Parse(this.textBox_x.Text);
-      this.dx_dt = double.Parse(this.textBox_dx_dt.Text);
-      PortalCraneModel.SetInitParams(this.fi, this.dfi_dt, this.x, this.dx_dt);
-    }
-
-    private void SetCalcParam()
-    {
-      this.dt = double.Parse(this.textBox_step.Text);
-      this.t_start = double.Parse(this.textBox_t_start.Text);
-      this.t_stop = double.Parse(this.textBox_t_stop.Text);
-      this.drawStCount = int.Parse(this.textBox_drawStCount.Text);
-      this.inDinamic = this.checkBox_dinDraw.Checked;
-      PortalCraneModel.SetCalcParams(this.dt, this.t_start, this.t_stop, this.drawStCount, this.inDinamic);
-    }
-
-    private void PictureBox1_Paint(object sender, PaintEventArgs e)
-    {
-      Rectangle clipRectangle1 = e.ClipRectangle;
-      int right = clipRectangle1.Right;
-      clipRectangle1 = e.ClipRectangle;
-      int left = clipRectangle1.Left;
-      double num1 = 0.5 * (double) (right + left);
-      Rectangle clipRectangle2 = e.ClipRectangle;
-      int bottom = clipRectangle2.Bottom;
-      clipRectangle2 = e.ClipRectangle;
-      int top = clipRectangle2.Top;
-      double num2 = 0.5 * (double) (bottom + top);
-      double height = (double) e.ClipRectangle.Height;
-      double width = (double) e.ClipRectangle.Width;
-      Pen pen = new Pen(Color.Black, 2f);
-      int num3 = !this.inDinamic ? this.allPoints.drawCount : this.dinPointsCount;
-      int red = 0;
-      int green = 0;
-      int blue = 0;
-      for (int index = 1; index < num3; ++index)
-      {
-        switch (index * 5 / (int) byte.MaxValue % 3)
-        {
-          case 0:
-            green = 0;
-            blue = 0;
-            red = index * 5 % (int) byte.MaxValue;
-            break;
-          case 1:
-            red = 0;
-            blue = 0;
-            green = index * 5 % (int) byte.MaxValue;
-            break;
-          case 2:
-            red = 0;
-            green = 0;
-            blue = index * 5 % (int) byte.MaxValue;
-            break;
+                lambda1_re, lambda1_im, lambda2_re, lambda2_im,
+                lambda3_re, lambda3_im, lambda4_re, lambda4_im);
         }
-        pen.Color = Color.FromArgb(red, green, blue);
-        e.Graphics.DrawLine(pen, (float) (num1 + this.DrawPoints[(index - 1) * 5] / this.xMax * width / 2.0), (float) (num2 - this.DrawPoints[(index - 1) * 5 + 1] / this.yMax * height / 2.0), (float) (num1 + this.DrawPoints[index * 5] / this.xMax * width / 2.0), (float) (num2 - this.DrawPoints[index * 5 + 1] / this.yMax * height / 2.0));
-      }
-    }
 
-    private void PictureBox2_Paint(object sender, PaintEventArgs e)
-    {
-      double left = (double) e.ClipRectangle.Left;
-      Rectangle clipRectangle = e.ClipRectangle;
-      int bottom = clipRectangle.Bottom;
-      clipRectangle = e.ClipRectangle;
-      int top = clipRectangle.Top;
-      double num1 = 0.5 * (double) (bottom + top);
-      double height = (double) e.ClipRectangle.Height;
-      double width = (double) e.ClipRectangle.Width;
-      Pen pen = new Pen(Color.Black, 2f);
-      int num2 = !this.inDinamic ? this.allPoints.drawCount : this.dinPointsCount;
-      int red = 0;
-      int green = 0;
-      int blue = 0;
-      for (int index = 1; index < num2; ++index)
-      {
-        switch (index * 5 / (int) byte.MaxValue % 5)
+        private void SetInitVal()
         {
-          case 0:
-            green = 0;
-            blue = 0;
-            red = index * 5 % (int) byte.MaxValue;
-            break;
-          case 1:
-            red = 0;
-            blue = 0;
-            green = index * 5 % (int) byte.MaxValue;
-            break;
-          case 2:
-            red = 0;
-            green = 0;
-            blue = index * 5 % (int) byte.MaxValue;
-            break;
+            this.fi = double.Parse(this.textBox_fi.Text);
+            this.dfi_dt = double.Parse(this.textBox_dfi_dt.Text);
+            this.x = double.Parse(this.textBox_x.Text);
+            this.dx_dt = double.Parse(this.textBox_dx_dt.Text);
+            PortalCraneModel.SetInitParams(this.fi, this.dfi_dt, this.x, this.dx_dt);
         }
-        pen.Color = Color.FromArgb(red, green, blue);
-        e.Graphics.DrawLine(pen, (float) (left + this.DrawPoints[(index - 1) * 5 + 2] / this.xMax * width / 15.0), (float) (num1 - this.DrawPoints[(index - 1) * 5 + 3] / this.yMax * height / 2.0), (float) (left + this.DrawPoints[index * 5 + 2] / this.xMax * width / 15.0), (float) (num1 - this.DrawPoints[index * 5 + 3] / this.yMax * height / 2.0));
-      }
-    }
 
-    private void PictureBox3_Paint(object sender, PaintEventArgs e)
-    {
-      double left = (double) e.ClipRectangle.Left;
-      Rectangle clipRectangle = e.ClipRectangle;
-      int bottom = clipRectangle.Bottom;
-      clipRectangle = e.ClipRectangle;
-      int top = clipRectangle.Top;
-      double num1 = 0.5 * (double) (bottom + top);
-      double height = (double) e.ClipRectangle.Height;
-      double width = (double) e.ClipRectangle.Width;
-      Pen pen = new Pen(Color.Black, 2f);
-      int num2 = !this.inDinamic ? this.allPoints.drawCount : this.dinPointsCount;
-      int red = 0;
-      int green = 0;
-      int blue = 0;
-      for (int index = 1; index < num2; ++index)
-      {
-        switch (index * 5 / (int) byte.MaxValue % 5)
+        private void SetCalcParam()
         {
-          case 0:
-            green = 0;
-            blue = 0;
-            red = index * 5 % (int) byte.MaxValue;
-            break;
-          case 1:
-            red = 0;
-            blue = 0;
-            green = index * 5 % (int) byte.MaxValue;
-            break;
-          case 2:
-            red = 0;
-            green = 0;
-            blue = index * 5 % (int) byte.MaxValue;
-            break;
+            this.dt = double.Parse(this.textBox_step.Text);
+            this.t_start = double.Parse(this.textBox_t_start.Text);
+            this.t_stop = double.Parse(this.textBox_t_stop.Text);
+            this.drawStCount = int.Parse(this.textBox_drawStCount.Text);
+            this.inDinamic = this.checkBox_dinDraw.Checked;
+            PortalCraneModel.SetCalcParams(this.dt, this.t_start, this.t_stop, this.drawStCount, this.inDinamic);
         }
-        pen.Color = Color.FromArgb(red, green, blue);
-        e.Graphics.DrawLine(pen, (float) (left + this.DrawPoints[(index - 1) * 5 + 4] / this.xMax * width / 70.0), (float) (num1 - this.DrawPoints[(index - 1) * 5] / this.yMax * height), (float) (left + this.DrawPoints[index * 5 + 4] / this.xMax * width / 70.0), (float) (num1 - this.DrawPoints[index * 5] / this.yMax * height));
-      }
-    }
 
-    private void PictureBox4_Paint(object sender, PaintEventArgs e)
-    {
-      double left = (double) e.ClipRectangle.Left;
-      Rectangle clipRectangle = e.ClipRectangle;
-      int bottom = clipRectangle.Bottom;
-      clipRectangle = e.ClipRectangle;
-      int top = clipRectangle.Top;
-      double num1 = 0.5 * (double) (bottom + top);
-      double height = (double) e.ClipRectangle.Height;
-      double width = (double) e.ClipRectangle.Width;
-      Pen pen = new Pen(Color.Black, 2f);
-      int num2 = !this.inDinamic ? this.allPoints.drawCount : this.dinPointsCount;
-      int red = 0;
-      int green = 0;
-      int blue = 0;
-      for (int index = 1; index < num2; ++index)
-      {
-        switch (index * 5 / (int) byte.MaxValue % 5)
+        private void PictureBox1_Paint(object sender, PaintEventArgs e)
         {
-          case 0:
-            green = 0;
-            blue = 0;
-            red = index * 5 % (int) byte.MaxValue;
-            break;
-          case 1:
-            red = 0;
-            blue = 0;
-            green = index * 5 % (int) byte.MaxValue;
-            break;
-          case 2:
-            red = 0;
-            green = 0;
-            blue = index * 5 % (int) byte.MaxValue;
-            break;
+            Rectangle clipRectangle1 = e.ClipRectangle;
+            int right = clipRectangle1.Right;
+            clipRectangle1 = e.ClipRectangle;
+            int left = clipRectangle1.Left;
+            double num1 = 0.5 * (double)(right + left);
+            Rectangle clipRectangle2 = e.ClipRectangle;
+            int bottom = clipRectangle2.Bottom;
+            clipRectangle2 = e.ClipRectangle;
+            int top = clipRectangle2.Top;
+            double num2 = 0.5 * (double)(bottom + top);
+            double height = (double)e.ClipRectangle.Height;
+            double width = (double)e.ClipRectangle.Width;
+            Pen pen = new Pen(Color.Black, 2f);
+            int num3 = !this.inDinamic ? this.allPoints.drawCount : this.dinPointsCount;
+            int red = 0;
+            int green = 0;
+            int blue = 0;
+            for (int index = 1; index < num3; ++index)
+            {
+                switch (index * 5 / (int)byte.MaxValue % 3)
+                {
+                    case 0:
+                        green = 0;
+                        blue = 0;
+                        red = index * 5 % (int)byte.MaxValue;
+                        break;
+                    case 1:
+                        red = 0;
+                        blue = 0;
+                        green = index * 5 % (int)byte.MaxValue;
+                        break;
+                    case 2:
+                        red = 0;
+                        green = 0;
+                        blue = index * 5 % (int)byte.MaxValue;
+                        break;
+                }
+                pen.Color = Color.FromArgb(red, green, blue);
+                e.Graphics.DrawLine(pen, (float)(num1 + this.DrawPoints[(index - 1) * 5] / this.xMax * width / 2.0), (float)(num2 - this.DrawPoints[(index - 1) * 5 + 1] / this.yMax * height / 2.0), (float)(num1 + this.DrawPoints[index * 5] / this.xMax * width / 2.0), (float)(num2 - this.DrawPoints[index * 5 + 1] / this.yMax * height / 2.0));
+            }
         }
-        pen.Color = Color.FromArgb(red, green, blue);
-        e.Graphics.DrawLine(pen, (float) (left + this.DrawPoints[(index - 1) * 5 + 4] / this.xMax * width / 50.0), (float) (num1 - this.DrawPoints[(index - 1) * 5 + 2] / this.yMax * height / 50.0), (float) (left + this.DrawPoints[index * 5 + 4] / this.xMax * width / 50.0), (float) (num1 - this.DrawPoints[index * 5 + 2] / this.yMax * height / 50.0));
-      }
-    }
 
-    protected override void Dispose(bool disposing)
-    {
-      if (disposing && this.components != null)
-        this.components.Dispose();
-      base.Dispose(disposing);
-    }
+        private void PictureBox2_Paint(object sender, PaintEventArgs e)
+        {
+            double left = (double)e.ClipRectangle.Left;
+            Rectangle clipRectangle = e.ClipRectangle;
+            int bottom = clipRectangle.Bottom;
+            clipRectangle = e.ClipRectangle;
+            int top = clipRectangle.Top;
+            double num1 = 0.5 * (double)(bottom + top);
+            double height = (double)e.ClipRectangle.Height;
+            double width = (double)e.ClipRectangle.Width;
+            Pen pen = new Pen(Color.Black, 2f);
+            int num2 = !this.inDinamic ? this.allPoints.drawCount : this.dinPointsCount;
+            int red = 0;
+            int green = 0;
+            int blue = 0;
+            for (int index = 1; index < num2; ++index)
+            {
+                switch (index * 5 / (int)byte.MaxValue % 5)
+                {
+                    case 0:
+                        green = 0;
+                        blue = 0;
+                        red = index * 5 % (int)byte.MaxValue;
+                        break;
+                    case 1:
+                        red = 0;
+                        blue = 0;
+                        green = index * 5 % (int)byte.MaxValue;
+                        break;
+                    case 2:
+                        red = 0;
+                        green = 0;
+                        blue = index * 5 % (int)byte.MaxValue;
+                        break;
+                }
+                pen.Color = Color.FromArgb(red, green, blue);
+                e.Graphics.DrawLine(pen, (float)(left + this.DrawPoints[(index - 1) * 5 + 2] / this.xMax * width / 15.0), (float)(num1 - this.DrawPoints[(index - 1) * 5 + 3] / this.yMax * height / 2.0), (float)(left + this.DrawPoints[index * 5 + 2] / this.xMax * width / 15.0), (float)(num1 - this.DrawPoints[index * 5 + 3] / this.yMax * height / 2.0));
+            }
+        }
 
-    private void InitializeComponent()
-    {
+        private void PictureBox3_Paint(object sender, PaintEventArgs e)
+        {
+            double left = (double)e.ClipRectangle.Left;
+            Rectangle clipRectangle = e.ClipRectangle;
+            int bottom = clipRectangle.Bottom;
+            clipRectangle = e.ClipRectangle;
+            int top = clipRectangle.Top;
+            double num1 = 0.5 * (double)(bottom + top);
+            double height = (double)e.ClipRectangle.Height;
+            double width = (double)e.ClipRectangle.Width;
+            Pen pen = new Pen(Color.Black, 2f);
+            int num2 = !this.inDinamic ? this.allPoints.drawCount : this.dinPointsCount;
+            int red = 0;
+            int green = 0;
+            int blue = 0;
+            for (int index = 1; index < num2; ++index)
+            {
+                switch (index * 5 / (int)byte.MaxValue % 5)
+                {
+                    case 0:
+                        green = 0;
+                        blue = 0;
+                        red = index * 5 % (int)byte.MaxValue;
+                        break;
+                    case 1:
+                        red = 0;
+                        blue = 0;
+                        green = index * 5 % (int)byte.MaxValue;
+                        break;
+                    case 2:
+                        red = 0;
+                        green = 0;
+                        blue = index * 5 % (int)byte.MaxValue;
+                        break;
+                }
+                pen.Color = Color.FromArgb(red, green, blue);
+                e.Graphics.DrawLine(pen, (float)(left + this.DrawPoints[(index - 1) * 5 + 4] / this.xMax * width / 70.0), (float)(num1 - this.DrawPoints[(index - 1) * 5] / this.yMax * height), (float)(left + this.DrawPoints[index * 5 + 4] / this.xMax * width / 70.0), (float)(num1 - this.DrawPoints[index * 5] / this.yMax * height));
+            }
+        }
+
+        private void PictureBox4_Paint(object sender, PaintEventArgs e)
+        {
+            double left = (double)e.ClipRectangle.Left;
+            Rectangle clipRectangle = e.ClipRectangle;
+            int bottom = clipRectangle.Bottom;
+            clipRectangle = e.ClipRectangle;
+            int top = clipRectangle.Top;
+            double num1 = 0.5 * (double)(bottom + top);
+            double height = (double)e.ClipRectangle.Height;
+            double width = (double)e.ClipRectangle.Width;
+            Pen pen = new Pen(Color.Black, 2f);
+            int num2 = !this.inDinamic ? this.allPoints.drawCount : this.dinPointsCount;
+            int red = 0;
+            int green = 0;
+            int blue = 0;
+            for (int index = 1; index < num2; ++index)
+            {
+                switch (index * 5 / (int)byte.MaxValue % 5)
+                {
+                    case 0:
+                        green = 0;
+                        blue = 0;
+                        red = index * 5 % (int)byte.MaxValue;
+                        break;
+                    case 1:
+                        red = 0;
+                        blue = 0;
+                        green = index * 5 % (int)byte.MaxValue;
+                        break;
+                    case 2:
+                        red = 0;
+                        green = 0;
+                        blue = index * 5 % (int)byte.MaxValue;
+                        break;
+                }
+                pen.Color = Color.FromArgb(red, green, blue);
+                e.Graphics.DrawLine(pen, (float)(left + this.DrawPoints[(index - 1) * 5 + 4] / this.xMax * width / 50.0), (float)(num1 - this.DrawPoints[(index - 1) * 5 + 2] / this.yMax * height / 50.0), (float)(left + this.DrawPoints[index * 5 + 4] / this.xMax * width / 50.0), (float)(num1 - this.DrawPoints[index * 5 + 2] / this.yMax * height / 50.0));
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && this.components != null)
+                this.components.Dispose();
+            base.Dispose(disposing);
+        }
+
+        private void InitializeComponent()
+        {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
@@ -624,6 +636,15 @@ namespace PortalCraneModel
             this.Button_runCalc = new System.Windows.Forms.Button();
             this.Timer1 = new System.Windows.Forms.Timer(this.components);
             this.roots_gbox = new System.Windows.Forms.GroupBox();
+            this.btn_clear = new System.Windows.Forms.Button();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.tbox_lambda4_im = new System.Windows.Forms.TextBox();
+            this.tbox_lambda4_re = new System.Windows.Forms.TextBox();
+            this.tbox_lambda2_im = new System.Windows.Forms.TextBox();
+            this.tbox_lambda2_re = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
             this.root1 = new System.Windows.Forms.Label();
             this.tbox_lambda3_im = new System.Windows.Forms.TextBox();
@@ -634,15 +655,6 @@ namespace PortalCraneModel
             this.chart2 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.chart3 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.chart4 = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.btn_clear = new System.Windows.Forms.Button();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.tbox_lambda2_re = new System.Windows.Forms.TextBox();
-            this.tbox_lambda2_im = new System.Windows.Forms.TextBox();
-            this.tbox_lambda4_re = new System.Windows.Forms.TextBox();
-            this.tbox_lambda4_im = new System.Windows.Forms.TextBox();
-            this.label10 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.button1 = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
@@ -666,6 +678,7 @@ namespace PortalCraneModel
             this.textBox8 = new System.Windows.Forms.TextBox();
             this.textBox9 = new System.Windows.Forms.TextBox();
             this.textBox10 = new System.Windows.Forms.TextBox();
+            this.button2 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -1203,7 +1216,7 @@ namespace PortalCraneModel
             // 
             // Button_runCalc
             // 
-            this.Button_runCalc.Location = new System.Drawing.Point(2, 163);
+            this.Button_runCalc.Location = new System.Drawing.Point(0, 174);
             this.Button_runCalc.Margin = new System.Windows.Forms.Padding(2);
             this.Button_runCalc.Name = "Button_runCalc";
             this.Button_runCalc.Size = new System.Drawing.Size(188, 25);
@@ -1219,6 +1232,7 @@ namespace PortalCraneModel
             // 
             // roots_gbox
             // 
+            this.roots_gbox.Controls.Add(this.button2);
             this.roots_gbox.Controls.Add(this.btn_clear);
             this.roots_gbox.Controls.Add(this.label11);
             this.roots_gbox.Controls.Add(this.label10);
@@ -1237,10 +1251,92 @@ namespace PortalCraneModel
             this.roots_gbox.Controls.Add(this.tbox_lambda1_im);
             this.roots_gbox.Location = new System.Drawing.Point(148, 194);
             this.roots_gbox.Name = "roots_gbox";
-            this.roots_gbox.Size = new System.Drawing.Size(191, 224);
+            this.roots_gbox.Size = new System.Drawing.Size(191, 237);
             this.roots_gbox.TabIndex = 32;
             this.roots_gbox.TabStop = false;
             this.roots_gbox.Text = "Желаемые корни хар. полинома";
+            // 
+            // btn_clear
+            // 
+            this.btn_clear.Location = new System.Drawing.Point(0, 204);
+            this.btn_clear.Name = "btn_clear";
+            this.btn_clear.Size = new System.Drawing.Size(188, 25);
+            this.btn_clear.TabIndex = 35;
+            this.btn_clear.Text = "Очистить";
+            this.btn_clear.UseVisualStyleBackColor = true;
+            this.btn_clear.Click += new System.EventHandler(this.Btn_clear_Click);
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(6, 123);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(56, 13);
+            this.label11.TabIndex = 44;
+            this.label11.Text = "lambda_4:";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(6, 71);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(56, 13);
+            this.label10.TabIndex = 43;
+            this.label10.Text = "lambda_2:";
+            // 
+            // tbox_lambda4_im
+            // 
+            this.tbox_lambda4_im.Location = new System.Drawing.Point(133, 120);
+            this.tbox_lambda4_im.Name = "tbox_lambda4_im";
+            this.tbox_lambda4_im.Size = new System.Drawing.Size(31, 20);
+            this.tbox_lambda4_im.TabIndex = 42;
+            this.tbox_lambda4_im.Text = "-1";
+            this.tbox_lambda4_im.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // tbox_lambda4_re
+            // 
+            this.tbox_lambda4_re.Location = new System.Drawing.Point(83, 120);
+            this.tbox_lambda4_re.Name = "tbox_lambda4_re";
+            this.tbox_lambda4_re.Size = new System.Drawing.Size(31, 20);
+            this.tbox_lambda4_re.TabIndex = 41;
+            this.tbox_lambda4_re.Text = "-1";
+            this.tbox_lambda4_re.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // tbox_lambda2_im
+            // 
+            this.tbox_lambda2_im.Location = new System.Drawing.Point(133, 68);
+            this.tbox_lambda2_im.Name = "tbox_lambda2_im";
+            this.tbox_lambda2_im.Size = new System.Drawing.Size(31, 20);
+            this.tbox_lambda2_im.TabIndex = 40;
+            this.tbox_lambda2_im.Text = "-1";
+            this.tbox_lambda2_im.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // tbox_lambda2_re
+            // 
+            this.tbox_lambda2_re.Location = new System.Drawing.Point(83, 68);
+            this.tbox_lambda2_re.Name = "tbox_lambda2_re";
+            this.tbox_lambda2_re.Size = new System.Drawing.Size(31, 20);
+            this.tbox_lambda2_re.TabIndex = 39;
+            this.tbox_lambda2_re.Text = "1";
+            this.tbox_lambda2_re.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(130, 22);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(21, 13);
+            this.label9.TabIndex = 38;
+            this.label9.Text = "Im:";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(80, 22);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(24, 13);
+            this.label8.TabIndex = 37;
+            this.label8.Text = "Re:";
             // 
             // label18
             // 
@@ -1268,6 +1364,7 @@ namespace PortalCraneModel
             this.tbox_lambda3_im.TabIndex = 15;
             this.tbox_lambda3_im.Text = "1";
             this.tbox_lambda3_im.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.tbox_lambda3_im.TextChanged += new System.EventHandler(this.Tbox_lambda3_im_TextChanged);
             // 
             // tbox_lambda1_re
             // 
@@ -1295,6 +1392,7 @@ namespace PortalCraneModel
             this.tbox_lambda1_im.TabIndex = 13;
             this.tbox_lambda1_im.Text = "1";
             this.tbox_lambda1_im.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.tbox_lambda1_im.TextChanged += new System.EventHandler(this.Tbox_lambda1_im_TextChanged);
             // 
             // chart1
             // 
@@ -1364,85 +1462,6 @@ namespace PortalCraneModel
             this.chart4.Size = new System.Drawing.Size(500, 350);
             this.chart4.TabIndex = 33;
             this.chart4.Text = "chart1";
-            // 
-            // btn_clear
-            // 
-            this.btn_clear.Location = new System.Drawing.Point(2, 193);
-            this.btn_clear.Name = "btn_clear";
-            this.btn_clear.Size = new System.Drawing.Size(188, 25);
-            this.btn_clear.TabIndex = 35;
-            this.btn_clear.Text = "Очистить";
-            this.btn_clear.UseVisualStyleBackColor = true;
-            this.btn_clear.Click += new System.EventHandler(this.Btn_clear_Click);
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(80, 22);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(24, 13);
-            this.label8.TabIndex = 37;
-            this.label8.Text = "Re:";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(130, 22);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(21, 13);
-            this.label9.TabIndex = 38;
-            this.label9.Text = "Im:";
-            // 
-            // tbox_lambda2_re
-            // 
-            this.tbox_lambda2_re.Location = new System.Drawing.Point(83, 68);
-            this.tbox_lambda2_re.Name = "tbox_lambda2_re";
-            this.tbox_lambda2_re.Size = new System.Drawing.Size(31, 20);
-            this.tbox_lambda2_re.TabIndex = 39;
-            this.tbox_lambda2_re.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // tbox_lambda2_im
-            // 
-            this.tbox_lambda2_im.Location = new System.Drawing.Point(133, 68);
-            this.tbox_lambda2_im.Name = "tbox_lambda2_im";
-            this.tbox_lambda2_im.Size = new System.Drawing.Size(31, 20);
-            this.tbox_lambda2_im.TabIndex = 40;
-            this.tbox_lambda2_im.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // tbox_lambda4_re
-            // 
-            this.tbox_lambda4_re.Location = new System.Drawing.Point(83, 120);
-            this.tbox_lambda4_re.Name = "tbox_lambda4_re";
-            this.tbox_lambda4_re.Size = new System.Drawing.Size(31, 20);
-            this.tbox_lambda4_re.TabIndex = 41;
-            this.tbox_lambda4_re.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // tbox_lambda4_im
-            // 
-            this.tbox_lambda4_im.Location = new System.Drawing.Point(133, 120);
-            this.tbox_lambda4_im.Name = "tbox_lambda4_im";
-            this.tbox_lambda4_im.Size = new System.Drawing.Size(31, 20);
-            this.tbox_lambda4_im.TabIndex = 42;
-            this.tbox_lambda4_im.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(6, 71);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(56, 13);
-            this.label10.TabIndex = 43;
-            this.label10.Text = "lambda_2:";
-            this.label10.Click += new System.EventHandler(this.Label10_Click);
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(6, 123);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(56, 13);
-            this.label11.TabIndex = 44;
-            this.label11.Text = "lambda_4:";
             // 
             // groupBox4
             // 
@@ -1722,6 +1741,16 @@ namespace PortalCraneModel
             this.textBox10.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.textBox10.UseWaitCursor = true;
             // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(83, 146);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(81, 23);
+            this.button2.TabIndex = 45;
+            this.button2.Text = "Сбросить";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.Button2_Click);
+            // 
             // PortalCraneModel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1758,22 +1787,22 @@ namespace PortalCraneModel
             this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
 
-    }
+        }
 
-    public struct TAllDrawPoints
-    {
-      public IntPtr allDrawPoints; // массив точек
-      public int drawCount; // число точек
-    }
+        public struct TAllDrawPoints
+        {
+            public IntPtr allDrawPoints; // массив точек
+            public int drawCount; // число точек
+        }
 
-    public struct TStatePoint
-    {
-      public double fi;
-      public double dfi_dt;
-      public double x;
-      public double dx_dt;
-      public double t;
-    }
+        public struct TStatePoint
+        {
+            public double fi;
+            public double dfi_dt;
+            public double x;
+            public double dx_dt;
+            public double t;
+        }
 
         private void Btn_clear_Click(object sender, EventArgs e)
         {
@@ -1789,9 +1818,47 @@ namespace PortalCraneModel
             buildCount = 0;
         }
 
-        private void Label10_Click(object sender, EventArgs e)
+        private void Tbox_lambda1_im_TextChanged(object sender, EventArgs e)
         {
+            if (tbox_lambda1_im.Text != "" && tbox_lambda1_im.Text != "0")
+            {
+                tbox_lambda2_re.Text = tbox_lambda1_re.Text;
+                tbox_lambda2_re.ReadOnly = true;
 
+                tbox_lambda2_im.Text = (double.Parse(tbox_lambda1_im.Text) * -1).ToString();
+                tbox_lambda2_im.ReadOnly = true;
+            }
+        }
+
+        private void Tbox_lambda3_im_TextChanged(object sender, EventArgs e)
+        {
+            if (tbox_lambda3_im.Text != "" && tbox_lambda3_im.Text != "0")
+            {
+                tbox_lambda4_re.Text = tbox_lambda3_re.Text;
+                tbox_lambda4_re.ReadOnly = true;
+
+                tbox_lambda4_im.Text = (double.Parse(tbox_lambda3_im.Text) * -1).ToString();
+                tbox_lambda4_im.ReadOnly = true;
+            }
+        }
+
+        private void Button2_Click(object sender, EventArgs e)
+        {
+            tbox_lambda1_re.Text = "";
+            tbox_lambda1_im.Text = "";
+
+            tbox_lambda2_re.Text = "";
+            tbox_lambda2_re.ReadOnly = false;
+            tbox_lambda2_im.Text = "";
+            tbox_lambda2_im.ReadOnly = false;
+
+            tbox_lambda3_re.Text = "";
+            tbox_lambda3_im.Text = "";
+
+            tbox_lambda4_re.Text = "";
+            tbox_lambda4_re.ReadOnly = false;
+            tbox_lambda4_im.Text = "";
+            tbox_lambda4_im.ReadOnly = false;
         }
     }
 }

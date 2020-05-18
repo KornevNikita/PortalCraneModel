@@ -56,8 +56,10 @@ vector<vector<double>> inv(const vector<vector<double>>& A);
 void transp(const vector<vector<double>>& P, vector<complex<double>>& P_T);
 
 extern "C" __declspec(dllexport)
-void SetModelParams(double _M, double _m, double _l, double _R, double _g, double _h_fi, double _h_x, double _B, double _gamma, double _E,
-  double _p1_re, double _p1_im, double _p2_re, double _p2_im);
+void SetModelParams(double _M, double _m, double _l, double _R, double _g, 
+  double _h_fi, double _h_x, double _B, double _gamma, double _E,
+  double _p1_re, double _p1_im, double _p2_re, double _p2_im,
+  double _p3_re, double _p3_im, double _p4_re, double _p4_im);
 
 extern "C" __declspec(dllexport)
 void SetCalcParams(double _dt, double _t_start, double _t_stop, int _drawStCount, bool _inDinamic);
