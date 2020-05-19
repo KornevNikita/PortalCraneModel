@@ -5,12 +5,14 @@
 #include <fstream>
 using namespace std;
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 double M, m, l, R, g, h_fi, h_x, Beta, gamma, E; // ïàðàìåòðû ìîäåëè
 double fi, dfi_dt, x, dx_dt; // íà÷àëüíîå ñîñòîÿíèå
 double dt, t_start, t_stop; //
 int drawStCount; //
 bool inDinamic; // ïàðàìåòðû ðàñ÷åòà
-double xMax, yMax; // ïàðàìåòðû ìàñøòàáà
 vector<double> reg(4);
 
 void mult(std::vector<std::vector<double>>& op1,
@@ -34,40 +36,58 @@ void mult(std::vector<std::vector<double>>& op1,
   }
 }
 
-void f(const std::vector<double>& _X, std::vector<double>& _k)
+void f(const std::vector<double>& _X, std::vector<double>& _k, bool system)
 {
-  double v; // regulator
+  double v_t; // regulator
+  if (system != true) // linear system
+  {
+    v_t = reg[0] * _X[0] + reg[1] * _X[1] + reg[2] * _X[2] + reg[3] * _X[3];
+    _k[0] = _X[1]; // fi
 
-  v = reg[0] * _X[0] + reg[1] * _X[1] + reg[2] * _X[2] + reg[3] * _X[3];
-  _k[0] = _X[1]; // fi
+    _k[1] = -_X[1] * (M + m) * h_fi / (M * m * l * l)
+      - _X[0] * (M + m) * g / (M * l)
+      + _X[3] * (gamma * E / (R * Beta) + h_x) / (M * l)
+      - gamma * v_t / (M * R * l); // dfi_dt
 
-  _k[1] = -_X[1] * (M + m) * h_fi / (M * m * l * l)
-    - _X[0] * (M + m) * g / (M * l)
-    + _X[3] * (gamma * E / (R * Beta) + h_x) / (M * l)
-    - gamma * v / (M * R * l); // dfi_dt
+    _k[2] = _X[3]; // x
 
-  _k[2] = _X[3]; // x
+    _k[3] = _X[1] * h_fi / (M * l)
+      + _X[0] * m * g / M
+      - _X[3] * (gamma * E / (R * Beta) + h_x) / M
+      + gamma * v_t / (M * R); // dx_dt
+  }
+  else // non-linear system
+  {
+    double f_t; // sila tyagi
+    v_t = reg[0] * ((_X[0] + M_PI) / 2 * M_PI - M_PI)  + reg[1] * _X[1] + reg[2] * _X[2] + reg[3] * _X[3];
+    f_t = gamma / R * (v_t - E * _X[3] / Beta);
 
-  _k[3] = _X[1] * h_fi / (M * l)
-    + _X[0] * m * g / M
-    - _X[3] * (gamma * E / (R * Beta) + h_x) / M
-    + gamma * v / (M * R); // dx_dt
+    _k[0] = _X[1]; // fi
+    _k[2] = _X[3]; // x
+
+    _k[3] = (f_t - h_x * _X[3] + (h_fi * _X[1] * cos(_X[0]) / l) +
+      m * g * cos(_X[0]) * sin(_X[0]) + m * l * _X[1] * _X[1] * sin(_X[0])) /
+      (M + m * (1 - pow(cos(_X[0]), 2))
+        );
+
+    _k[1] = -h_fi * _X[1] - m * l * _k[3] * cos(_X[0]) - m * g * l * sin(_X[0]) / (m * l * l);
+  }
 }
 
-point TDinModel::RK4()
+point TDinModel::RK4(bool system)
 {
   static std::vector<double> k1(4), k2(4), k3(4), k4(4), temp(4);
   for (int i = 1; i < drawStCount; i++) {
-    f(X, k1);
+    f(X, k1, system);
     for (int j = 0; j < n; j++)
       temp[j] = X[j] + k1[j] * 0.5 * dt;
-    f(temp, k2);
+    f(temp, k2, system);
     for (int j = 0; j < n; j++)
       temp[j] = X[j] + k2[j] * 0.5 * dt;
-    f(temp, k3);
+    f(temp, k3, system);
     for (int j = 0; j < n; j++)
       temp[j] = X[j] + k3[j] * dt;
-    f(temp, k4);
+    f(temp, k4, system);
     for (int j = 0; j < n; j++)
       X[j] = X[j] + dt / 6 * (k1[j] + 2 * k2[j] + 2 * k3[j] + k4[j]);
   }
@@ -207,12 +227,6 @@ void SetCalcParams(double _dt, double _t_start, double _t_stop, int _drawStCount
   dt = _dt, t_start = _t_start, t_stop = _t_stop, drawStCount = _drawStCount, inDinamic = _inDinamic;
 }
 
-void SetScaleParams(double _xMax, double _yMax)
-{
-  xMax = _xMax;
-  yMax = _yMax;
-}
-
 int GetAllDrawPointsCount()
 {
   return static_cast<int>((t_stop - t_start) / (drawStCount * dt));
@@ -230,7 +244,7 @@ void DeleteAllPointsArray(TAllDrawPoints* allDrawData)
   allDrawData->FreeMem();
 }
 //Çàïîëíåíèå ìàññèâà âñåìè îòîáðàæàåìûìè òî÷êàìè (count øòóê)
-void GetAllDrawPoints(TAllDrawPoints* allDrawData)
+void GetAllDrawPoints(TAllDrawPoints* allDrawData, bool system)
 {
   point drawPoint(fi, dfi_dt, x, dx_dt, t_start);
   TDinModel model(4, drawPoint);
@@ -239,7 +253,7 @@ void GetAllDrawPoints(TAllDrawPoints* allDrawData)
   fout.open("values.txt", ios_base::trunc);
   for (int i = 1; i < allDrawData->drawCount; i++)
   {
-    drawPoint = model.RK4();
+    drawPoint = model.RK4(system);
     allDrawData->allDrawPoints[i] = drawPoint;
     fout << drawPoint.fi << " " << drawPoint.dfi_dt << " " << drawPoint.x << " " << drawPoint.dx_dt << endl;
   }

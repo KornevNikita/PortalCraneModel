@@ -29,7 +29,7 @@ public:
     X.push_back(p.t);
   }
 
-  point RK4();
+  point RK4(bool system);
 };
 
 struct TAllDrawPoints {
@@ -68,9 +68,6 @@ extern "C" __declspec(dllexport)
 void SetInitParams(double _fi, double _dfi_dt, double _x, double _dx_dt);
 
 extern "C" __declspec(dllexport)
-void SetScaleParams(double _xMax, double _yMax);
-
-extern "C" __declspec(dllexport)
 int GetAllDrawPointsCount();
 
 extern "C" __declspec(dllexport)
@@ -80,4 +77,4 @@ extern "C" __declspec(dllexport)
 void DeleteAllPointsArray(TAllDrawPoints* allDrawData);
 
 extern "C" __declspec(dllexport)
-void GetAllDrawPoints(TAllDrawPoints* ptrAllDrawPoints);
+void GetAllDrawPoints(TAllDrawPoints* ptrAllDrawPoints, bool system);
