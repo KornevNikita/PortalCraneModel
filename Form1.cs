@@ -1908,20 +1908,20 @@ namespace PortalCraneModel
 
         private void Button2_Click(object sender, EventArgs e)
         {
-            tbox_lambda1_re.Text = "";
-            tbox_lambda1_im.Text = "";
+            tbox_lambda1_re.Text = "0";
+            tbox_lambda1_im.Text = "0";
 
-            tbox_lambda2_re.Text = "";
+            tbox_lambda2_re.Text = "0";
             tbox_lambda2_re.ReadOnly = false;
-            tbox_lambda2_im.Text = "";
+            tbox_lambda2_im.Text = "0";
             tbox_lambda2_im.ReadOnly = false;
 
-            tbox_lambda3_re.Text = "";
-            tbox_lambda3_im.Text = "";
+            tbox_lambda3_re.Text = "0";
+            tbox_lambda3_im.Text = "0";
 
-            tbox_lambda4_re.Text = "";
+            tbox_lambda4_re.Text = "0";
             tbox_lambda4_re.ReadOnly = false;
-            tbox_lambda4_im.Text = "";
+            tbox_lambda4_im.Text = "0";
             tbox_lambda4_im.ReadOnly = false;
         }
     }
