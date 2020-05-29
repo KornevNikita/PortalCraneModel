@@ -14,7 +14,7 @@ double dt, t_start, t_stop; //
 int drawStCount; //
 bool inDinamic; // ïàðàìåòðû ðàñ÷åòà
 vector<double> reg(4);
-vector<complex<double>> p(4);
+vector<complex<double>> p(4);  // zhelaemie korni 
 
 void mult(std::vector<std::vector<double>>& op1,
   std::vector<std::vector<double>>& op2,
@@ -37,30 +37,31 @@ void mult(std::vector<std::vector<double>>& op1,
   }
 }
 
-void f(const std::vector<double>& _X, std::vector<double>& _k, bool system)
+void f(const std::vector<double>& _X, std::vector<double>& _k, bool system, bool reg_on)
 {
   double v_t; // regulator
-  if (system == false) // linear system
+  if (system == true) // linear system
   {
-    v_t = reg[0] * _X[0] + reg[1] * _X[1] + reg[2] * _X[2] + reg[3] * _X[3];
+    v_t = (reg_on == true) ? reg[0] * _X[0] + reg[1] * _X[1] + reg[2] * _X[2] + reg[3] * _X[3] : 1;
     _k[0] = _X[1]; // fi
 
     _k[1] = -_X[1] * (M + m) * h_fi / (M * m * l * l)
       - _X[0] * (M + m) * g / (M * l)
       + _X[3] * (gamma * E / (R * Beta) + h_x) / (M * l)
-      - gamma / (M * R * l);// *v_t; // dfi_dt
+      - gamma * v_t / (M * R * l); // dfi_dt
 
     _k[2] = _X[3]; // x
 
     _k[3] = _X[1] * h_fi / (M * l)
       + _X[0] * m * g / M
       - _X[3] * (gamma * E / (R * Beta) + h_x) / M
-      + gamma / (M * R); // * v_t; // dx_dt
+      + gamma * v_t / (M * R); // dx_dt
   }
   else // non-linear system
   {
     double f_t; // sila tyagi
-    v_t = reg[0] * ((_X[0] + M_PI) / 2 * M_PI - M_PI)  + reg[1] * _X[1] + reg[2] * _X[2] + reg[3] * _X[3];
+    v_t = (reg_on == true) ?
+      reg[0] * ((_X[0] + M_PI) / 2 * M_PI - M_PI) + reg[1] * _X[1] + reg[2] * _X[2] + reg[3] * _X[3] : 1;
     f_t = gamma / R * (v_t - E * _X[3] / Beta);
 
     _k[0] = _X[1]; // fi
@@ -75,20 +76,20 @@ void f(const std::vector<double>& _X, std::vector<double>& _k, bool system)
   }
 }
 
-point TDinModel::RK4(bool system)
+point TDinModel::RK4(bool system, bool reg_on)
 {
   static std::vector<double> k1(4), k2(4), k3(4), k4(4), temp(4);
   for (int i = 0; i < drawStCount; i++) {
-    f(X, k1, system);
+    f(X, k1, system, reg_on);
     for (int j = 0; j < n; j++)
       temp[j] = X[j] + k1[j] * 0.5 * dt;
-    f(temp, k2, system);
+    f(temp, k2, system, reg_on);
     for (int j = 0; j < n; j++)
       temp[j] = X[j] + k2[j] * 0.5 * dt;
-    f(temp, k3, system);
+    f(temp, k3, system, reg_on);
     for (int j = 0; j < n; j++)
       temp[j] = X[j] + k3[j] * dt;
-    f(temp, k4, system);
+    f(temp, k4, system, reg_on);
     for (int j = 0; j < n; j++)
       X[j] = X[j] + dt / 6 * (k1[j] + 2 * k2[j] + 2 * k3[j] + k4[j]);
   }
@@ -140,7 +141,7 @@ void DeleteAllPointsArray(TAllDrawPoints* allDrawData)
   allDrawData->FreeMem();
 }
 //Çàïîëíåíèå ìàññèâà âñåìè îòîáðàæàåìûìè òî÷êàìè (count øòóê)
-void GetAllDrawPoints(TAllDrawPoints* allDrawData, bool system)
+void GetAllDrawPoints(TAllDrawPoints* allDrawData, bool system, bool reg_on)
 {
   point drawPoint(fi, dfi_dt, x, dx_dt, t_start);
   TDinModel model(4, drawPoint);
@@ -149,7 +150,7 @@ void GetAllDrawPoints(TAllDrawPoints* allDrawData, bool system)
   fout.open("values.txt", ios_base::trunc);
   for (int i = 1; i < allDrawData->drawCount; i++)
   {
-    drawPoint = model.RK4(system);
+    drawPoint = model.RK4(system, reg_on);
     allDrawData->allDrawPoints[i] = drawPoint;
     fout << drawPoint.fi << " " << drawPoint.dfi_dt << " " << drawPoint.x << " " << drawPoint.dx_dt << endl;
   }
@@ -294,12 +295,35 @@ void transp(const vector<vector<double>>& P, vector<vector<double>>& P_T)
   for (int i = 0; i < P.size(); i++)
     for (int j = 0; j < P.size(); j++)
       P_T[i][j] = P[j][i];
+
+  std::ofstream fout;
+  fout.open("transp.txt", ios_base::trunc);
+
+  fout << "Ishodnaya matrica:" << endl;
+  for (int i = 0; i < 4; i++)
+  {
+    for (int j = 0; j < 4; j++)
+    {
+      fout << P[i][j] << " ";
+    }
+    fout << endl;
+  }
+
+  fout << endl;
+
+  fout << "Transponirovannaya matrica:" << endl;
+  for (int i = 0; i < 4; i++)
+  {
+    for (int j = 0; j < 4; j++)
+    {
+      fout << P_T[i][j] << " ";
+    }
+    fout << endl;
+  }
 }
 
 void calc_regulator()
 {
-  //regulator
-  // zhelaemie korni 
   vector<double> coeff_g(4); // koefficienti har. polinoma pri zadannih kornyah p1-p4: g0 + g1*p + g2*p^2 + g3*p^3 + p^4 
   calc_coeffs(p, coeff_g); // ishem coeff_g po T. Vieta
   vector<double> a(4); // elementi matrici ~A
@@ -391,15 +415,13 @@ void calc_regulator()
   matrix_R_inv = inv(matrix_R);
   mult(delta_R, matrix_R_inv, P);
   vector<vector<double>> P_T(4, vector<double>(4));
-  transp(P, P_T);
-
-  // k = P_T * (a - g)
+  //transp(P, P_T);
 
   vector<vector<double>> a_g(4, vector<double>(1)), temp_reg(4, vector<double>(1));
   for (int i = 0; i < 4; i++)
     a_g[i][0] = a[i] - coeff_g[i];
 
-  mult(P_T, a_g, temp_reg);
+  mult(P, a_g, temp_reg);
   for (int i = 0; i < 4; i++)
     reg[i] = temp_reg[i][0];
 

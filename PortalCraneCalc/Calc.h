@@ -29,7 +29,7 @@ public:
     X.push_back(p.t);
   }
 
-  point RK4(bool system);
+  point RK4(bool system, bool reg_on);
 };
 
 struct TAllDrawPoints {
@@ -50,7 +50,7 @@ void mult(std::vector<std::vector<double>>& op1,
   std::vector<std::vector<double>>& op2,
   std::vector<std::vector<double>>& res);
 
-void f(const std::vector<double>& _X, std::vector<double>& _k, bool system);
+void f(const std::vector<double>& _X, std::vector<double>& _k, bool system, bool reg_on);
 void calc_regulator();
 void calc_coeffs(const vector<complex<double>>& p, vector<double>& g);
 vector<vector<double>> inv(const vector<vector<double>>& A);
@@ -78,4 +78,4 @@ extern "C" __declspec(dllexport)
 void DeleteAllPointsArray(TAllDrawPoints* allDrawData);
 
 extern "C" __declspec(dllexport)
-void GetAllDrawPoints(TAllDrawPoints* ptrAllDrawPoints, bool system);
+void GetAllDrawPoints(TAllDrawPoints* ptrAllDrawPoints, bool system, bool reg_on);

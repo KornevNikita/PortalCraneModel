@@ -152,6 +152,7 @@ namespace PortalCraneModel
         private Timer Timer1;
         private CheckBox cBox_non_linear;
         private DataGridView dataGridView1;
+        private CheckBox cBox_Reg_on;
         private Label textBox_run_time;
 
         [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
@@ -179,7 +180,7 @@ namespace PortalCraneModel
         public static extern void DeleteAllPointsArray(IntPtr allDrawData);
 
         [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void GetAllDrawPoints(IntPtr ptrAllDrawPoints, bool system);
+        public static extern void GetAllDrawPoints(IntPtr ptrAllDrawPoints, bool system, bool reg);
 
         public PortalCraneModel()
         {
@@ -267,6 +268,7 @@ namespace PortalCraneModel
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             // считываем:
+            dataGridView1.Rows.Clear();
             this.SetParam(); // параметры модели
             this.SetCalcParam(); // параметры расчета
             this.SetInitVal(); // начальное состояние системы
@@ -299,7 +301,7 @@ namespace PortalCraneModel
                 this.ptrTAllDrawPoints = Marshal.AllocHGlobal(sizeStruct); // выделяем память под неуправляемую структуру
                 Marshal.StructureToPtr(this.allPoints, this.ptrTAllDrawPoints, false); // копируем данные из неуправляемой в управляемую
                 PortalCraneModel.InitAllPointsArray(this.ptrTAllDrawPoints); // выделяем память под внутренний неуправляемый массив в неупр структуре
-                PortalCraneModel.GetAllDrawPoints(this.ptrTAllDrawPoints, cBox_non_linear.Checked);
+                PortalCraneModel.GetAllDrawPoints(this.ptrTAllDrawPoints, cBox_non_linear.Checked, cBox_Reg_on.Checked);
                 this.allPoints = (PortalCraneModel.TAllDrawPoints)Marshal.PtrToStructure(this.ptrTAllDrawPoints, typeof(PortalCraneModel.TAllDrawPoints));
                 Marshal.Copy(this.allPoints.allDrawPoints, this.DrawPoints, 0, this.allPoints.drawCount * 5);
                 PortalCraneModel.DeleteAllPointsArray(this.ptrTAllDrawPoints);
@@ -359,8 +361,8 @@ namespace PortalCraneModel
                 int count = 0;
                 for (int i = 0; i < DrawPoints.Length; i += 5)
                 {
-                    dataGridView1.Rows.Add(count, Math.Round(DrawPoints[i + 4], 6), Math.Round(DrawPoints[i], 6), 
-                        Math.Round(DrawPoints[i + 1], 6), Math.Round(DrawPoints[i + 2], 6), Math.Round(DrawPoints[i + 3], 6));
+                    dataGridView1.Rows.Add(count, Math.Round(DrawPoints[i + 4], 12), Math.Round(DrawPoints[i], 12), 
+                        Math.Round(DrawPoints[i + 1], 12), Math.Round(DrawPoints[i + 2], 12), Math.Round(DrawPoints[i + 3], 12));
                     count++;
                 }
 
@@ -588,18 +590,18 @@ namespace PortalCraneModel
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea7 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend7 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea8 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend8 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea9 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend9 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series9 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea10 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend10 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series10 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea11 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend11 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series11 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea12 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend12 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series12 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.Button_setParam = new System.Windows.Forms.Button();
             this.textBox_E = new System.Windows.Forms.TextBox();
@@ -694,6 +696,7 @@ namespace PortalCraneModel
             this.Timer1 = new System.Windows.Forms.Timer(this.components);
             this.cBox_non_linear = new System.Windows.Forms.CheckBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.cBox_Reg_on = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -1417,69 +1420,69 @@ namespace PortalCraneModel
             // 
             // chart1
             // 
-            chartArea5.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea5);
-            legend5.Enabled = false;
-            legend5.Name = "Legend1";
-            this.chart1.Legends.Add(legend5);
+            chartArea9.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea9);
+            legend9.Enabled = false;
+            legend9.Name = "Legend1";
+            this.chart1.Legends.Add(legend9);
             this.chart1.Location = new System.Drawing.Point(344, 17);
             this.chart1.Name = "chart1";
-            series5.ChartArea = "ChartArea1";
-            series5.Legend = "Legend1";
-            series5.Name = "Series1";
-            this.chart1.Series.Add(series5);
+            series9.ChartArea = "ChartArea1";
+            series9.Legend = "Legend1";
+            series9.Name = "Series1";
+            this.chart1.Series.Add(series9);
             this.chart1.Size = new System.Drawing.Size(500, 350);
             this.chart1.TabIndex = 33;
             this.chart1.Text = "chart1";
             // 
             // chart2
             // 
-            chartArea6.Name = "ChartArea1";
-            this.chart2.ChartAreas.Add(chartArea6);
-            legend6.Enabled = false;
-            legend6.Name = "Legend1";
-            this.chart2.Legends.Add(legend6);
+            chartArea10.Name = "ChartArea1";
+            this.chart2.ChartAreas.Add(chartArea10);
+            legend10.Enabled = false;
+            legend10.Name = "Legend1";
+            this.chart2.Legends.Add(legend10);
             this.chart2.Location = new System.Drawing.Point(850, 17);
             this.chart2.Name = "chart2";
-            series6.ChartArea = "ChartArea1";
-            series6.Legend = "Legend1";
-            series6.Name = "Series1";
-            this.chart2.Series.Add(series6);
+            series10.ChartArea = "ChartArea1";
+            series10.Legend = "Legend1";
+            series10.Name = "Series1";
+            this.chart2.Series.Add(series10);
             this.chart2.Size = new System.Drawing.Size(500, 350);
             this.chart2.TabIndex = 34;
             this.chart2.Text = "chart2";
             // 
             // chart3
             // 
-            chartArea7.Name = "ChartArea1";
-            this.chart3.ChartAreas.Add(chartArea7);
-            legend7.Enabled = false;
-            legend7.Name = "Legend1";
-            this.chart3.Legends.Add(legend7);
+            chartArea11.Name = "ChartArea1";
+            this.chart3.ChartAreas.Add(chartArea11);
+            legend11.Enabled = false;
+            legend11.Name = "Legend1";
+            this.chart3.Legends.Add(legend11);
             this.chart3.Location = new System.Drawing.Point(344, 373);
             this.chart3.Name = "chart3";
-            series7.ChartArea = "ChartArea1";
-            series7.Legend = "Legend1";
-            series7.Name = "Series1";
-            this.chart3.Series.Add(series7);
+            series11.ChartArea = "ChartArea1";
+            series11.Legend = "Legend1";
+            series11.Name = "Series1";
+            this.chart3.Series.Add(series11);
             this.chart3.Size = new System.Drawing.Size(500, 350);
             this.chart3.TabIndex = 33;
             this.chart3.Text = "chart1";
             // 
             // chart4
             // 
-            chartArea8.Name = "ChartArea1";
-            this.chart4.ChartAreas.Add(chartArea8);
-            legend8.Enabled = false;
-            legend8.Name = "Legend1";
-            this.chart4.Legends.Add(legend8);
+            chartArea12.Name = "ChartArea1";
+            this.chart4.ChartAreas.Add(chartArea12);
+            legend12.Enabled = false;
+            legend12.Name = "Legend1";
+            this.chart4.Legends.Add(legend12);
             this.chart4.Location = new System.Drawing.Point(850, 373);
             this.chart4.Name = "chart4";
-            series8.ChartArea = "ChartArea1";
-            series8.Legend = "Legend1";
-            series8.Name = "Series1";
-            series8.XAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
-            this.chart4.Series.Add(series8);
+            series12.ChartArea = "ChartArea1";
+            series12.Legend = "Legend1";
+            series12.Name = "Series1";
+            series12.XAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
+            this.chart4.Series.Add(series12);
             this.chart4.Size = new System.Drawing.Size(500, 350);
             this.chart4.TabIndex = 33;
             this.chart4.Text = "chart1";
@@ -1770,11 +1773,13 @@ namespace PortalCraneModel
             // cBox_non_linear
             // 
             this.cBox_non_linear.AutoSize = true;
+            this.cBox_non_linear.Checked = true;
+            this.cBox_non_linear.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cBox_non_linear.Location = new System.Drawing.Point(148, 437);
             this.cBox_non_linear.Name = "cBox_non_linear";
-            this.cBox_non_linear.Size = new System.Drawing.Size(176, 17);
+            this.cBox_non_linear.Size = new System.Drawing.Size(122, 17);
             this.cBox_non_linear.TabIndex = 35;
-            this.cBox_non_linear.Text = "Нелинеаризованная система";
+            this.cBox_non_linear.Text = "Линейная система";
             this.cBox_non_linear.UseVisualStyleBackColor = true;
             // 
             // dataGridView1
@@ -1786,12 +1791,23 @@ namespace PortalCraneModel
             this.dataGridView1.Size = new System.Drawing.Size(329, 296);
             this.dataGridView1.TabIndex = 46;
             // 
+            // cBox_Reg_on
+            // 
+            this.cBox_Reg_on.AutoSize = true;
+            this.cBox_Reg_on.Location = new System.Drawing.Point(9, 437);
+            this.cBox_Reg_on.Name = "cBox_Reg_on";
+            this.cBox_Reg_on.Size = new System.Drawing.Size(129, 17);
+            this.cBox_Reg_on.TabIndex = 47;
+            this.cBox_Reg_on.Text = "Включить регулятор";
+            this.cBox_Reg_on.UseVisualStyleBackColor = true;
+            // 
             // PortalCraneModel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(1364, 768);
+            this.Controls.Add(this.cBox_Reg_on);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.cBox_non_linear);
             this.Controls.Add(this.chart2);
