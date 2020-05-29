@@ -14,13 +14,14 @@ double dt, t_start, t_stop; //
 int drawStCount; //
 bool inDinamic; // ïàðàìåòðû ðàñ÷åòà
 vector<double> reg(4);
+vector<complex<double>> p(4);
 
 void mult(std::vector<std::vector<double>>& op1,
   std::vector<std::vector<double>>& op2,
   std::vector<std::vector<double>>& res)
 {
   std::ofstream fout;
-  fout.open("file.txt");
+  fout.open("mult.txt");
   double sum = 0;
   for (int i = 0; i < res.size(); i++)
   {
@@ -39,7 +40,7 @@ void mult(std::vector<std::vector<double>>& op1,
 void f(const std::vector<double>& _X, std::vector<double>& _k, bool system)
 {
   double v_t; // regulator
-  if (system != true) // linear system
+  if (system == false) // linear system
   {
     v_t = reg[0] * _X[0] + reg[1] * _X[1] + reg[2] * _X[2] + reg[3] * _X[3];
     _k[0] = _X[1]; // fi
@@ -47,14 +48,14 @@ void f(const std::vector<double>& _X, std::vector<double>& _k, bool system)
     _k[1] = -_X[1] * (M + m) * h_fi / (M * m * l * l)
       - _X[0] * (M + m) * g / (M * l)
       + _X[3] * (gamma * E / (R * Beta) + h_x) / (M * l)
-      - gamma * v_t / (M * R * l); // dfi_dt
+      - gamma / (M * R * l);// *v_t; // dfi_dt
 
     _k[2] = _X[3]; // x
 
     _k[3] = _X[1] * h_fi / (M * l)
       + _X[0] * m * g / M
       - _X[3] * (gamma * E / (R * Beta) + h_x) / M
-      + gamma * v_t / (M * R); // dx_dt
+      + gamma / (M * R); // * v_t; // dx_dt
   }
   else // non-linear system
   {
@@ -77,7 +78,7 @@ void f(const std::vector<double>& _X, std::vector<double>& _k, bool system)
 point TDinModel::RK4(bool system)
 {
   static std::vector<double> k1(4), k2(4), k3(4), k4(4), temp(4);
-  for (int i = 1; i < drawStCount; i++) {
+  for (int i = 0; i < drawStCount; i++) {
     f(X, k1, system);
     for (int j = 0; j < n; j++)
       temp[j] = X[j] + k1[j] * 0.5 * dt;
@@ -101,120 +102,15 @@ void SetModelParams(double _M, double _m, double _l, double _R, double _g,
   double _p1_re, double _p1_im, double _p2_re, double _p2_im,
   double _p3_re, double _p3_im, double _p4_re, double _p4_im)
 {
-  M = _M, m = _m, l = _l, R = _R, g = _g, h_fi = _h_fi, h_x = _h_x, Beta = _Beta, gamma = _gamma, E = _E;
-
-  //regulator
-  vector<complex<double>> p(4); // çàäàííûå êîðíè
-  vector<double> coeff_g(4); // êîýôôèöèåíòû ïîëèíîìà g0 + g1*p + g2*p^2 + g3*p^3 + p^4, êîòîðûå áóäåì èñêàòü (ïðè p^4 íåò êîýôô, ò.ê. îí = 1)
+  M = _M, m = _m, l = _l, R = _R, g = _g,
+    h_fi = _h_fi, h_x = _h_x, Beta = _Beta, gamma = _gamma, E = _E;
   
   p[0] = (_p1_re, _p1_im);
   p[1] = (_p2_re, _p2_im);
   p[2] = (_p3_re, _p3_im);
   p[3] = (_p4_re, _p4_im);
 
-  calc_coeffs(p, coeff_g); // íàõîäèì êîýôôèöèåíòû æåëàåìîãî õàð. ïîëèíîìà ïî çàäàííûì êîðíÿì c ïîìîùüþ ò. Âèåòòà
-  vector<double> a(4); // êîýôôèöèåíòû èñõîäíîãî ïîëèíîìà
-  double a21 = -(M + m) * g / (M * l), // êîýôôèöèåíòû èñõîäíîé ìàòðèöû À è âåêòîðà Â
-    a22 = -(M + m) * h_fi / (M * m * l * l),
-    a24 = 1 / (M * l) * (gamma * E / (R * Beta) + h_x),
-    a41 = m * g / M,
-    a42 = h_fi / (M * l),
-    a44 = -1 / M * (gamma * E / (R * Beta) + h_x);
-  double b2 = -gamma / (M * R * l),
-    b4 = gamma * (M * R);
-  a[0] = 0;
-  a[1] = a21 * a44 - a24 * a41;
-  a[2] = a22 * a44 - a24 * a42 - a21;
-  a[3] = -a22 - a44; // êîýôôèöèåíòû èñõîäíîãî ïîëèíîìà, ïîëó÷åííîãî èç |A - pE|
-  vector<vector<double>> A(4, vector<double>(4)), B(4, vector<double>(1));
-  vector<vector<double>> delta_A(4, vector<double>(4)), delta_B(4, vector<double>(1)); // A è B, ïðèâåäåííûå ê êàíîí. âèäó
-
-  A[0][1] = 1;
-  A[1][0] = a21;
-  A[1][1] = a22;
-  A[1][3] = a24;
-  A[2][3] = 1;
-  A[3][0] = a41;
-  A[3][1] = a42;
-  A[3][3] = a44;
-  B[1][0] = b2;
-  B[3][0] = b4;
-
-  delta_A[0][1] = 1;
-  delta_A[1][2] = 1;
-  delta_A[2][3] = 1;
-  delta_A[3][0] = -a[0];
-  delta_A[3][1] = -a[1];
-  delta_A[3][2] = -a[2];
-  delta_A[3][3] = -a[3];
-  delta_B[3][0] = 1;
-
-  // òåïåðü íàäî ïîñ÷èòàòü R è delta_R, íà÷íåì ñ R
-  // R = (B; AB; A^2B; A^3B)
-  // ~R = (~B; ~A~B; ~A^2~B; ~A^3~B);
-  vector<vector<double>> matrix_R(4, vector<double>(4)), delta_R(4, vector<double>(4)); // regulator
-  vector<vector<double>> tempvec(4, vector<double>(1)), tempmatrix1(4, vector<double>(4)), tempmatrix2(4, vector<double>(4)), 
-    delta_tempvec(4, vector<double>(1)), delta_tempmatrix1(4, vector<double>(4)), delta_tempmatrix2(4, vector<double>(4));
-
-  // B, ~B
-  for (int i = 0; i < 4; i++)
-  {
-    matrix_R[i][0] = B[i][0];
-    delta_R[i][0] = delta_B[i][0];
-  }
-  
-  // AB, ~A~B
-  mult(A, B, tempvec);
-  mult(delta_A, delta_B, delta_tempvec);
-  for (int i = 0; i < 4; i++)
-  {
-    matrix_R[i][1] = tempvec[i][0];
-    delta_R[i][1] = delta_tempvec[i][0];
-  }
-
-  // A^2B, ~A^2~B
-  mult(A, A, tempmatrix1);
-  mult(delta_A, delta_A, delta_tempmatrix1);
-  mult(tempmatrix1, B, tempvec);
-  mult(delta_tempmatrix1, delta_B, delta_tempvec);
-  for (int i = 0; i < 4; i++)
-  {
-    matrix_R[i][2] = tempvec[i][0];
-    delta_R[i][2] = delta_tempvec[i][0];
-  }
-
-  // A^3B, ~A^3~B
-  mult(tempmatrix1, A, tempmatrix2);
-  mult(delta_tempmatrix1, delta_A, delta_tempmatrix2);
-  mult(tempmatrix2, B, tempvec);
-  mult(delta_tempmatrix2, delta_B, delta_tempvec);
-  for (int i = 0; i < 4; i++)
-  {
-    matrix_R[i][3] = tempvec[i][0];
-    delta_R[i][3] = delta_tempvec[i][0];
-  }
-
-  //èùåì P: = ~R * R^-1
-  vector<vector<double>> P(4, vector<double>(4)), matrix_R_inv(4, vector<double>(4));
-  matrix_R_inv = inv(matrix_R);
-  mult(delta_R, matrix_R_inv, P);
-  vector<vector<double>> P_T(4, vector<double>(4));
-  //transp(P, P_T);
-
-  // k = P_T * (a - g)
-
-  vector<vector<double>> a_g(4, vector<double>(1)), temp_reg(4, vector<double>(1));
-  for (int i = 0; i < 4; i++)
-    a_g[i][0] = a[i] - coeff_g[i];
-  
-  mult(P, a_g, temp_reg);
-  for (int i = 0; i < 4; i++)
-    reg[i] = temp_reg[i][0];
-
-  std::ofstream fout;
-  fout.open("reg.txt", ios_base::trunc);
-  for (int i = 0; i < 4; i++)
-    fout << reg[i] << " ";
+  calc_regulator();
 }
 
 void SetInitParams(double _fi, double _dfi_dt, double _x, double _dx_dt)
@@ -259,29 +155,40 @@ void GetAllDrawPoints(TAllDrawPoints* allDrawData, bool system)
   }
 }
 
-//ðåãóëÿòîð
 void calc_coeffs(const vector<complex<double>>& p, vector<double>& g)
 {
-  // õàð. ïîëèíîì - a0 + a1*p + a2*p^2 + a3*p^3 + a4*p^4
+  // g0 + g1 * p + g2 * p ^ 2 + g3 * p ^ 3 + p ^ 4
   complex<double> temp;
-  temp = p[0] * p[1] * p[2] * p[3]; // p0*p1*p2*p3 = a0/a4
+
+  // p0 * p1 * p2 * p3 = g0 / g4, (g4 = 1)
+  temp = p[0] * p[1] * p[2] * p[3]; 
+
   g[0] = temp.real();
+
+  // p0 * p1 * p2 + p0 * p1 * p3 + 
+  // p0 * p2 * p3 + p1 * p2 * p3 = (-g1) / g4, (g4 = 1)
   temp = (-1.0) *
     (p[0] * p[1] * p[2] +
       p[0] * p[1] * p[3] +
       p[0] * p[2] * p[3] +
-      p[1] * p[2] * p[3]); // p0*p1*p2 + p0*p1*p3 + p0*p2*p3 + p1*p2*p3 = (-a1)/a4
+      p[1] * p[2] * p[3]); 
+
   g[1] = temp.real();
+
+  // p0 * p1 + p0 * p2 + p0 * p3 + 
+  // p1 * p2 + p1 * p3 + p2 * p3 = g2 / g4, (g4 = 1)
   temp = p[0] * p[1] +
     p[0] * p[2] +
     p[0] * p[3] +
     p[1] * p[2] +
     p[1] * p[3] +
-    p[2] * p[3]; // p0*p1 + p0*p2 + p0*p3 + p1*p2 * p1*p3 + p2*p3 = a2/a4
+    p[2] * p[3]; 
+
   g[2] = temp.real();
+
   temp = (-1.0) * (p[0] + p[1] + p[2] + p[3]);
+
   g[3] = temp.real();  // p0 + p1 + p2 + p3 = (-a3) / a4
-  //g[4] = 1; // a4
 }
 
 // ïîèñê îáðàòíîé ìàòðèöà
@@ -361,7 +268,7 @@ vector<vector<double>> inv(const vector<vector<double>>& _A)
     }
   }
 
-  fout << "Ishodnaya preobrazovannaya:" << endl;
+  fout << "Ishodnaya preobrazovannaya k edinichnoy:" << endl;
   for (int i = 0; i < n; i++)
   {
     for (int j = 0; j < n; j++)
@@ -387,4 +294,118 @@ void transp(const vector<vector<double>>& P, vector<vector<double>>& P_T)
   for (int i = 0; i < P.size(); i++)
     for (int j = 0; j < P.size(); j++)
       P_T[i][j] = P[j][i];
+}
+
+void calc_regulator()
+{
+  //regulator
+  // zhelaemie korni 
+  vector<double> coeff_g(4); // koefficienti har. polinoma pri zadannih kornyah p1-p4: g0 + g1*p + g2*p^2 + g3*p^3 + p^4 
+  calc_coeffs(p, coeff_g); // ishem coeff_g po T. Vieta
+  vector<double> a(4); // elementi matrici ~A
+
+  double a21 = -(M + m) * g / (M * l), // koefficienti systemi v forme Koshi 
+    a22 = -(M + m) * h_fi / (M * m * l * l),
+    a24 = 1 / (M * l) * (gamma * E / (R * Beta) + h_x),
+    a41 = m * g / M,
+    a42 = h_fi / (M * l),
+    a44 = -1 / M * (gamma * E / (R * Beta) + h_x);
+
+  double b2 = -gamma / (M * R * l),
+    b4 = gamma / (M * R);
+
+  a[0] = 0;
+  a[1] = a21 * a44 - a24 * a41;
+  a[2] = a22 * a44 - a24 * a42 - a21;
+  a[3] = -a22 - a44; // |A - pE|
+
+  vector<vector<double>> A(4, vector<double>(4)), B(4, vector<double>(1));
+  vector<vector<double>> delta_A(4, vector<double>(4)), delta_B(4, vector<double>(1)); // A è B, ïðèâåäåííûå ê êàíîí. âèäó
+
+  A[0][1] = 1;
+  A[1][0] = a21;
+  A[1][1] = a22;
+  A[1][3] = a24;
+  A[2][3] = 1;
+  A[3][0] = a41;
+  A[3][1] = a42;
+  A[3][3] = a44;
+  B[1][0] = b2;
+  B[3][0] = b4;
+
+  delta_A[0][1] = 1;
+  delta_A[1][2] = 1;
+  delta_A[2][3] = 1;
+  delta_A[3][0] = -a[0];
+  delta_A[3][1] = -a[1];
+  delta_A[3][2] = -a[2];
+  delta_A[3][3] = -a[3];
+  delta_B[3][0] = 1;
+
+  // R = (B; AB; A^2B; A^3B)
+  // ~R = (~B; ~A~B; ~A^2~B; ~A^3~B);
+  vector<vector<double>> matrix_R(4, vector<double>(4)), delta_R(4, vector<double>(4)); // regulator
+  vector<vector<double>> tempvec(4, vector<double>(1)), tempmatrix1(4, vector<double>(4)), tempmatrix2(4, vector<double>(4)),
+    delta_tempvec(4, vector<double>(1)), delta_tempmatrix1(4, vector<double>(4)), delta_tempmatrix2(4, vector<double>(4));
+
+  // B, ~B
+  for (int i = 0; i < 4; i++)
+  {
+    matrix_R[i][0] = B[i][0];
+    delta_R[i][0] = delta_B[i][0];
+  }
+
+  // AB, ~A~B
+  mult(A, B, tempvec);
+  mult(delta_A, delta_B, delta_tempvec);
+  for (int i = 0; i < 4; i++)
+  {
+    matrix_R[i][1] = tempvec[i][0];
+    delta_R[i][1] = delta_tempvec[i][0];
+  }
+
+  // A^2B, ~A^2~B
+  mult(A, A, tempmatrix1);
+  mult(delta_A, delta_A, delta_tempmatrix1);
+  mult(tempmatrix1, B, tempvec);
+  mult(delta_tempmatrix1, delta_B, delta_tempvec);
+  for (int i = 0; i < 4; i++)
+  {
+    matrix_R[i][2] = tempvec[i][0];
+    delta_R[i][2] = delta_tempvec[i][0];
+  }
+
+  // A^3B, ~A^3~B
+  mult(tempmatrix1, A, tempmatrix2);
+  mult(delta_tempmatrix1, delta_A, delta_tempmatrix2);
+  mult(tempmatrix2, B, tempvec);
+  mult(delta_tempmatrix2, delta_B, delta_tempvec);
+  for (int i = 0; i < 4; i++)
+  {
+    matrix_R[i][3] = tempvec[i][0];
+    delta_R[i][3] = delta_tempvec[i][0];
+  }
+
+  // P^-1: = ~R * R^-1
+  vector<vector<double>> P(4, vector<double>(4)), matrix_R_inv(4, vector<double>(4));
+  matrix_R_inv = inv(matrix_R);
+  mult(delta_R, matrix_R_inv, P);
+  vector<vector<double>> P_T(4, vector<double>(4));
+  transp(P, P_T);
+
+  // k = P_T * (a - g)
+
+  vector<vector<double>> a_g(4, vector<double>(1)), temp_reg(4, vector<double>(1));
+  for (int i = 0; i < 4; i++)
+    a_g[i][0] = a[i] - coeff_g[i];
+
+  mult(P_T, a_g, temp_reg);
+  for (int i = 0; i < 4; i++)
+    reg[i] = temp_reg[i][0];
+
+  std::ofstream fout;
+  fout.open("reg.txt", ios_base::trunc);
+  for (int i = 0; i < 4; i++)
+    fout << reg[i] << " ";
+
 }
