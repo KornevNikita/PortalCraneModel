@@ -56,6 +56,8 @@ void calc_coeffs(const vector<complex<double>>& p, vector<double>& g);
 vector<vector<double>> inv(const vector<vector<double>>& A);
 void transp(const vector<vector<double>>& P, vector<vector<double>>& P_T);
 
+void init_matrix_A();
+
 extern "C" __declspec(dllexport)
 void SetModelParams(double _M, double _m, double _l, double _R, double _g, 
   double _h_fi, double _h_x, double _B, double _gamma, double _E,

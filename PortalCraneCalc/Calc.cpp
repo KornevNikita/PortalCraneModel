@@ -8,13 +8,15 @@ using namespace std;
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-double M, m, l, R, g, h_fi, h_x, Beta, gamma, E; // ïàðàìåòðû ìîäåëè
-double fi, dfi_dt, x, dx_dt; // íà÷àëüíîå ñîñòîÿíèå
-double dt, t_start, t_stop; //
-int drawStCount; //
-bool inDinamic; // ïàðàìåòðû ðàñ÷åòà
-vector<double> reg(4);
+double M, m, l, R, g, h_fi, h_x, Beta, gamma, E; // parametri sistemi
+double fi, dfi_dt, x, dx_dt; // nachalnie usloviya
+double dt, t_start, t_stop; // parametri rasscheta
+int drawStCount; // chislo tochek, kotorie budut otrisovani
+bool inDinamic; // risovat v dinamike (poka ne realizovano)
+vector<double> reg(4); // regulator
 vector<complex<double>> p(4);  // zhelaemie korni 
+
+double a21, a22, a24, a41, a42, a44, b2, b4; // coefficinti matrici A & vectora b (forma Koshi)
 
 void mult(std::vector<std::vector<double>>& op1,
   std::vector<std::vector<double>>& op2,
@@ -42,21 +44,50 @@ void f(const std::vector<double>& _X, std::vector<double>& _k, bool system, bool
   double v_t; // regulator
   if (system == true) // linear system
   {
-    v_t = (reg_on == true) ? reg[0] * _X[0] + reg[1] * _X[1] + reg[2] * _X[2] + reg[3] * _X[3] : 1;
-    _k[0] = _X[1]; // fi
+    // sm. str. 118 (2014 god):
+    // x = (x1, x2, x3, x4) = (fi, fi_dt, x - x*, x_dt),
+    // k = (k1, k2, k3, k4) - coefficienti regulatora;
+    // x_dt = Ax + bU(t), 
+    // gde A - matrix:
 
-    _k[1] = -_X[1] * (M + m) * h_fi / (M * m * l * l)
-      - _X[0] * (M + m) * g / (M * l)
-      + _X[3] * (gamma * E / (R * Beta) + h_x) / (M * l)
-      - gamma * v_t / (M * R * l); // dfi_dt
+    // (  0   1  0  0  )
+    // ( a21 a22 0 a24 )
+    // (  0   0  0  1  )
+    // ( a41 a42 0 a44 );
 
-    _k[2] = _X[3]; // x
+    // b - vector: (0, b2, 0, b4),
+    // U(t) = k^T * x -- scalar,
+    // bU(t) = (0, b2 * U(t), 0, b4 * U(t));
 
-    _k[3] = _X[1] * h_fi / (M * l)
-      + _X[0] * m * g / M
-      - _X[3] * (gamma * E / (R * Beta) + h_x) / M
-      + gamma * v_t / (M * R); // dx_dt
+    // Ax:
+    // (  0   1  0  0  )     (   fi   )     (               fi_dt                 )
+    // ( a21 a22 0 a24 )  *  ( fi_dt  )  =  ( a21 * fi + a22 * fi_dt + a24 * x_dt )
+    // (  0   0  0  1  )     ( x - x* )     (                x_dt                 )
+    // ( a41 a42 0 a44 )     (  x_dt  )     ( a41 * fi + a42 * fi_dt + a44 * x_dt )
+
+    // U(t) = v(t) = k^T * x = k1 * fi + k2 * fi_dt + k3 * (x - x*) + k4 * x_dt:
+    v_t = (reg_on == true) ? (reg[0] * _X[0]) + (reg[1] * _X[1]) + (reg[2] * _X[2]) + (reg[3] * _X[3]) : 1;
+
+    // x_dt = Ax + bU(t):
+    _k[0] = _X[1]; // fi_dt
+    _k[1] = a21 * _X[0] + a22 * _X[1] + a24 * _X[3] + b2 * v_t; // (fi_dt)dt
+    _k[2] = _X[3]; // x_dt
+    _k[3] = a41 * _X[0] + a42 * _X[1] + a44 * _X[3] + b4 * v_t; // (x_dt)dt
+
+    // =============================================================
+
+    //_k[0] = _X[1]; // fi
+    //_k[1] = (-1.0) * _X[0] * (M + m) * g / (M * l) +
+    //  (-1.0) * _X[1] * (M + m) * h_fi / (M * m * l * l) +
+    //  _X[3] * (gamma * E / (R * Beta) + h_x) / (M * l) +
+    //  (-1.0) * gamma * v_t / (M * R * l); // dfi_dt
+    //_k[2] = _X[3]; // x
+    //_k[3] = _X[0] * m * g / M +
+    //  _X[1] * h_fi / (M * l) +
+    //  (-1.0) * _X[3] * (gamma * E / (R * Beta) + h_x) / M +
+    //  gamma * v_t / (M * R); // dx_dt
   }
+
   else // non-linear system
   {
     double f_t; // sila tyagi
@@ -78,7 +109,7 @@ void f(const std::vector<double>& _X, std::vector<double>& _k, bool system, bool
 
 point TDinModel::RK4(bool system, bool reg_on)
 {
-  static std::vector<double> k1(4), k2(4), k3(4), k4(4), temp(4);
+  std::vector<double> k1(4), k2(4), k3(4), k4(4), temp(4);
   for (int i = 0; i < drawStCount; i++) {
     f(X, k1, system, reg_on);
     for (int j = 0; j < n; j++)
@@ -93,6 +124,7 @@ point TDinModel::RK4(bool system, bool reg_on)
     for (int j = 0; j < n; j++)
       X[j] = X[j] + dt / 6 * (k1[j] + 2 * k2[j] + 2 * k3[j] + k4[j]);
   }
+
   X[4] += dt * drawStCount;
   point res(X[0], X[1], X[2], X[3], X[4]);
   return res;
@@ -110,6 +142,8 @@ void SetModelParams(double _M, double _m, double _l, double _R, double _g,
   p[1] = (_p2_re, _p2_im);
   p[2] = (_p3_re, _p3_im);
   p[3] = (_p4_re, _p4_im);
+
+  init_matrix_A();
 
   calc_regulator();
 }
@@ -430,4 +464,16 @@ void calc_regulator()
   for (int i = 0; i < 4; i++)
     fout << reg[i] << " ";
 
+}
+
+void init_matrix_A()
+{
+  a21 = (-1.) * (M + m) * g / (M * l),
+    a22 = (-1.) * (M + m) * h_fi / (M * m * l * l),
+    a24 = (gamma * E / (R * Beta) + h_x) / (M * l),
+    a41 = m * g / M,
+    a42 = h_fi / (M * l),
+    a44 = (-1.) * (gamma * E / (R * Beta) + h_x) / M,
+    b2 = (-1.) * gamma / (M * R * l),
+    b4 = gamma / (M * R);
 }
