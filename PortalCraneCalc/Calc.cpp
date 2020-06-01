@@ -109,7 +109,7 @@ void f(const std::vector<double>& _X, std::vector<double>& _k, bool system, bool
 
 point TDinModel::RK4(bool system, bool reg_on)
 {
-  std::vector<double> k1(4), k2(4), k3(4), k4(4), temp(4);
+  static std::vector<double> k1(4), k2(4), k3(4), k4(4), temp(4);
   for (int i = 0; i < drawStCount; i++) {
     f(X, k1, system, reg_on);
     for (int j = 0; j < n; j++)
@@ -169,11 +169,13 @@ void InitAllPointsArray(TAllDrawPoints* allDrawData)
 {
   allDrawData->AllocMem(allDrawData->drawCount);
 }
+
 //Îñâîáîæäåíèå ïàìÿòè îò âíóòðåííåãî ìàññèâà â ñòðóêòóðå TAllDrawPoints
 void DeleteAllPointsArray(TAllDrawPoints* allDrawData)
 {
   allDrawData->FreeMem();
 }
+
 //Çàïîëíåíèå ìàññèâà âñåìè îòîáðàæàåìûìè òî÷êàìè (count øòóê)
 void GetAllDrawPoints(TAllDrawPoints* allDrawData, bool system, bool reg_on)
 {
@@ -192,7 +194,7 @@ void GetAllDrawPoints(TAllDrawPoints* allDrawData, bool system, bool reg_on)
 
 void calc_coeffs(const vector<complex<double>>& p, vector<double>& g)
 {
-  // g0 + g1 * p + g2 * p ^ 2 + g3 * p ^ 3 + p ^ 4
+  // g0 + g1*p + g2*p^2 + g3*p^3 + p^4
   complex<double> temp;
 
   // p0 * p1 * p2 * p3 = g0 / g4, (g4 = 1)
@@ -358,27 +360,19 @@ void transp(const vector<vector<double>>& P, vector<vector<double>>& P_T)
 
 void calc_regulator()
 {
-  vector<double> coeff_g(4); // koefficienti har. polinoma pri zadannih kornyah p1-p4: g0 + g1*p + g2*p^2 + g3*p^3 + p^4 
+  vector<double> coeff_g(4); // koefficienti har. polinoma pri zadannih kornyah p1-p4: g0 + g1*p + g2*p^2 + g3*p^3 + p^4
+
   calc_coeffs(p, coeff_g); // ishem coeff_g po T. Vieta
-  vector<double> a(4); // elementi matrici ~A
 
-  double a21 = -(M + m) * g / (M * l), // koefficienti systemi v forme Koshi 
-    a22 = -(M + m) * h_fi / (M * m * l * l),
-    a24 = 1 / (M * l) * (gamma * E / (R * Beta) + h_x),
-    a41 = m * g / M,
-    a42 = h_fi / (M * l),
-    a44 = -1 / M * (gamma * E / (R * Beta) + h_x);
-
-  double b2 = -gamma / (M * R * l),
-    b4 = gamma / (M * R);
+  vector<double> a(4); // |A - pE| = a(l) = l^4 + l^3 * a3 + l^2 * a2 + l * a1 + a0
 
   a[0] = 0;
   a[1] = a21 * a44 - a24 * a41;
   a[2] = a22 * a44 - a24 * a42 - a21;
-  a[3] = -a22 - a44; // |A - pE|
+  a[3] = (-1.0) * a44 - a22; 
 
-  vector<vector<double>> A(4, vector<double>(4)), B(4, vector<double>(1));
-  vector<vector<double>> delta_A(4, vector<double>(4)), delta_B(4, vector<double>(1)); // A è B, ïðèâåäåííûå ê êàíîí. âèäó
+  vector<vector<double>> A(4, vector<double>(4)), B(4, vector<double>(1)); // sistema v forme Koshi (str. 118)
+  vector<vector<double>> delta_A(4, vector<double>(4)), delta_B(4, vector<double>(1)); // normalnaya kanon. forma
 
   A[0][1] = 1;
   A[1][0] = a21;
@@ -388,21 +382,23 @@ void calc_regulator()
   A[3][0] = a41;
   A[3][1] = a42;
   A[3][3] = a44;
+
   B[1][0] = b2;
   B[3][0] = b4;
 
   delta_A[0][1] = 1;
   delta_A[1][2] = 1;
   delta_A[2][3] = 1;
-  delta_A[3][0] = -a[0];
-  delta_A[3][1] = -a[1];
-  delta_A[3][2] = -a[2];
-  delta_A[3][3] = -a[3];
+  delta_A[3][0] = (-1.0) * a[0];
+  delta_A[3][1] = (-1.0) * a[1];
+  delta_A[3][2] = (-1.0) * a[2];
+  delta_A[3][3] = (-1.0) * a[3];
+
   delta_B[3][0] = 1;
 
   // R = (B; AB; A^2B; A^3B)
   // ~R = (~B; ~A~B; ~A^2~B; ~A^3~B);
-  vector<vector<double>> matrix_R(4, vector<double>(4)), delta_R(4, vector<double>(4)); // regulator
+  vector<vector<double>> matrix_R(4, vector<double>(4)), delta_R(4, vector<double>(4)); // matrici upravlyaemosti v novom i starom bazisah
   vector<vector<double>> tempvec(4, vector<double>(1)), tempmatrix1(4, vector<double>(4)), tempmatrix2(4, vector<double>(4)),
     delta_tempvec(4, vector<double>(1)), delta_tempmatrix1(4, vector<double>(4)), delta_tempmatrix2(4, vector<double>(4));
 
@@ -416,6 +412,7 @@ void calc_regulator()
   // AB, ~A~B
   mult(A, B, tempvec);
   mult(delta_A, delta_B, delta_tempvec);
+
   for (int i = 0; i < 4; i++)
   {
     matrix_R[i][1] = tempvec[i][0];
@@ -425,8 +422,10 @@ void calc_regulator()
   // A^2B, ~A^2~B
   mult(A, A, tempmatrix1);
   mult(delta_A, delta_A, delta_tempmatrix1);
+
   mult(tempmatrix1, B, tempvec);
   mult(delta_tempmatrix1, delta_B, delta_tempvec);
+
   for (int i = 0; i < 4; i++)
   {
     matrix_R[i][2] = tempvec[i][0];
@@ -436,8 +435,10 @@ void calc_regulator()
   // A^3B, ~A^3~B
   mult(tempmatrix1, A, tempmatrix2);
   mult(delta_tempmatrix1, delta_A, delta_tempmatrix2);
+
   mult(tempmatrix2, B, tempvec);
   mult(delta_tempmatrix2, delta_B, delta_tempvec);
+
   for (int i = 0; i < 4; i++)
   {
     matrix_R[i][3] = tempvec[i][0];
@@ -451,7 +452,8 @@ void calc_regulator()
   vector<vector<double>> P_T(4, vector<double>(4));
   //transp(P, P_T);
 
-  vector<vector<double>> a_g(4, vector<double>(1)), temp_reg(4, vector<double>(1));
+  vector<vector<double>> a_g(4, vector<double>(1)), // a - g
+    temp_reg(4, vector<double>(1));
   for (int i = 0; i < 4; i++)
     a_g[i][0] = a[i] - coeff_g[i];
 
@@ -463,7 +465,6 @@ void calc_regulator()
   fout.open("reg.txt", ios_base::trunc);
   for (int i = 0; i < 4; i++)
     fout << reg[i] << " ";
-
 }
 
 void init_matrix_A()
