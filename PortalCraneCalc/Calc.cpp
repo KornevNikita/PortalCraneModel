@@ -693,7 +693,6 @@ void calc_regulator()
   for (int i = 0; i < dim - 1; i++)
     fout << reg[i] << ", ";
   fout << reg[dim - 1] << ")" << endl;
-  fout << reg;
 }
 
 void init_matrix_A()
