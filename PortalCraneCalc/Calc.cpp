@@ -172,20 +172,16 @@ int GetAllDrawPointsCount()
   return static_cast<int>((t_stop - t_start) / (drawStCount * dt));
 }
 
-//Âûäåëåíèå ïàìÿòè ïîä âíóòðåííèé ìàññèâ ñòðóêòóðû TAllDrawPoints
-//Ðàçìåð ìàññèâà äîëæåí áûòü óæå çàëîæåí â ïîëå drawCount
 void InitAllPointsArray(TAllDrawPoints* allDrawData)
 {
   allDrawData->AllocMem(allDrawData->drawCount);
 }
 
-//Îñâîáîæäåíèå ïàìÿòè îò âíóòðåííåãî ìàññèâà â ñòðóêòóðå TAllDrawPoints
 void DeleteAllPointsArray(TAllDrawPoints* allDrawData)
 {
   allDrawData->FreeMem();
 }
 
-//Çàïîëíåíèå ìàññèâà âñåìè îòîáðàæàåìûìè òî÷êàìè (count øòóê)
 void GetAllDrawPoints(TAllDrawPoints* allDrawData, bool system, bool reg_on)
 {
   point drawPoint(fi, dfi_dt, x, dx_dt, t_start);
@@ -411,13 +407,14 @@ vector<vector<double>> inv(const vector<vector<double>>& _A)
 
 void transp(const vector<vector<double>>& P, vector<vector<double>>& P_T)
 {
+
+  std::ofstream fout;
+  fout.open("transp.txt", ios_base::trunc);
+
   int n = static_cast<int>(P.size());
   for (int i = 0; i < P.size(); i++)
     for (int j = 0; j < P.size(); j++)
       P_T[i][j] = P[j][i];
-
-  std::ofstream fout;
-  fout.open("transp.txt", ios_base::trunc);
 
   fout << "Ishodnaya matrica:" << endl;
   for (int i = 0; i < dim; i++)
@@ -645,65 +642,58 @@ void calc_regulator()
     fout << matrix_R[i][dim - 1] << ")" << endl;
   }
 
-  // P^-1: = ~R * R^-1
-  vector<vector<double>> P(dim, vector<double>(dim)), matrix_R_inv(dim, vector<double>(dim));
-  matrix_R_inv = inv(matrix_R);
+  // R^T * k = ~R^T * ~k
+  // Naydem pravuyu chast ~R^T * ~k, gde ~k = (a - a*):
+  vector<vector<double>> delta_R_tr(dim, vector<double>(dim)),
+    delta_k(dim, vector<double>(1));
 
-  fout << endl << "U^-1:" << endl;
+  // ~R^T
+  transp(delta_R, delta_R_tr);
+  fout << endl << "~U^T:" << endl;
   for (int i = 0; i < dim; ++i)
   {
     fout << "(";
     for (int j = 0; j < dim - 1; ++j)
-      fout << matrix_R_inv[i][j] << " ";
-    fout << matrix_R_inv[i][dim - 1] << ")" << endl;
+      fout << delta_R_tr[i][j] << " ";
+    fout << delta_R_tr[i][dim - 1] << ")" << endl;
   }
 
-  mult(delta_R, matrix_R_inv, P);
-
-  fout << endl << "P^(-1) = ~U * U^-1:" << endl;
+  // ~k = a - a*
+  fout << endl << "~k = a - a*" << endl;
   for (int i = 0; i < dim; ++i)
-  {
-    fout << "(";
-    for (int j = 0; j < dim - 1; ++j)
-      fout << P[i][j] << " ";
-    fout << P[i][dim - 1] << ")" << endl;
-  }
+    delta_k[i][0] = a[i] - coeff_g[i];
+  fout << "(";
+  for (int i = 0; i < dim - 1; ++i)
+    fout << delta_k[i][0] << ", ";
+  fout << delta_k[dim - 1][0] << ")" << endl;
 
-  vector<vector<double>> P_T(dim, vector<double>(dim));
-  transp(P, P_T);
+  // ~R^T * ~k
+  vector<vector<double>> delta_R_tr_delta_k(dim, vector<double>(1));
+  mult(delta_R_tr, delta_k, delta_R_tr_delta_k);
+  fout << endl << "~U^T * ~k:" << endl
+    << "(";
+  for (int i = 0; i < dim - 1; ++i)
+    fout << delta_R_tr_delta_k[i][0] << ", ";
+  fout << delta_R_tr_delta_k[dim - 1][0] << ")" << endl;
 
-  fout << endl << "(P^(-1))^T:" << endl;
+  // Naydem levuyu chast:
+  vector<vector<double>> R_tr(dim, vector<double>(dim));
+
+  // R^T:
+  transp(matrix_R, R_tr);
+
+  // Gauss: R^T * k = ~R^T * ~k
+  vector<double> d_R_tr_d_k(4);
   for (int i = 0; i < dim; ++i)
-  {
-    fout << "(";
-    for (int j = 0; j < dim - 1; ++j)
-      fout << P_T[i][j] << " ";
-    fout << P_T[i][dim - 1] << ")" << endl;
-  }
-  fout << endl;
+    d_R_tr_d_k[i] = delta_R_tr_delta_k[i][0];
+  Gauss(R_tr, d_R_tr_d_k, reg);
 
-  vector<vector<double>> a_g(dim, vector<double>(1)), // a - g
-    temp_reg(dim, vector<double>(1));
-
-  for (int i = 0; i < dim; i++)
-    a_g[i][0] = a[i] - coeff_g[i];
-
-  mult(P_T, a_g, temp_reg);
-  //mult(P, a_g, temp_reg);
-
-  for (int i = 0; i < dim; i++)
-    reg[i] = temp_reg[i][0];
-
-  for (int i = 0; i < dim; ++i)
-  {
-    fout << "a" << i << " - " << "a*" << i << " = " << a[i] - coeff_g[i] << endl;
-  }
-
-  fout << endl << "regulator = (P^(-1))^T * (a - a*):" << endl
+  fout << endl << "regulator:" << endl
     << "(";
   for (int i = 0; i < dim - 1; i++)
     fout << reg[i] << ", ";
   fout << reg[dim - 1] << ")" << endl;
+  fout << reg;
 }
 
 void init_matrix_A()
@@ -717,3 +707,88 @@ void init_matrix_A()
     b2 = (-1.) * gamma / (M * R * l),
     b4 = gamma / (M * R);
 }
+
+void Gauss(vector<vector<double>>& _A, vector<double>& _b, vector<double>& res)
+{
+  vector<vector<double>> A(_A); 
+  vector<double>b(_b);
+  std::ofstream fout;
+  fout.open("Gauss.txt", ios_base::trunc);
+
+  int n = static_cast<int>(_A.size());
+
+  // pryamoy hod:
+  fout << "size = " << n << endl << "Ishodnaya:" << endl << endl;
+  for (int i = 0; i < n; i++)
+  {
+    fout << "(";
+    for (int j = 0; j < n - 1; j++)
+      fout << A[i][j] << " ";
+    fout << A[i][n - 1] << " | " << b[i] << ")" << endl;
+  }
+
+  double pivot;
+  for (int i = 0; i < n; i++)
+  {
+    pivot = A[i][i];
+    if (pivot == 0)
+    {
+      for (int j = 0; j < n; j++)
+      {
+        if (A[j][i] != 0)
+        {
+          pivot = A[j][i];
+          vector<double> temp = A[j];
+          A[j] = A[i];
+          A[i] = temp;
+
+          double temp_double;
+          temp_double = b[j];
+          b[j] = b[i];
+          b[i] = temp_double;
+          break;
+        }
+      }
+      if (pivot == 0)
+        res[i] = 0;
+    }
+
+    for (int j = 0; j < n; j++)
+      A[i][j] /= pivot;
+    b[i] /= pivot;
+
+    for (int j = i + 1; j < n; j++)
+    {
+      pivot = A[j][i];
+      for (int k = 0; k < n; k++)
+        A[j][k] -= A[i][k] * pivot;
+      b[j] -= b[i] * pivot;
+    }
+
+    fout << endl;
+    for (int i = 0; i < dim; ++i)
+    {
+      fout << "(";
+      for (int j = 0; j < dim - 1; ++j)
+        fout << A[i][j] << " ";
+      fout << A[i][dim - 1] << " | " << b[i] << ")" << endl;
+    }
+  }
+  
+  // Obratniy hod:
+  res[n - 1] = b[n - 1];
+  for (int i = n - 2; i >= 0; --i)
+  {
+    double sum = 0;
+    for (int j = i + 1; j < n; ++j)
+      sum += A[i][j] * res[j];
+    fout << "sum = " << sum << endl;
+    res[i] = b[i] - sum;
+  }
+
+  fout << endl << "res:" << endl;
+    fout << "(";
+    for (int i = 0; i < dim - 1; ++i)
+      fout << res[i] << ", ";
+    fout << res[n - 1] << ")" << endl;
+  }

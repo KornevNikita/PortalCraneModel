@@ -57,6 +57,7 @@ vector<vector<double>> inv(const vector<vector<double>>& A);
 void transp(const vector<vector<double>>& P, vector<vector<double>>& P_T);
 
 void init_matrix_A();
+void Gauss(vector<vector<double>>& _A, vector<double>& _b, vector<double>& res);
 
 extern "C" __declspec(dllexport)
 void SetModelParams(double _M, double _m, double _l, double _R, double _g, 
