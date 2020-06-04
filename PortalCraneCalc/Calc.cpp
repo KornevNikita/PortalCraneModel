@@ -8,13 +8,14 @@ using namespace std;
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+size_t dim = 4; // razmernost' sistemi
 double M, m, l, R, g, h_fi, h_x, Beta, gamma, E; // parametri sistemi
 double fi, dfi_dt, x, dx_dt; // nachalnie usloviya
 double dt, t_start, t_stop; // parametri rasscheta
 int drawStCount; // chislo tochek, kotorie budut otrisovani
 bool inDinamic; // risovat v dinamike (poka ne realizovano)
-vector<double> reg(4); // regulator
-vector<complex<double>> p(4);  // zhelaemie korni 
+vector<double> reg(dim); // regulator
+vector<complex<double>> p(dim);  // zhelaemie korni 
 
 double a21, a22, a24, a41, a42, a44, b2, b4; // coefficinti matrici A & vectora b (forma Koshi)
 
@@ -135,13 +136,21 @@ void SetModelParams(double _M, double _m, double _l, double _R, double _g,
   double _p1_re, double _p1_im, double _p2_re, double _p2_im,
   double _p3_re, double _p3_im, double _p4_re, double _p4_im)
 {
+  std::ofstream fout;
+  fout.open("korni.txt", ios_base::trunc);
+  fout << "Vhodnie parametri:" << endl
+    << _p1_re << " " << _p1_im << endl << _p2_re << " " << _p2_im << endl
+    << _p3_re << " " << _p3_im << endl << _p4_re << " " << _p4_im << endl;
+
   M = _M, m = _m, l = _l, R = _R, g = _g,
     h_fi = _h_fi, h_x = _h_x, Beta = _Beta, gamma = _gamma, E = _E;
   
-  p[0] = (_p1_re, _p1_im);
-  p[1] = (_p2_re, _p2_im);
-  p[2] = (_p3_re, _p3_im);
-  p[3] = (_p4_re, _p4_im);
+  complex<double> p1(_p1_re, _p1_im), p2(_p2_re, _p2_im),
+  p3(_p3_re, _p3_im), p4(_p4_re, _p4_im);
+
+  p[0] = p1, p[1] = p2, p[2] = p3, p[3] = p4;
+
+  fout << p[0] << endl << p[1] << endl << p[2] << endl << p[3] << endl;
 
   init_matrix_A();
 
@@ -194,48 +203,58 @@ void GetAllDrawPoints(TAllDrawPoints* allDrawData, bool system, bool reg_on)
 
 void calc_coeffs(const vector<complex<double>>& p, vector<double>& g)
 {
-  // g0 + g1*p + g2*p^2 + g3*p^3 + p^4
-  complex<double> temp;
+  if (dim == 2)
+  {
+    complex<double> temp = p[0] * p[1];
+    g[0] = temp.real();
+    temp = (-1.0) * (p[0] + p[1]);
+    g[1] = temp.real();
+  }
 
-  // p0 * p1 * p2 * p3 = g0 / g4, (g4 = 1)
-  temp = p[0] * p[1] * p[2] * p[3]; 
+  if (dim == 4)
+  {
+    // g0 + g1*p + g2*p^2 + g3*p^3 + p^4
+    complex<double> temp;
 
-  g[0] = temp.real();
+    // p0 * p1 * p2 * p3 = g0 / g4, (g4 = 1)
+    temp = p[0] * p[1] * p[2] * p[3];
 
-  // p0 * p1 * p2 + p0 * p1 * p3 + 
-  // p0 * p2 * p3 + p1 * p2 * p3 = (-g1) / g4, (g4 = 1)
-  temp = (-1.0) *
-    (p[0] * p[1] * p[2] +
-      p[0] * p[1] * p[3] +
-      p[0] * p[2] * p[3] +
-      p[1] * p[2] * p[3]); 
+    g[0] = temp.real();
 
-  g[1] = temp.real();
+    // p0 * p1 * p2 + p0 * p1 * p3 + 
+    // p0 * p2 * p3 + p1 * p2 * p3 = (-g1) / g4, (g4 = 1)
+    temp = (-1.0) *
+      (p[0] * p[1] * p[2] +
+        p[0] * p[1] * p[3] +
+        p[0] * p[2] * p[3] +
+        p[1] * p[2] * p[3]);
 
-  // p0 * p1 + p0 * p2 + p0 * p3 + 
-  // p1 * p2 + p1 * p3 + p2 * p3 = g2 / g4, (g4 = 1)
-  temp = p[0] * p[1] +
-    p[0] * p[2] +
-    p[0] * p[3] +
-    p[1] * p[2] +
-    p[1] * p[3] +
-    p[2] * p[3]; 
+    g[1] = temp.real();
 
-  g[2] = temp.real();
+    // p0 * p1 + p0 * p2 + p0 * p3 + 
+    // p1 * p2 + p1 * p3 + p2 * p3 = g2 / g4, (g4 = 1)
+    temp = p[0] * p[1] +
+      p[0] * p[2] +
+      p[0] * p[3] +
+      p[1] * p[2] +
+      p[1] * p[3] +
+      p[2] * p[3];
 
-  temp = (-1.0) * (p[0] + p[1] + p[2] + p[3]);
+    g[2] = temp.real();
 
-  g[3] = temp.real();  // p0 + p1 + p2 + p3 = (-a3) / a4
+    temp = (-1.0) * (p[0] + p[1] + p[2] + p[3]);
+
+    g[3] = temp.real();  // p0 + p1 + p2 + p3 = (-a3) / a4
+  }
 }
 
-// ïîèñê îáðàòíîé ìàòðèöà
 vector<vector<double>> inv(const vector<vector<double>>& _A)
 {
-  size_t n = _A.size();
   std::ofstream fout;
   fout.open("inv.txt", ios_base::trunc);
 
-  // âûâåäåì èñõîäíóþ ìàòðèöó
+  size_t n = _A.size();
+
   fout << "Ishodnaya:" << endl << "size = " << n << endl;
   for (int i = 0; i < n; i++)
   {
@@ -245,7 +264,6 @@ vector<vector<double>> inv(const vector<vector<double>>& _A)
   }
   fout << endl;
 
-  // íàõîæäåíèå îïðåäåëèòåëÿ ïî Ãàóññó
   vector<vector<double>> A(_A);
   vector<vector<double>> E(n, vector<double>(n));
   for (int i = 0; i < n; i++)
@@ -267,10 +285,14 @@ vector<vector<double>> inv(const vector<vector<double>>& _A)
           vector<double> temp = A[j];
           A[j] = A[i];
           A[i] = temp;
+
+          temp = E[j];
+          E[j] = E[i];
+          E[i] = temp;
           break;
         }
       }
-      if (pivot == 0) // åñëè íå 0 íå íàéäåí, ==> îáðàòíîé ìàòðèöû íåò
+      if (pivot == 0) 
         throw("no inv matrix");
     }
 
@@ -289,20 +311,69 @@ vector<vector<double>> inv(const vector<vector<double>>& _A)
         E[j][k] -= E[i][k] * pivot;
       }
     }
+
+    fout << "i = " << i << endl;
+    fout << "==================================================" << endl
+      << "A:" << endl;
+    for (int i = 0; i < n; i++)
+    {
+      for (int j = 0; j < n; j++)
+        fout << A[i][j] << "\t";
+      fout << endl;
+    }
+    fout << endl;
+
+    fout << "==================================================" << endl
+      << "E:" << endl;
+    fout << "i = " << i << endl;
+    for (int i = 0; i < n; i++)
+    {
+      for (int j = 0; j < n; j++)
+        fout << E[i][j] << "\t";
+      fout << endl;
+    }
+    fout << endl
+      << "==================================================" << endl;
   }
 
-  // îáðàòíûé
+  // obratniy hod
+  fout << endl << "Obratniy hod:" << endl;
   for (int i = static_cast<int>(n) - 1; i > 0; i--)
   {
     for (int j = i - 1; j >= 0; j--)
     {
       double pivot = A[j][i];
+      fout << "pivot = " << pivot << endl;
       for (int k = 0; k < n; k++)
       {
+        fout << E[j][k] << " " << E[i][k] * pivot << " " << E[j][k] - E[i][k] * pivot << endl;
         A[j][k] -= A[i][k] * pivot;
         E[j][k] -= E[i][k] * pivot;
+        fout << E[j][k] << endl;
       }
     }
+    fout << "i = " << i << endl;
+    fout << "==================================================" << endl
+      << "A:" << endl;
+    for (int i = 0; i < n; i++)
+    {
+      for (int j = 0; j < n; j++)
+        fout << A[i][j] << "\t";
+      fout << endl;
+    }
+    fout << endl;
+
+    fout << "==================================================" << endl
+      << "E:" << endl;
+    fout << "i = " << i << endl;
+    for (int i = 0; i < n; i++)
+    {
+      for (int j = 0; j < n; j++)
+        fout << E[i][j] << "\t";
+      fout << endl;
+    }
+    fout << endl
+      << "==================================================" << endl;
   }
 
   fout << "Ishodnaya preobrazovannaya k edinichnoy:" << endl;
@@ -321,6 +392,19 @@ vector<vector<double>> inv(const vector<vector<double>>& _A)
       fout << E[i][j] << "\t";
     fout << endl;
   }
+  
+  fout << endl << "Proverka A * A^-1 = E:" << endl;
+  vector <vector<double>> res(dim, vector<double>(dim)), proverka(_A);
+
+  mult(proverka, E, res);
+
+  for (int i = 0; i < n; i++)
+  {
+    for (int j = 0; j < n; j++)
+      fout << res[i][j] << "\t";
+    fout << endl;
+  }
+
   fout.close();
   return E;
 }
@@ -336,9 +420,9 @@ void transp(const vector<vector<double>>& P, vector<vector<double>>& P_T)
   fout.open("transp.txt", ios_base::trunc);
 
   fout << "Ishodnaya matrica:" << endl;
-  for (int i = 0; i < 4; i++)
+  for (int i = 0; i < dim; i++)
   {
-    for (int j = 0; j < 4; j++)
+    for (int j = 0; j < dim; j++)
     {
       fout << P[i][j] << " ";
     }
@@ -348,9 +432,9 @@ void transp(const vector<vector<double>>& P, vector<vector<double>>& P_T)
   fout << endl;
 
   fout << "Transponirovannaya matrica:" << endl;
-  for (int i = 0; i < 4; i++)
+  for (int i = 0; i < dim; i++)
   {
-    for (int j = 0; j < 4; j++)
+    for (int j = 0; j < dim; j++)
     {
       fout << P_T[i][j] << " ";
     }
@@ -360,19 +444,16 @@ void transp(const vector<vector<double>>& P, vector<vector<double>>& P_T)
 
 void calc_regulator()
 {
-  vector<double> coeff_g(4); // koefficienti har. polinoma pri zadannih kornyah p1-p4: g0 + g1*p + g2*p^2 + g3*p^3 + p^4
+  std::ofstream fout;
+  fout.open("calc_reg.txt", ios_base::trunc);
+  fout << "Zadannie korni p:" << endl;
+  for (int i = 0; i < dim; ++i)
+    fout << p[i].real() << " + " << p[i].imag() << "i" << endl;
+  fout << endl;
 
-  calc_coeffs(p, coeff_g); // ishem coeff_g po T. Vieta
-
-  vector<double> a(4); // |A - pE| = a(l) = l^4 + l^3 * a3 + l^2 * a2 + l * a1 + a0
-
-  a[0] = 0;
-  a[1] = a21 * a44 - a24 * a41;
-  a[2] = a22 * a44 - a24 * a42 - a21;
-  a[3] = (-1.0) * a44 - a22; 
-
-  vector<vector<double>> A(4, vector<double>(4)), B(4, vector<double>(1)); // sistema v forme Koshi (str. 118)
-  vector<vector<double>> delta_A(4, vector<double>(4)), delta_B(4, vector<double>(1)); // normalnaya kanon. forma
+  vector<vector<double>> A(dim, vector<double>(dim)), B(dim, vector<double>(1)); // sistema v forme Koshi (str. 118)
+  vector<double> a(dim); // |A - pE| = a(l) = l^4 + l^3 * a3 + l^2 * a2 + l * a1 + a0
+  vector<vector<double>> delta_A(dim, vector<double>(dim)), delta_B(dim, vector<double>(1)); // normalnaya kanon. forma
 
   A[0][1] = 1;
   A[1][0] = a21;
@@ -386,6 +467,24 @@ void calc_regulator()
   B[1][0] = b2;
   B[3][0] = b4;
 
+  fout << "A|b:" << endl;
+  for (int i = 0; i < dim; ++i)
+  {
+    fout << "(";
+    for (int j = 0; j < dim - 1; ++j)
+      fout << A[i][j] << " ";
+    fout << A[i][dim - 1] << " | " << B[i][0] << ")" << endl;
+  }
+
+  a[0] = 0;
+  a[1] = a21 * a44 - a24 * a41;
+  a[2] = a22 * a44 - a24 * a42 - a21;
+  a[3] = (-1.0) * a44 - a22;
+
+  fout << "|A - pE| = a(l) = l^4 + l^3 * a3 + l^2 * a2 + l * a1 + a0:" << endl;
+  for (int i = 0; i < dim; ++i)
+    fout << "a" << i << " = " << a[i] << endl;
+
   delta_A[0][1] = 1;
   delta_A[1][2] = 1;
   delta_A[2][3] = 1;
@@ -396,14 +495,60 @@ void calc_regulator()
 
   delta_B[3][0] = 1;
 
+  fout << endl << "~A|~b:" << endl;
+  for (int i = 0; i < dim; ++i)
+  {
+    fout << "(";
+    for (int j = 0; j < dim - 1; ++j)
+      fout << delta_A[i][j] << " ";
+    fout << delta_A[i][dim - 1] << " | " << delta_B[i][0] << ")" << endl;
+  }
+
+
+  //// dlya 2-mernoy sistemi:
+  //double a11 = 1, a12 = 3, 
+  //  a21 = 2, a22 = 5, 
+  //  b1 = 1, b2 = 2;
+  //fout << "A:" << endl
+  //  << "(" << a11 << " " << a12 << ")" << endl
+  //  << "(" << a21 << " " << a22 << ")" << endl
+  //  << "b: " << "(" << b1 << ", " << b2 << ")" << endl << endl;
+
+ /* a[0] = a11 * a22 - a21 * a12;
+  a[1] = (-1.) * a11 - a22;
+  fout << "|A - pE| = a(l) = l^4 + l^3 * a3 + l^2 * a2 + l * a1 + a0:" << endl;
+  for (int i = 0; i < dim; ++i)
+    fout << "a" << i << " = " << a[i] << endl;
+  fout << endl;*/
+
+  vector<double> coeff_g(dim); // koefficienti har. polinoma pri zadannih kornyah p1-p4: g0 + g1*p + g2*p^2 + g3*p^3 + p^4
+
+  calc_coeffs(p, coeff_g); // ishem coeff_g po T. Vieta
+  fout << endl << "Koefficienti dlya korney p:" << endl;
+  for (int i = 0; i < dim; ++i)
+    fout << "a*[" << i << "] = " << coeff_g[i] << endl;
+  fout << endl;
+
+  /*A[0][0] = a11;
+  A[0][1] = a12;
+  A[1][0] = a21;
+  A[1][1] = a22;
+  B[0][0] = b1;
+  B[1][0] = b2;
+
+  delta_A[0][1] = 1;
+  delta_A[1][0] = (-1.) * a[0];
+  delta_A[1][1] = (-1.) * a[1];
+  delta_B[1][0] = 1;*/
+
   // R = (B; AB; A^2B; A^3B)
   // ~R = (~B; ~A~B; ~A^2~B; ~A^3~B);
-  vector<vector<double>> matrix_R(4, vector<double>(4)), delta_R(4, vector<double>(4)); // matrici upravlyaemosti v novom i starom bazisah
-  vector<vector<double>> tempvec(4, vector<double>(1)), tempmatrix1(4, vector<double>(4)), tempmatrix2(4, vector<double>(4)),
-    delta_tempvec(4, vector<double>(1)), delta_tempmatrix1(4, vector<double>(4)), delta_tempmatrix2(4, vector<double>(4));
+  vector<vector<double>> matrix_R(dim, vector<double>(dim)), delta_R(dim, vector<double>(dim)); // matrici upravlyaemosti v novom i starom bazisah
+  vector<vector<double>> tempvec(dim, vector<double>(1)), tempmatrix1(dim, vector<double>(dim)), tempmatrix2(dim, vector<double>(dim)),
+    delta_tempvec(dim, vector<double>(1)), delta_tempmatrix1(dim, vector<double>(dim)), delta_tempmatrix2(dim, vector<double>(dim));
 
   // B, ~B
-  for (int i = 0; i < 4; i++)
+  for (int i = 0; i < dim; i++)
   {
     matrix_R[i][0] = B[i][0];
     delta_R[i][0] = delta_B[i][0];
@@ -413,7 +558,19 @@ void calc_regulator()
   mult(A, B, tempvec);
   mult(delta_A, delta_B, delta_tempvec);
 
-  for (int i = 0; i < 4; i++)
+  fout << "A * b:" << endl
+    << "(";
+  for (int i = 0; i < dim - 1; ++i)
+    fout << tempvec[i][0] << ", ";
+  fout << tempvec[dim - 1][0] << ")" << endl;
+
+  fout << endl << "~A * ~b:" << endl
+    << "(";
+  for (int i = 0; i < dim - 1; ++i)
+    fout << delta_tempvec[i][0] << ", ";
+  fout << delta_tempvec[dim - 1][0] << ")" << endl;
+
+  for (int i = 0; i < dim; i++)
   {
     matrix_R[i][1] = tempvec[i][0];
     delta_R[i][1] = delta_tempvec[i][0];
@@ -426,11 +583,23 @@ void calc_regulator()
   mult(tempmatrix1, B, tempvec);
   mult(delta_tempmatrix1, delta_B, delta_tempvec);
 
-  for (int i = 0; i < 4; i++)
+  for (int i = 0; i < dim; i++)
   {
     matrix_R[i][2] = tempvec[i][0];
     delta_R[i][2] = delta_tempvec[i][0];
   }
+
+  fout << endl << "A^2 * b:" << endl
+    << "(";
+  for (int i = 0; i < dim - 1; ++i)
+    fout << tempvec[i][0] << ", ";
+  fout << tempvec[dim - 1][0] << ")" << endl;
+
+  fout << endl << "~A^2 * ~b:" << endl
+    << "(";
+  for (int i = 0; i < dim - 1; ++i)
+    fout << tempvec[i][0] << ", ";
+  fout << delta_tempvec[dim - 1][0] << ")" << endl;
 
   // A^3B, ~A^3~B
   mult(tempmatrix1, A, tempmatrix2);
@@ -439,32 +608,102 @@ void calc_regulator()
   mult(tempmatrix2, B, tempvec);
   mult(delta_tempmatrix2, delta_B, delta_tempvec);
 
-  for (int i = 0; i < 4; i++)
+  for (int i = 0; i < dim; i++)
   {
     matrix_R[i][3] = tempvec[i][0];
     delta_R[i][3] = delta_tempvec[i][0];
   }
 
-  // P^-1: = ~R * R^-1
-  vector<vector<double>> P(4, vector<double>(4)), matrix_R_inv(4, vector<double>(4));
-  matrix_R_inv = inv(matrix_R);
-  mult(delta_R, matrix_R_inv, P);
-  vector<vector<double>> P_T(4, vector<double>(4));
-  //transp(P, P_T);
+  fout << endl << "A^3 * b:" << endl
+    << "(";
+  for (int i = 0; i < dim - 1; ++i)
+    fout << tempvec[i][0] << ", ";
+  fout << tempvec[dim - 1][0] << ")" << endl;
 
-  vector<vector<double>> a_g(4, vector<double>(1)), // a - g
-    temp_reg(4, vector<double>(1));
-  for (int i = 0; i < 4; i++)
+  fout << endl << "~A^3 * ~b:" << endl
+    << "(";
+  for (int i = 0; i < dim - 1; ++i)
+    fout << tempvec[i][0] << ", ";
+  fout << delta_tempvec[dim - 1][0] << ")" << endl;
+
+  fout << endl << "~U:" << endl;
+  for (int i = 0; i < dim; ++i)
+  {
+    fout << "(";
+    for (int j = 0; j < dim - 1; ++j)
+      fout << delta_R[i][j] << " ";
+    fout << delta_R[i][dim - 1] << ")" << endl;
+  }
+
+
+  fout << endl << "U:" << endl;
+  for (int i = 0; i < dim; ++i)
+  {
+    fout << "(";
+    for (int j = 0; j < dim - 1; ++j)
+      fout << matrix_R[i][j] << " ";
+    fout << matrix_R[i][dim - 1] << ")" << endl;
+  }
+
+  // P^-1: = ~R * R^-1
+  vector<vector<double>> P(dim, vector<double>(dim)), matrix_R_inv(dim, vector<double>(dim));
+  matrix_R_inv = inv(matrix_R);
+
+  fout << endl << "U^-1:" << endl;
+  for (int i = 0; i < dim; ++i)
+  {
+    fout << "(";
+    for (int j = 0; j < dim - 1; ++j)
+      fout << matrix_R_inv[i][j] << " ";
+    fout << matrix_R_inv[i][dim - 1] << ")" << endl;
+  }
+
+  mult(delta_R, matrix_R_inv, P);
+
+  fout << endl << "P^(-1) = ~U * U^-1:" << endl;
+  for (int i = 0; i < dim; ++i)
+  {
+    fout << "(";
+    for (int j = 0; j < dim - 1; ++j)
+      fout << P[i][j] << " ";
+    fout << P[i][dim - 1] << ")" << endl;
+  }
+
+  vector<vector<double>> P_T(dim, vector<double>(dim));
+  transp(P, P_T);
+
+  fout << endl << "(P^(-1))^T:" << endl;
+  for (int i = 0; i < dim; ++i)
+  {
+    fout << "(";
+    for (int j = 0; j < dim - 1; ++j)
+      fout << P_T[i][j] << " ";
+    fout << P_T[i][dim - 1] << ")" << endl;
+  }
+  fout << endl;
+
+  vector<vector<double>> a_g(dim, vector<double>(1)), // a - g
+    temp_reg(dim, vector<double>(1));
+
+  for (int i = 0; i < dim; i++)
     a_g[i][0] = a[i] - coeff_g[i];
 
-  mult(P, a_g, temp_reg);
-  for (int i = 0; i < 4; i++)
+  mult(P_T, a_g, temp_reg);
+  //mult(P, a_g, temp_reg);
+
+  for (int i = 0; i < dim; i++)
     reg[i] = temp_reg[i][0];
 
-  std::ofstream fout;
-  fout.open("reg.txt", ios_base::trunc);
-  for (int i = 0; i < 4; i++)
-    fout << reg[i] << " ";
+  for (int i = 0; i < dim; ++i)
+  {
+    fout << "a" << i << " - " << "a*" << i << " = " << a[i] - coeff_g[i] << endl;
+  }
+
+  fout << endl << "regulator = (P^(-1))^T * (a - a*):" << endl
+    << "(";
+  for (int i = 0; i < dim - 1; i++)
+    fout << reg[i] << ", ";
+  fout << reg[dim - 1] << ")" << endl;
 }
 
 void init_matrix_A()

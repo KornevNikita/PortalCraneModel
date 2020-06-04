@@ -393,8 +393,8 @@ namespace PortalCraneModel
             lambda4_re = double.Parse(tbox_lambda4_re.Text);
             lambda4_im = double.Parse(tbox_lambda4_im.Text);
             PortalCraneModel.SetModelParams(this.M, this.m, this.l, this.R, this.g, this.h_fi, this.h_x, this.B, this.gamma, this.E,
-                lambda1_re, lambda1_im, lambda2_re, lambda2_im,
-                lambda3_re, lambda3_im, lambda4_re, lambda4_im);
+                this.lambda1_re, this.lambda1_im, this.lambda2_re, this.lambda2_im,
+                this.lambda3_re, this.lambda3_im, this.lambda4_re, this.lambda4_im);
         }
 
         private void SetInitVal()
@@ -590,18 +590,18 @@ namespace PortalCraneModel
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea9 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend9 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series9 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea10 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend10 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series10 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea11 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend11 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series11 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea12 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend12 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series12 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea7 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend7 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea8 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend8 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.Button_setParam = new System.Windows.Forms.Button();
             this.textBox_E = new System.Windows.Forms.TextBox();
@@ -1314,7 +1314,7 @@ namespace PortalCraneModel
             this.tbox_lambda4_im.Name = "tbox_lambda4_im";
             this.tbox_lambda4_im.Size = new System.Drawing.Size(31, 20);
             this.tbox_lambda4_im.TabIndex = 42;
-            this.tbox_lambda4_im.Text = "0";
+            this.tbox_lambda4_im.Text = "-1";
             this.tbox_lambda4_im.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // tbox_lambda4_re
@@ -1323,7 +1323,7 @@ namespace PortalCraneModel
             this.tbox_lambda4_re.Name = "tbox_lambda4_re";
             this.tbox_lambda4_re.Size = new System.Drawing.Size(31, 20);
             this.tbox_lambda4_re.TabIndex = 41;
-            this.tbox_lambda4_re.Text = "0";
+            this.tbox_lambda4_re.Text = "-1";
             this.tbox_lambda4_re.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // tbox_lambda2_im
@@ -1332,8 +1332,9 @@ namespace PortalCraneModel
             this.tbox_lambda2_im.Name = "tbox_lambda2_im";
             this.tbox_lambda2_im.Size = new System.Drawing.Size(31, 20);
             this.tbox_lambda2_im.TabIndex = 40;
-            this.tbox_lambda2_im.Text = "0";
+            this.tbox_lambda2_im.Text = "-1";
             this.tbox_lambda2_im.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.tbox_lambda2_im.TextChanged += new System.EventHandler(this.Tbox_lambda2_im_TextChanged);
             // 
             // tbox_lambda2_re
             // 
@@ -1341,7 +1342,7 @@ namespace PortalCraneModel
             this.tbox_lambda2_re.Name = "tbox_lambda2_re";
             this.tbox_lambda2_re.Size = new System.Drawing.Size(31, 20);
             this.tbox_lambda2_re.TabIndex = 39;
-            this.tbox_lambda2_re.Text = "0";
+            this.tbox_lambda2_re.Text = "-1";
             this.tbox_lambda2_re.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label9
@@ -1386,7 +1387,7 @@ namespace PortalCraneModel
             this.tbox_lambda3_im.Name = "tbox_lambda3_im";
             this.tbox_lambda3_im.Size = new System.Drawing.Size(31, 20);
             this.tbox_lambda3_im.TabIndex = 15;
-            this.tbox_lambda3_im.Text = "0";
+            this.tbox_lambda3_im.Text = "1";
             this.tbox_lambda3_im.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.tbox_lambda3_im.TextChanged += new System.EventHandler(this.Tbox_lambda3_im_TextChanged);
             // 
@@ -1396,7 +1397,7 @@ namespace PortalCraneModel
             this.tbox_lambda1_re.Name = "tbox_lambda1_re";
             this.tbox_lambda1_re.Size = new System.Drawing.Size(31, 20);
             this.tbox_lambda1_re.TabIndex = 12;
-            this.tbox_lambda1_re.Text = "0";
+            this.tbox_lambda1_re.Text = "-1";
             this.tbox_lambda1_re.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // tbox_lambda3_re
@@ -1405,7 +1406,7 @@ namespace PortalCraneModel
             this.tbox_lambda3_re.Name = "tbox_lambda3_re";
             this.tbox_lambda3_re.Size = new System.Drawing.Size(31, 20);
             this.tbox_lambda3_re.TabIndex = 14;
-            this.tbox_lambda3_re.Text = "0";
+            this.tbox_lambda3_re.Text = "-1";
             this.tbox_lambda3_re.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // tbox_lambda1_im
@@ -1414,75 +1415,75 @@ namespace PortalCraneModel
             this.tbox_lambda1_im.Name = "tbox_lambda1_im";
             this.tbox_lambda1_im.Size = new System.Drawing.Size(31, 20);
             this.tbox_lambda1_im.TabIndex = 13;
-            this.tbox_lambda1_im.Text = "0";
+            this.tbox_lambda1_im.Text = "1";
             this.tbox_lambda1_im.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.tbox_lambda1_im.TextChanged += new System.EventHandler(this.Tbox_lambda1_im_TextChanged);
             // 
             // chart1
             // 
-            chartArea9.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea9);
-            legend9.Enabled = false;
-            legend9.Name = "Legend1";
-            this.chart1.Legends.Add(legend9);
+            chartArea5.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea5);
+            legend5.Enabled = false;
+            legend5.Name = "Legend1";
+            this.chart1.Legends.Add(legend5);
             this.chart1.Location = new System.Drawing.Point(344, 17);
             this.chart1.Name = "chart1";
-            series9.ChartArea = "ChartArea1";
-            series9.Legend = "Legend1";
-            series9.Name = "Series1";
-            this.chart1.Series.Add(series9);
+            series5.ChartArea = "ChartArea1";
+            series5.Legend = "Legend1";
+            series5.Name = "Series1";
+            this.chart1.Series.Add(series5);
             this.chart1.Size = new System.Drawing.Size(500, 350);
             this.chart1.TabIndex = 33;
             this.chart1.Text = "chart1";
             // 
             // chart2
             // 
-            chartArea10.Name = "ChartArea1";
-            this.chart2.ChartAreas.Add(chartArea10);
-            legend10.Enabled = false;
-            legend10.Name = "Legend1";
-            this.chart2.Legends.Add(legend10);
+            chartArea6.Name = "ChartArea1";
+            this.chart2.ChartAreas.Add(chartArea6);
+            legend6.Enabled = false;
+            legend6.Name = "Legend1";
+            this.chart2.Legends.Add(legend6);
             this.chart2.Location = new System.Drawing.Point(850, 17);
             this.chart2.Name = "chart2";
-            series10.ChartArea = "ChartArea1";
-            series10.Legend = "Legend1";
-            series10.Name = "Series1";
-            this.chart2.Series.Add(series10);
+            series6.ChartArea = "ChartArea1";
+            series6.Legend = "Legend1";
+            series6.Name = "Series1";
+            this.chart2.Series.Add(series6);
             this.chart2.Size = new System.Drawing.Size(500, 350);
             this.chart2.TabIndex = 34;
             this.chart2.Text = "chart2";
             // 
             // chart3
             // 
-            chartArea11.Name = "ChartArea1";
-            this.chart3.ChartAreas.Add(chartArea11);
-            legend11.Enabled = false;
-            legend11.Name = "Legend1";
-            this.chart3.Legends.Add(legend11);
+            chartArea7.Name = "ChartArea1";
+            this.chart3.ChartAreas.Add(chartArea7);
+            legend7.Enabled = false;
+            legend7.Name = "Legend1";
+            this.chart3.Legends.Add(legend7);
             this.chart3.Location = new System.Drawing.Point(344, 373);
             this.chart3.Name = "chart3";
-            series11.ChartArea = "ChartArea1";
-            series11.Legend = "Legend1";
-            series11.Name = "Series1";
-            this.chart3.Series.Add(series11);
+            series7.ChartArea = "ChartArea1";
+            series7.Legend = "Legend1";
+            series7.Name = "Series1";
+            this.chart3.Series.Add(series7);
             this.chart3.Size = new System.Drawing.Size(500, 350);
             this.chart3.TabIndex = 33;
             this.chart3.Text = "chart1";
             // 
             // chart4
             // 
-            chartArea12.Name = "ChartArea1";
-            this.chart4.ChartAreas.Add(chartArea12);
-            legend12.Enabled = false;
-            legend12.Name = "Legend1";
-            this.chart4.Legends.Add(legend12);
+            chartArea8.Name = "ChartArea1";
+            this.chart4.ChartAreas.Add(chartArea8);
+            legend8.Enabled = false;
+            legend8.Name = "Legend1";
+            this.chart4.Legends.Add(legend8);
             this.chart4.Location = new System.Drawing.Point(850, 373);
             this.chart4.Name = "chart4";
-            series12.ChartArea = "ChartArea1";
-            series12.Legend = "Legend1";
-            series12.Name = "Series1";
-            series12.XAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
-            this.chart4.Series.Add(series12);
+            series8.ChartArea = "ChartArea1";
+            series8.Legend = "Legend1";
+            series8.Name = "Series1";
+            series8.XAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
+            this.chart4.Series.Add(series8);
             this.chart4.Size = new System.Drawing.Size(500, 350);
             this.chart4.TabIndex = 33;
             this.chart4.Text = "chart1";
@@ -1794,6 +1795,8 @@ namespace PortalCraneModel
             // cBox_Reg_on
             // 
             this.cBox_Reg_on.AutoSize = true;
+            this.cBox_Reg_on.Checked = true;
+            this.cBox_Reg_on.CheckState = System.Windows.Forms.CheckState.Checked;
             this.cBox_Reg_on.Location = new System.Drawing.Point(9, 437);
             this.cBox_Reg_on.Name = "cBox_Reg_on";
             this.cBox_Reg_on.Size = new System.Drawing.Size(129, 17);
@@ -1923,6 +1926,11 @@ namespace PortalCraneModel
             tbox_lambda4_re.ReadOnly = false;
             tbox_lambda4_im.Text = "0";
             tbox_lambda4_im.ReadOnly = false;
+        }
+
+        private void Tbox_lambda2_im_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
