@@ -67,7 +67,7 @@ void f(const std::vector<double>& _X, std::vector<double>& _k, bool system, bool
     // ( a41 a42 0 a44 )     (  x_dt  )     ( a41 * fi + a42 * fi_dt + a44 * x_dt )
 
     // U(t) = v(t) = k^T * x = k1 * fi + k2 * fi_dt + k3 * (x - x*) + k4 * x_dt:
-    v_t = (reg_on == true) ? (reg[0] * _X[0]) + (reg[1] * _X[1]) + (reg[2] * _X[2]) + (reg[3] * _X[3]) : 1;
+    v_t = (reg_on == true) ? (reg[0] * _X[0]) + (reg[1] * _X[1]) + (reg[2] * _X[2]) + (reg[3] * _X[3]) : 0;
 
     // x_dt = Ax + bU(t):
     _k[0] = _X[1]; // fi_dt
@@ -93,18 +93,21 @@ void f(const std::vector<double>& _X, std::vector<double>& _k, bool system, bool
   {
     double f_t; // sila tyagi
     v_t = (reg_on == true) ?
-      reg[0] * ((_X[0] + M_PI) / 2 * M_PI - M_PI) + reg[1] * _X[1] + reg[2] * _X[2] + reg[3] * _X[3] : 1;
+      reg[0] * ((_X[0] + M_PI) / (2 * M_PI) - M_PI) + reg[1] * _X[1] + reg[2] * _X[2] + reg[3] * _X[3] : 0;
     f_t = gamma / R * (v_t - E * _X[3] / Beta);
 
-    _k[0] = _X[1]; // fi
+    _k[0] = _X[1]; // fi_dt
+
+    _k[1] = f_t - h_x * _X[3]
+      - (M + m) * (((-1.) * h_fi * _X[1]) / (m * l * cos(_X[0])) - g * tan(_X[0]))
+      + m * l * _X[1] * _X[1] * sin(_X[0]);
+    _k[1] /= m * l * cos(_X[0]) - (M + m) * l / cos(_X[0]);
+
     _k[2] = _X[3]; // x
 
-    _k[3] = (f_t - h_x * _X[3] + (h_fi * _X[1] * cos(_X[0]) / l) +
-      m * g * cos(_X[0]) * sin(_X[0]) + m * l * _X[1] * _X[1] * sin(_X[0])) /
-      (M + m * (1 - pow(cos(_X[0]), 2))
-        );
-
-    _k[1] = -h_fi * _X[1] - m * l * _k[3] * cos(_X[0]) - m * g * l * sin(_X[0]) / (m * l * l);
+    _k[3] = (-1.) * h_fi * _X[1] / (m * l * cos(_X[0]))
+      - l * _k[1] / cos(_X[0])
+      - g * tan(_X[0]);
   }
 }
 
