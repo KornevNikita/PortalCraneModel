@@ -1522,7 +1522,6 @@ namespace PortalCraneModel
             this.groupBox4.TabIndex = 0;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Параметры модели";
-            this.groupBox4.UseWaitCursor = true;
             // 
             // button1
             // 
@@ -1533,7 +1532,6 @@ namespace PortalCraneModel
             this.button1.TabIndex = 27;
             this.button1.Text = "Принять";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.UseWaitCursor = true;
             this.button1.Click += new System.EventHandler(this.Button_setParam_Click);
             // 
             // textBox1
@@ -1545,7 +1543,6 @@ namespace PortalCraneModel
             this.textBox1.TabIndex = 26;
             this.textBox1.Text = "0,00767";
             this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.textBox1.UseWaitCursor = true;
             // 
             // textBox2
             // 
@@ -1556,7 +1553,6 @@ namespace PortalCraneModel
             this.textBox2.TabIndex = 25;
             this.textBox2.Text = "4,481";
             this.textBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.textBox2.UseWaitCursor = true;
             // 
             // label5
             // 
@@ -1567,7 +1563,6 @@ namespace PortalCraneModel
             this.label5.Size = new System.Drawing.Size(44, 13);
             this.label5.TabIndex = 24;
             this.label5.Text = "gamma:";
-            this.label5.UseWaitCursor = true;
             // 
             // label6
             // 
@@ -1578,7 +1573,6 @@ namespace PortalCraneModel
             this.label6.Size = new System.Drawing.Size(17, 13);
             this.label6.TabIndex = 23;
             this.label6.Text = "E:";
-            this.label6.UseWaitCursor = true;
             // 
             // label12
             // 
@@ -1589,7 +1583,6 @@ namespace PortalCraneModel
             this.label12.Size = new System.Drawing.Size(27, 13);
             this.label12.TabIndex = 21;
             this.label12.Text = "h_x:";
-            this.label12.UseWaitCursor = true;
             // 
             // label13
             // 
@@ -1600,7 +1593,6 @@ namespace PortalCraneModel
             this.label13.Size = new System.Drawing.Size(17, 13);
             this.label13.TabIndex = 20;
             this.label13.Text = "B:";
-            this.label13.UseWaitCursor = true;
             // 
             // label14
             // 
@@ -1610,7 +1602,6 @@ namespace PortalCraneModel
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(0, 13);
             this.label14.TabIndex = 19;
-            this.label14.UseWaitCursor = true;
             // 
             // label15
             // 
@@ -1621,7 +1612,6 @@ namespace PortalCraneModel
             this.label15.Size = new System.Drawing.Size(27, 13);
             this.label15.TabIndex = 18;
             this.label15.Text = "h_fi:";
-            this.label15.UseWaitCursor = true;
             // 
             // label17
             // 
@@ -1632,18 +1622,16 @@ namespace PortalCraneModel
             this.label17.Size = new System.Drawing.Size(16, 13);
             this.label17.TabIndex = 17;
             this.label17.Text = "g:";
-            this.label17.UseWaitCursor = true;
             // 
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(4, 89);
+            this.label19.Location = new System.Drawing.Point(4, 92);
             this.label19.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(18, 13);
             this.label19.TabIndex = 16;
             this.label19.Text = "R:";
-            this.label19.UseWaitCursor = true;
             // 
             // label20
             // 
@@ -1654,7 +1642,6 @@ namespace PortalCraneModel
             this.label20.Size = new System.Drawing.Size(12, 13);
             this.label20.TabIndex = 15;
             this.label20.Text = "l:";
-            this.label20.UseWaitCursor = true;
             // 
             // label21
             // 
@@ -1665,7 +1652,6 @@ namespace PortalCraneModel
             this.label21.Size = new System.Drawing.Size(18, 13);
             this.label21.TabIndex = 14;
             this.label21.Text = "m:";
-            this.label21.UseWaitCursor = true;
             // 
             // label22
             // 
@@ -1676,7 +1662,6 @@ namespace PortalCraneModel
             this.label22.Size = new System.Drawing.Size(19, 13);
             this.label22.TabIndex = 13;
             this.label22.Text = "M:";
-            this.label22.UseWaitCursor = true;
             // 
             // textBox3
             // 
@@ -1687,7 +1672,6 @@ namespace PortalCraneModel
             this.textBox3.TabIndex = 7;
             this.textBox3.Text = "0,0024";
             this.textBox3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.textBox3.UseWaitCursor = true;
             // 
             // textBox4
             // 
@@ -1698,7 +1682,6 @@ namespace PortalCraneModel
             this.textBox4.TabIndex = 3;
             this.textBox4.Text = "9,81";
             this.textBox4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.textBox4.UseWaitCursor = true;
             // 
             // textBox5
             // 
@@ -1709,7 +1692,6 @@ namespace PortalCraneModel
             this.textBox5.TabIndex = 6;
             this.textBox5.Text = "0,024";
             this.textBox5.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.textBox5.UseWaitCursor = true;
             // 
             // textBox6
             // 
@@ -1720,7 +1702,6 @@ namespace PortalCraneModel
             this.textBox6.TabIndex = 2;
             this.textBox6.Text = "2,6";
             this.textBox6.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.textBox6.UseWaitCursor = true;
             // 
             // textBox7
             // 
@@ -1731,7 +1712,6 @@ namespace PortalCraneModel
             this.textBox7.TabIndex = 5;
             this.textBox7.Text = "0,641";
             this.textBox7.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.textBox7.UseWaitCursor = true;
             // 
             // textBox8
             // 
@@ -1742,7 +1722,6 @@ namespace PortalCraneModel
             this.textBox8.TabIndex = 4;
             this.textBox8.Text = "5,4";
             this.textBox8.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.textBox8.UseWaitCursor = true;
             // 
             // textBox9
             // 
@@ -1753,7 +1732,6 @@ namespace PortalCraneModel
             this.textBox9.TabIndex = 1;
             this.textBox9.Text = "0,019";
             this.textBox9.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.textBox9.UseWaitCursor = true;
             // 
             // textBox10
             // 
@@ -1764,7 +1742,6 @@ namespace PortalCraneModel
             this.textBox10.TabIndex = 0;
             this.textBox10.Text = "1,073";
             this.textBox10.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.textBox10.UseWaitCursor = true;
             // 
             // Timer1
             // 
