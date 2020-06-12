@@ -124,29 +124,6 @@ namespace PortalCraneModel
         private Label label9;
         private Label label8;
         private Label label11;
-        private GroupBox groupBox4;
-        private Button button1;
-        private TextBox textBox1;
-        private TextBox textBox2;
-        private Label label5;
-        private Label label6;
-        private Label label12;
-        private Label label13;
-        private Label label14;
-        private Label label15;
-        private Label label17;
-        private Label label19;
-        private Label label20;
-        private Label label21;
-        private Label label22;
-        private TextBox textBox3;
-        private TextBox textBox4;
-        private TextBox textBox5;
-        private TextBox textBox6;
-        private TextBox textBox7;
-        private TextBox textBox8;
-        private TextBox textBox9;
-        private TextBox textBox10;
         private Button button2;
         private CheckBox checkBox_dinDraw;
         private Timer Timer1;
@@ -590,18 +567,18 @@ namespace PortalCraneModel
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea7 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend7 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea8 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend8 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.Button_setParam = new System.Windows.Forms.Button();
             this.textBox_E = new System.Windows.Forms.TextBox();
@@ -670,29 +647,6 @@ namespace PortalCraneModel
             this.chart2 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.chart3 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.chart4 = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.label13 = new System.Windows.Forms.Label();
-            this.label14 = new System.Windows.Forms.Label();
-            this.label15 = new System.Windows.Forms.Label();
-            this.label17 = new System.Windows.Forms.Label();
-            this.label19 = new System.Windows.Forms.Label();
-            this.label20 = new System.Windows.Forms.Label();
-            this.label21 = new System.Windows.Forms.Label();
-            this.label22 = new System.Windows.Forms.Label();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.textBox4 = new System.Windows.Forms.TextBox();
-            this.textBox5 = new System.Windows.Forms.TextBox();
-            this.textBox6 = new System.Windows.Forms.TextBox();
-            this.textBox7 = new System.Windows.Forms.TextBox();
-            this.textBox8 = new System.Windows.Forms.TextBox();
-            this.textBox9 = new System.Windows.Forms.TextBox();
-            this.textBox10 = new System.Windows.Forms.TextBox();
             this.Timer1 = new System.Windows.Forms.Timer(this.components);
             this.cBox_non_linear = new System.Windows.Forms.CheckBox();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
@@ -705,7 +659,6 @@ namespace PortalCraneModel
             ((System.ComponentModel.ISupportInitialize)(this.chart2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart4)).BeginInit();
-            this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -743,7 +696,6 @@ namespace PortalCraneModel
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Параметры модели";
-            this.groupBox1.UseWaitCursor = true;
             // 
             // Button_setParam
             // 
@@ -754,7 +706,6 @@ namespace PortalCraneModel
             this.Button_setParam.TabIndex = 27;
             this.Button_setParam.Text = "Принять";
             this.Button_setParam.UseVisualStyleBackColor = true;
-            this.Button_setParam.UseWaitCursor = true;
             this.Button_setParam.Click += new System.EventHandler(this.Button_setParam_Click);
             // 
             // textBox_E
@@ -765,7 +716,6 @@ namespace PortalCraneModel
             this.textBox_E.Size = new System.Drawing.Size(76, 20);
             this.textBox_E.TabIndex = 26;
             this.textBox_E.Text = "0,00767";
-            this.textBox_E.UseWaitCursor = true;
             // 
             // textBox_gamma
             // 
@@ -775,7 +725,6 @@ namespace PortalCraneModel
             this.textBox_gamma.Size = new System.Drawing.Size(76, 20);
             this.textBox_gamma.TabIndex = 25;
             this.textBox_gamma.Text = "4,481";
-            this.textBox_gamma.UseWaitCursor = true;
             // 
             // label_gamma
             // 
@@ -786,7 +735,6 @@ namespace PortalCraneModel
             this.label_gamma.Size = new System.Drawing.Size(44, 13);
             this.label_gamma.TabIndex = 24;
             this.label_gamma.Text = "gamma:";
-            this.label_gamma.UseWaitCursor = true;
             // 
             // label_E
             // 
@@ -797,7 +745,6 @@ namespace PortalCraneModel
             this.label_E.Size = new System.Drawing.Size(17, 13);
             this.label_E.TabIndex = 23;
             this.label_E.Text = "E:";
-            this.label_E.UseWaitCursor = true;
             // 
             // label_h_x
             // 
@@ -808,7 +755,6 @@ namespace PortalCraneModel
             this.label_h_x.Size = new System.Drawing.Size(27, 13);
             this.label_h_x.TabIndex = 21;
             this.label_h_x.Text = "h_x:";
-            this.label_h_x.UseWaitCursor = true;
             // 
             // label_B
             // 
@@ -819,7 +765,6 @@ namespace PortalCraneModel
             this.label_B.Size = new System.Drawing.Size(17, 13);
             this.label_B.TabIndex = 20;
             this.label_B.Text = "B:";
-            this.label_B.UseWaitCursor = true;
             // 
             // label7
             // 
@@ -829,7 +774,6 @@ namespace PortalCraneModel
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(0, 13);
             this.label7.TabIndex = 19;
-            this.label7.UseWaitCursor = true;
             // 
             // label_h_fi
             // 
@@ -840,7 +784,6 @@ namespace PortalCraneModel
             this.label_h_fi.Size = new System.Drawing.Size(27, 13);
             this.label_h_fi.TabIndex = 18;
             this.label_h_fi.Text = "h_fi:";
-            this.label_h_fi.UseWaitCursor = true;
             // 
             // label_g
             // 
@@ -851,7 +794,6 @@ namespace PortalCraneModel
             this.label_g.Size = new System.Drawing.Size(16, 13);
             this.label_g.TabIndex = 17;
             this.label_g.Text = "g:";
-            this.label_g.UseWaitCursor = true;
             // 
             // label_R
             // 
@@ -862,7 +804,6 @@ namespace PortalCraneModel
             this.label_R.Size = new System.Drawing.Size(18, 13);
             this.label_R.TabIndex = 16;
             this.label_R.Text = "R:";
-            this.label_R.UseWaitCursor = true;
             // 
             // label_l
             // 
@@ -873,7 +814,6 @@ namespace PortalCraneModel
             this.label_l.Size = new System.Drawing.Size(12, 13);
             this.label_l.TabIndex = 15;
             this.label_l.Text = "l:";
-            this.label_l.UseWaitCursor = true;
             // 
             // label_mmal
             // 
@@ -884,7 +824,6 @@ namespace PortalCraneModel
             this.label_mmal.Size = new System.Drawing.Size(18, 13);
             this.label_mmal.TabIndex = 14;
             this.label_mmal.Text = "m:";
-            this.label_mmal.UseWaitCursor = true;
             // 
             // label_M
             // 
@@ -895,7 +834,6 @@ namespace PortalCraneModel
             this.label_M.Size = new System.Drawing.Size(19, 13);
             this.label_M.TabIndex = 13;
             this.label_M.Text = "M:";
-            this.label_M.UseWaitCursor = true;
             // 
             // textBox_h_fi
             // 
@@ -905,7 +843,6 @@ namespace PortalCraneModel
             this.textBox_h_fi.Size = new System.Drawing.Size(76, 20);
             this.textBox_h_fi.TabIndex = 7;
             this.textBox_h_fi.Text = "0,0024";
-            this.textBox_h_fi.UseWaitCursor = true;
             // 
             // textBox_g
             // 
@@ -915,7 +852,6 @@ namespace PortalCraneModel
             this.textBox_g.Size = new System.Drawing.Size(76, 20);
             this.textBox_g.TabIndex = 3;
             this.textBox_g.Text = "9,81";
-            this.textBox_g.UseWaitCursor = true;
             // 
             // textBox_B
             // 
@@ -925,7 +861,6 @@ namespace PortalCraneModel
             this.textBox_B.Size = new System.Drawing.Size(76, 20);
             this.textBox_B.TabIndex = 6;
             this.textBox_B.Text = "0,024";
-            this.textBox_B.UseWaitCursor = true;
             // 
             // textBox_R
             // 
@@ -935,7 +870,6 @@ namespace PortalCraneModel
             this.textBox_R.Size = new System.Drawing.Size(76, 20);
             this.textBox_R.TabIndex = 2;
             this.textBox_R.Text = "2,6";
-            this.textBox_R.UseWaitCursor = true;
             // 
             // textBox_l
             // 
@@ -945,7 +879,6 @@ namespace PortalCraneModel
             this.textBox_l.Size = new System.Drawing.Size(76, 20);
             this.textBox_l.TabIndex = 5;
             this.textBox_l.Text = "0,641";
-            this.textBox_l.UseWaitCursor = true;
             // 
             // textBox_h_x
             // 
@@ -955,7 +888,6 @@ namespace PortalCraneModel
             this.textBox_h_x.Size = new System.Drawing.Size(76, 20);
             this.textBox_h_x.TabIndex = 4;
             this.textBox_h_x.Text = "5,4";
-            this.textBox_h_x.UseWaitCursor = true;
             // 
             // textBox_mmal
             // 
@@ -965,7 +897,6 @@ namespace PortalCraneModel
             this.textBox_mmal.Size = new System.Drawing.Size(76, 20);
             this.textBox_mmal.TabIndex = 1;
             this.textBox_mmal.Text = "0,019";
-            this.textBox_mmal.UseWaitCursor = true;
             // 
             // textBox_M
             // 
@@ -975,7 +906,6 @@ namespace PortalCraneModel
             this.textBox_M.Size = new System.Drawing.Size(76, 20);
             this.textBox_M.TabIndex = 0;
             this.textBox_M.Text = "1,073";
-            this.textBox_M.UseWaitCursor = true;
             // 
             // textBox_fi
             // 
@@ -984,7 +914,7 @@ namespace PortalCraneModel
             this.textBox_fi.Name = "textBox_fi";
             this.textBox_fi.Size = new System.Drawing.Size(76, 20);
             this.textBox_fi.TabIndex = 8;
-            this.textBox_fi.Text = "0";
+            this.textBox_fi.Text = "0,523";
             this.textBox_fi.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // textBox_x
@@ -994,7 +924,7 @@ namespace PortalCraneModel
             this.textBox_x.Name = "textBox_x";
             this.textBox_x.Size = new System.Drawing.Size(76, 20);
             this.textBox_x.TabIndex = 9;
-            this.textBox_x.Text = "5";
+            this.textBox_x.Text = "0,05";
             this.textBox_x.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // textBox_dfi_dt
@@ -1314,7 +1244,7 @@ namespace PortalCraneModel
             this.tbox_lambda4_im.Name = "tbox_lambda4_im";
             this.tbox_lambda4_im.Size = new System.Drawing.Size(31, 20);
             this.tbox_lambda4_im.TabIndex = 42;
-            this.tbox_lambda4_im.Text = "-1";
+            this.tbox_lambda4_im.Text = "0";
             this.tbox_lambda4_im.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // tbox_lambda4_re
@@ -1323,7 +1253,7 @@ namespace PortalCraneModel
             this.tbox_lambda4_re.Name = "tbox_lambda4_re";
             this.tbox_lambda4_re.Size = new System.Drawing.Size(31, 20);
             this.tbox_lambda4_re.TabIndex = 41;
-            this.tbox_lambda4_re.Text = "-1";
+            this.tbox_lambda4_re.Text = "0";
             this.tbox_lambda4_re.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // tbox_lambda2_im
@@ -1332,7 +1262,7 @@ namespace PortalCraneModel
             this.tbox_lambda2_im.Name = "tbox_lambda2_im";
             this.tbox_lambda2_im.Size = new System.Drawing.Size(31, 20);
             this.tbox_lambda2_im.TabIndex = 40;
-            this.tbox_lambda2_im.Text = "-1";
+            this.tbox_lambda2_im.Text = "0";
             this.tbox_lambda2_im.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.tbox_lambda2_im.TextChanged += new System.EventHandler(this.Tbox_lambda2_im_TextChanged);
             // 
@@ -1342,7 +1272,7 @@ namespace PortalCraneModel
             this.tbox_lambda2_re.Name = "tbox_lambda2_re";
             this.tbox_lambda2_re.Size = new System.Drawing.Size(31, 20);
             this.tbox_lambda2_re.TabIndex = 39;
-            this.tbox_lambda2_re.Text = "-1";
+            this.tbox_lambda2_re.Text = "0";
             this.tbox_lambda2_re.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // label9
@@ -1387,7 +1317,7 @@ namespace PortalCraneModel
             this.tbox_lambda3_im.Name = "tbox_lambda3_im";
             this.tbox_lambda3_im.Size = new System.Drawing.Size(31, 20);
             this.tbox_lambda3_im.TabIndex = 15;
-            this.tbox_lambda3_im.Text = "1";
+            this.tbox_lambda3_im.Text = "0";
             this.tbox_lambda3_im.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.tbox_lambda3_im.TextChanged += new System.EventHandler(this.Tbox_lambda3_im_TextChanged);
             // 
@@ -1395,10 +1325,12 @@ namespace PortalCraneModel
             // 
             this.tbox_lambda1_re.Location = new System.Drawing.Point(83, 42);
             this.tbox_lambda1_re.Name = "tbox_lambda1_re";
+            this.tbox_lambda1_re.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
             this.tbox_lambda1_re.Size = new System.Drawing.Size(31, 20);
             this.tbox_lambda1_re.TabIndex = 12;
-            this.tbox_lambda1_re.Text = "-1";
+            this.tbox_lambda1_re.Text = "0";
             this.tbox_lambda1_re.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.tbox_lambda1_re.TextChanged += new System.EventHandler(this.Tbox_lambda1_re_TextChanged);
             // 
             // tbox_lambda3_re
             // 
@@ -1406,7 +1338,7 @@ namespace PortalCraneModel
             this.tbox_lambda3_re.Name = "tbox_lambda3_re";
             this.tbox_lambda3_re.Size = new System.Drawing.Size(31, 20);
             this.tbox_lambda3_re.TabIndex = 14;
-            this.tbox_lambda3_re.Text = "-1";
+            this.tbox_lambda3_re.Text = "0";
             this.tbox_lambda3_re.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // tbox_lambda1_im
@@ -1415,333 +1347,78 @@ namespace PortalCraneModel
             this.tbox_lambda1_im.Name = "tbox_lambda1_im";
             this.tbox_lambda1_im.Size = new System.Drawing.Size(31, 20);
             this.tbox_lambda1_im.TabIndex = 13;
-            this.tbox_lambda1_im.Text = "1";
+            this.tbox_lambda1_im.Text = "0";
             this.tbox_lambda1_im.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.tbox_lambda1_im.TextChanged += new System.EventHandler(this.Tbox_lambda1_im_TextChanged);
             // 
             // chart1
             // 
-            chartArea5.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea5);
-            legend5.Enabled = false;
-            legend5.Name = "Legend1";
-            this.chart1.Legends.Add(legend5);
+            chartArea1.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea1);
+            legend1.Enabled = false;
+            legend1.Name = "Legend1";
+            this.chart1.Legends.Add(legend1);
             this.chart1.Location = new System.Drawing.Point(344, 17);
             this.chart1.Name = "chart1";
-            series5.ChartArea = "ChartArea1";
-            series5.Legend = "Legend1";
-            series5.Name = "Series1";
-            this.chart1.Series.Add(series5);
+            series1.ChartArea = "ChartArea1";
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            this.chart1.Series.Add(series1);
             this.chart1.Size = new System.Drawing.Size(500, 350);
             this.chart1.TabIndex = 33;
             this.chart1.Text = "chart1";
             // 
             // chart2
             // 
-            chartArea6.Name = "ChartArea1";
-            this.chart2.ChartAreas.Add(chartArea6);
-            legend6.Enabled = false;
-            legend6.Name = "Legend1";
-            this.chart2.Legends.Add(legend6);
+            chartArea2.Name = "ChartArea1";
+            this.chart2.ChartAreas.Add(chartArea2);
+            legend2.Enabled = false;
+            legend2.Name = "Legend1";
+            this.chart2.Legends.Add(legend2);
             this.chart2.Location = new System.Drawing.Point(850, 17);
             this.chart2.Name = "chart2";
-            series6.ChartArea = "ChartArea1";
-            series6.Legend = "Legend1";
-            series6.Name = "Series1";
-            this.chart2.Series.Add(series6);
+            series2.ChartArea = "ChartArea1";
+            series2.Legend = "Legend1";
+            series2.Name = "Series1";
+            this.chart2.Series.Add(series2);
             this.chart2.Size = new System.Drawing.Size(500, 350);
             this.chart2.TabIndex = 34;
             this.chart2.Text = "chart2";
             // 
             // chart3
             // 
-            chartArea7.Name = "ChartArea1";
-            this.chart3.ChartAreas.Add(chartArea7);
-            legend7.Enabled = false;
-            legend7.Name = "Legend1";
-            this.chart3.Legends.Add(legend7);
+            chartArea3.Name = "ChartArea1";
+            this.chart3.ChartAreas.Add(chartArea3);
+            legend3.Enabled = false;
+            legend3.Name = "Legend1";
+            this.chart3.Legends.Add(legend3);
             this.chart3.Location = new System.Drawing.Point(344, 373);
             this.chart3.Name = "chart3";
-            series7.ChartArea = "ChartArea1";
-            series7.Legend = "Legend1";
-            series7.Name = "Series1";
-            this.chart3.Series.Add(series7);
+            series3.ChartArea = "ChartArea1";
+            series3.Legend = "Legend1";
+            series3.Name = "Series1";
+            this.chart3.Series.Add(series3);
             this.chart3.Size = new System.Drawing.Size(500, 350);
             this.chart3.TabIndex = 33;
             this.chart3.Text = "chart1";
             // 
             // chart4
             // 
-            chartArea8.Name = "ChartArea1";
-            this.chart4.ChartAreas.Add(chartArea8);
-            legend8.Enabled = false;
-            legend8.Name = "Legend1";
-            this.chart4.Legends.Add(legend8);
+            chartArea4.Name = "ChartArea1";
+            this.chart4.ChartAreas.Add(chartArea4);
+            legend4.Enabled = false;
+            legend4.Name = "Legend1";
+            this.chart4.Legends.Add(legend4);
             this.chart4.Location = new System.Drawing.Point(850, 373);
             this.chart4.Name = "chart4";
-            series8.ChartArea = "ChartArea1";
-            series8.Legend = "Legend1";
-            series8.Name = "Series1";
-            series8.XAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
-            this.chart4.Series.Add(series8);
+            series4.ChartArea = "ChartArea1";
+            series4.Legend = "Legend1";
+            series4.Name = "Series1";
+            series4.XAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
+            this.chart4.Series.Add(series4);
             this.chart4.Size = new System.Drawing.Size(500, 350);
             this.chart4.TabIndex = 33;
             this.chart4.Text = "chart1";
-            // 
-            // groupBox4
-            // 
-            this.groupBox4.BackColor = System.Drawing.SystemColors.Control;
-            this.groupBox4.Controls.Add(this.button1);
-            this.groupBox4.Controls.Add(this.textBox1);
-            this.groupBox4.Controls.Add(this.textBox2);
-            this.groupBox4.Controls.Add(this.label5);
-            this.groupBox4.Controls.Add(this.label6);
-            this.groupBox4.Controls.Add(this.label12);
-            this.groupBox4.Controls.Add(this.label13);
-            this.groupBox4.Controls.Add(this.label14);
-            this.groupBox4.Controls.Add(this.label15);
-            this.groupBox4.Controls.Add(this.label17);
-            this.groupBox4.Controls.Add(this.label19);
-            this.groupBox4.Controls.Add(this.label20);
-            this.groupBox4.Controls.Add(this.label21);
-            this.groupBox4.Controls.Add(this.label22);
-            this.groupBox4.Controls.Add(this.textBox3);
-            this.groupBox4.Controls.Add(this.textBox4);
-            this.groupBox4.Controls.Add(this.textBox5);
-            this.groupBox4.Controls.Add(this.textBox6);
-            this.groupBox4.Controls.Add(this.textBox7);
-            this.groupBox4.Controls.Add(this.textBox8);
-            this.groupBox4.Controls.Add(this.textBox9);
-            this.groupBox4.Controls.Add(this.textBox10);
-            this.groupBox4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.groupBox4.Location = new System.Drawing.Point(9, 10);
-            this.groupBox4.Margin = new System.Windows.Forms.Padding(2);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox4.Size = new System.Drawing.Size(135, 270);
-            this.groupBox4.TabIndex = 0;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Параметры модели";
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(55, 245);
-            this.button1.Margin = new System.Windows.Forms.Padding(2);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 19);
-            this.button1.TabIndex = 27;
-            this.button1.Text = "Принять";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.Button_setParam_Click);
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(55, 222);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(2);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(76, 20);
-            this.textBox1.TabIndex = 26;
-            this.textBox1.Text = "0,00767";
-            this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // textBox2
-            // 
-            this.textBox2.Location = new System.Drawing.Point(55, 199);
-            this.textBox2.Margin = new System.Windows.Forms.Padding(2);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(76, 20);
-            this.textBox2.TabIndex = 25;
-            this.textBox2.Text = "4,481";
-            this.textBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(4, 202);
-            this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(44, 13);
-            this.label5.TabIndex = 24;
-            this.label5.Text = "gamma:";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(4, 226);
-            this.label6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(17, 13);
-            this.label6.TabIndex = 23;
-            this.label6.Text = "E:";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(4, 158);
-            this.label12.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(27, 13);
-            this.label12.TabIndex = 21;
-            this.label12.Text = "h_x:";
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(4, 180);
-            this.label13.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(17, 13);
-            this.label13.TabIndex = 20;
-            this.label13.Text = "B:";
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(16, 158);
-            this.label14.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(0, 13);
-            this.label14.TabIndex = 19;
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(4, 135);
-            this.label15.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(27, 13);
-            this.label15.TabIndex = 18;
-            this.label15.Text = "h_fi:";
-            // 
-            // label17
-            // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(4, 112);
-            this.label17.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(16, 13);
-            this.label17.TabIndex = 17;
-            this.label17.Text = "g:";
-            // 
-            // label19
-            // 
-            this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(4, 92);
-            this.label19.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(18, 13);
-            this.label19.TabIndex = 16;
-            this.label19.Text = "R:";
-            // 
-            // label20
-            // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(4, 67);
-            this.label20.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(12, 13);
-            this.label20.TabIndex = 15;
-            this.label20.Text = "l:";
-            // 
-            // label21
-            // 
-            this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(4, 44);
-            this.label21.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(18, 13);
-            this.label21.TabIndex = 14;
-            this.label21.Text = "m:";
-            // 
-            // label22
-            // 
-            this.label22.AutoSize = true;
-            this.label22.Location = new System.Drawing.Point(4, 21);
-            this.label22.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(19, 13);
-            this.label22.TabIndex = 13;
-            this.label22.Text = "M:";
-            // 
-            // textBox3
-            // 
-            this.textBox3.Location = new System.Drawing.Point(55, 131);
-            this.textBox3.Margin = new System.Windows.Forms.Padding(2);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(76, 20);
-            this.textBox3.TabIndex = 7;
-            this.textBox3.Text = "0,0024";
-            this.textBox3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // textBox4
-            // 
-            this.textBox4.Location = new System.Drawing.Point(55, 108);
-            this.textBox4.Margin = new System.Windows.Forms.Padding(2);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(76, 20);
-            this.textBox4.TabIndex = 3;
-            this.textBox4.Text = "9,81";
-            this.textBox4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // textBox5
-            // 
-            this.textBox5.Location = new System.Drawing.Point(55, 176);
-            this.textBox5.Margin = new System.Windows.Forms.Padding(2);
-            this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(76, 20);
-            this.textBox5.TabIndex = 6;
-            this.textBox5.Text = "0,024";
-            this.textBox5.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // textBox6
-            // 
-            this.textBox6.Location = new System.Drawing.Point(55, 85);
-            this.textBox6.Margin = new System.Windows.Forms.Padding(2);
-            this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(76, 20);
-            this.textBox6.TabIndex = 2;
-            this.textBox6.Text = "2,6";
-            this.textBox6.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // textBox7
-            // 
-            this.textBox7.Location = new System.Drawing.Point(55, 63);
-            this.textBox7.Margin = new System.Windows.Forms.Padding(2);
-            this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(76, 20);
-            this.textBox7.TabIndex = 5;
-            this.textBox7.Text = "0,641";
-            this.textBox7.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // textBox8
-            // 
-            this.textBox8.Location = new System.Drawing.Point(55, 154);
-            this.textBox8.Margin = new System.Windows.Forms.Padding(2);
-            this.textBox8.Name = "textBox8";
-            this.textBox8.Size = new System.Drawing.Size(76, 20);
-            this.textBox8.TabIndex = 4;
-            this.textBox8.Text = "5,4";
-            this.textBox8.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // textBox9
-            // 
-            this.textBox9.Location = new System.Drawing.Point(55, 40);
-            this.textBox9.Margin = new System.Windows.Forms.Padding(2);
-            this.textBox9.Name = "textBox9";
-            this.textBox9.Size = new System.Drawing.Size(76, 20);
-            this.textBox9.TabIndex = 1;
-            this.textBox9.Text = "0,019";
-            this.textBox9.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // textBox10
-            // 
-            this.textBox10.Location = new System.Drawing.Point(55, 17);
-            this.textBox10.Margin = new System.Windows.Forms.Padding(2);
-            this.textBox10.Name = "textBox10";
-            this.textBox10.Size = new System.Drawing.Size(76, 20);
-            this.textBox10.TabIndex = 0;
-            this.textBox10.Text = "1,073";
-            this.textBox10.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // Timer1
             // 
@@ -1797,7 +1474,6 @@ namespace PortalCraneModel
             this.Controls.Add(this.roots_gbox);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox1);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "PortalCraneModel";
@@ -1815,8 +1491,6 @@ namespace PortalCraneModel
             ((System.ComponentModel.ISupportInitialize)(this.chart2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart4)).EndInit();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -1906,6 +1580,11 @@ namespace PortalCraneModel
         }
 
         private void Tbox_lambda2_im_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Tbox_lambda1_re_TextChanged(object sender, EventArgs e)
         {
 
         }
