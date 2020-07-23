@@ -1,5 +1,8 @@
 #include "pch.h"
+
+#include "TDinModel.h"
 #include "Calc.h"
+
 #include <fstream>
 #include <complex>
 #include <fstream>
@@ -67,7 +70,7 @@ void f(const std::vector<double>& _X, std::vector<double>& _k, bool system, bool
     // ( a41 a42 0 a44 )     (  x_dt  )     ( a41 * fi + a42 * fi_dt + a44 * x_dt )
 
     // U(t) = v(t) = k^T * x = k1 * fi + k2 * fi_dt + k3 * (x - x*) + k4 * x_dt:
-    v_t = (reg_on == true) ? (reg[0] * _X[0]) + (reg[1] * _X[1]) + (reg[2] * _X[2]) + (reg[3] * _X[3]) : 0;
+    v_t = reg_on ? (reg[0] * _X[0]) + (reg[1] * _X[1]) + (reg[2] * _X[2]) + (reg[3] * _X[3]) : 0;
 
     // x_dt = Ax + bU(t):
     _k[0] = _X[1]; // fi_dt
@@ -92,7 +95,7 @@ void f(const std::vector<double>& _X, std::vector<double>& _k, bool system, bool
   else // non-linear system
   {
     double f_t; // sila tyagi
-    v_t = (reg_on == true) ?
+    v_t = reg_on ?
       reg[0] * ((_X[0] + M_PI) / (2 * M_PI) - M_PI) + reg[1] * _X[1] + reg[2] * _X[2] + reg[3] * _X[3] : 0;
     f_t = gamma / R * (v_t - E * _X[3] / Beta);
 
@@ -109,29 +112,6 @@ void f(const std::vector<double>& _X, std::vector<double>& _k, bool system, bool
       - l * _k[1] / cos(_X[0])
       - g * tan(_X[0]);
   }
-}
-
-point TDinModel::RK4(bool system, bool reg_on)
-{
-  static std::vector<double> k1(4), k2(4), k3(4), k4(4), temp(4);
-  for (int i = 0; i < drawStCount; i++) {
-    f(X, k1, system, reg_on);
-    for (int j = 0; j < n; j++)
-      temp[j] = X[j] + k1[j] * 0.5 * dt;
-    f(temp, k2, system, reg_on);
-    for (int j = 0; j < n; j++)
-      temp[j] = X[j] + k2[j] * 0.5 * dt;
-    f(temp, k3, system, reg_on);
-    for (int j = 0; j < n; j++)
-      temp[j] = X[j] + k3[j] * dt;
-    f(temp, k4, system, reg_on);
-    for (int j = 0; j < n; j++)
-      X[j] = X[j] + dt / 6 * (k1[j] + 2 * k2[j] + 2 * k3[j] + k4[j]);
-  }
-
-  X[4] += dt * drawStCount;
-  point res(X[0], X[1], X[2], X[3], X[4]);
-  return res;
 }
 
 void SetModelParams(double _M, double _m, double _l, double _R, double _g, 
@@ -192,7 +172,7 @@ void GetAllDrawPoints(TAllDrawPoints* allDrawData, bool system, bool reg_on)
   allDrawData->allDrawPoints[0] = drawPoint;
   std::ofstream fout;
   fout.open("values.txt", ios_base::trunc);
-  for (int i = 1; i < allDrawData->drawCount; i++)
+  for (unsigned i = 1; i < allDrawData->drawCount; i++)
   {
     drawPoint = model.RK4(system, reg_on);
     allDrawData->allDrawPoints[i] = drawPoint;
