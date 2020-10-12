@@ -12,6 +12,8 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 
+using Contour_line;
+
 namespace PortalCraneModel
 {
     public class PortalCraneModel : Form
@@ -133,6 +135,17 @@ namespace PortalCraneModel
         private TextBox textBox_dfi_dt;
         private TabPage tabPage2;
         private Timer Timer1;
+        private PictureBox pic;
+        public TextBox xmin_t;
+        public TextBox ymin_t;
+        public TextBox xmax_t;
+        public TextBox ymax_t;
+        public TextBox DL_M3;
+        public TextBox DL_N;
+        public TextBox DL_M1;
+        public TextBox DL_M2;
+        private TextBox func_num_text;
+        private Button button1;
         private IContainer components;
 
         [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
@@ -349,6 +362,8 @@ namespace PortalCraneModel
                 stopwatch.Stop();
                 this.textBox_run_time.Text = stopwatch.Elapsed.TotalSeconds.ToString();
                 this.textBox_run_time.BackColor = Color.LightGreen;
+
+                //button1.Enabled = true;
             }
         }
 
@@ -656,6 +671,17 @@ namespace PortalCraneModel
             this.textBox_x = new System.Windows.Forms.TextBox();
             this.textBox_dfi_dt = new System.Windows.Forms.TextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.button1 = new System.Windows.Forms.Button();
+            this.func_num_text = new System.Windows.Forms.TextBox();
+            this.xmin_t = new System.Windows.Forms.TextBox();
+            this.ymin_t = new System.Windows.Forms.TextBox();
+            this.xmax_t = new System.Windows.Forms.TextBox();
+            this.ymax_t = new System.Windows.Forms.TextBox();
+            this.DL_M3 = new System.Windows.Forms.TextBox();
+            this.DL_N = new System.Windows.Forms.TextBox();
+            this.DL_M1 = new System.Windows.Forms.TextBox();
+            this.DL_M2 = new System.Windows.Forms.TextBox();
+            this.pic = new System.Windows.Forms.PictureBox();
             this.Timer1 = new System.Windows.Forms.Timer(this.components);
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -668,6 +694,8 @@ namespace PortalCraneModel
             this.roots_gbox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.groupBox2.SuspendLayout();
+            this.tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pic)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -1492,6 +1520,17 @@ namespace PortalCraneModel
             // 
             // tabPage2
             // 
+            this.tabPage2.Controls.Add(this.pic);
+            this.tabPage2.Controls.Add(this.button1);
+            this.tabPage2.Controls.Add(this.func_num_text);
+            this.tabPage2.Controls.Add(this.xmin_t);
+            this.tabPage2.Controls.Add(this.ymin_t);
+            this.tabPage2.Controls.Add(this.xmax_t);
+            this.tabPage2.Controls.Add(this.ymax_t);
+            this.tabPage2.Controls.Add(this.DL_M3);
+            this.tabPage2.Controls.Add(this.DL_N);
+            this.tabPage2.Controls.Add(this.DL_M1);
+            this.tabPage2.Controls.Add(this.DL_M2);
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
@@ -1499,6 +1538,107 @@ namespace PortalCraneModel
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Линии равного уровня";
             this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(679, 207);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 10;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // func_num_text
+            // 
+            this.func_num_text.Location = new System.Drawing.Point(678, 77);
+            this.func_num_text.Name = "func_num_text";
+            this.func_num_text.Size = new System.Drawing.Size(100, 20);
+            this.func_num_text.TabIndex = 9;
+            this.func_num_text.Text = "2";
+            this.func_num_text.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // xmin_t
+            // 
+            this.xmin_t.Location = new System.Drawing.Point(678, 103);
+            this.xmin_t.Name = "xmin_t";
+            this.xmin_t.Size = new System.Drawing.Size(76, 20);
+            this.xmin_t.TabIndex = 8;
+            this.xmin_t.Text = "-1";
+            this.xmin_t.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // ymin_t
+            // 
+            this.ymin_t.Location = new System.Drawing.Point(678, 129);
+            this.ymin_t.Name = "ymin_t";
+            this.ymin_t.Size = new System.Drawing.Size(76, 20);
+            this.ymin_t.TabIndex = 7;
+            this.ymin_t.Text = "-1";
+            this.ymin_t.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // xmax_t
+            // 
+            this.xmax_t.Location = new System.Drawing.Point(678, 155);
+            this.xmax_t.Name = "xmax_t";
+            this.xmax_t.Size = new System.Drawing.Size(76, 20);
+            this.xmax_t.TabIndex = 6;
+            this.xmax_t.Text = "1";
+            this.xmax_t.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // ymax_t
+            // 
+            this.ymax_t.Location = new System.Drawing.Point(678, 181);
+            this.ymax_t.Name = "ymax_t";
+            this.ymax_t.Size = new System.Drawing.Size(76, 20);
+            this.ymax_t.TabIndex = 5;
+            this.ymax_t.Text = "1";
+            this.ymax_t.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // DL_M3
+            // 
+            this.DL_M3.Location = new System.Drawing.Point(784, 181);
+            this.DL_M3.Name = "DL_M3";
+            this.DL_M3.Size = new System.Drawing.Size(76, 20);
+            this.DL_M3.TabIndex = 4;
+            this.DL_M3.Text = "3";
+            this.DL_M3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // DL_N
+            // 
+            this.DL_N.Location = new System.Drawing.Point(784, 103);
+            this.DL_N.Name = "DL_N";
+            this.DL_N.Size = new System.Drawing.Size(76, 20);
+            this.DL_N.TabIndex = 3;
+            this.DL_N.Text = "50";
+            this.DL_N.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // DL_M1
+            // 
+            this.DL_M1.Location = new System.Drawing.Point(784, 129);
+            this.DL_M1.Name = "DL_M1";
+            this.DL_M1.Size = new System.Drawing.Size(76, 20);
+            this.DL_M1.TabIndex = 2;
+            this.DL_M1.Text = "10";
+            this.DL_M1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // DL_M2
+            // 
+            this.DL_M2.Location = new System.Drawing.Point(784, 155);
+            this.DL_M2.Name = "DL_M2";
+            this.DL_M2.Size = new System.Drawing.Size(76, 20);
+            this.DL_M2.TabIndex = 1;
+            this.DL_M2.Text = "5";
+            this.DL_M2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // pic
+            // 
+            this.pic.BackColor = System.Drawing.SystemColors.Control;
+            this.pic.Location = new System.Drawing.Point(8, 6);
+            this.pic.Name = "pic";
+            this.pic.Size = new System.Drawing.Size(600, 600);
+            this.pic.TabIndex = 0;
+            this.pic.TabStop = false;
+            this.pic.Paint += new System.Windows.Forms.PaintEventHandler(this.pic_Paint);
             // 
             // Timer1
             // 
@@ -1531,6 +1671,9 @@ namespace PortalCraneModel
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            this.tabPage2.ResumeLayout(false);
+            this.tabPage2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pic)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1616,5 +1759,262 @@ namespace PortalCraneModel
             tbox_lambda4_im.Text = "0";
             tbox_lambda4_im.ReadOnly = false;
         }
+
+        //===============================================================================================================================================================
+
+        static public double[] pt;
+        static double XMin, XMax, YMin, YMax;
+
+        struct Node
+        {
+            public double x;
+            public double y;
+            public double Q;
+        }
+
+        class eque_lines
+        {
+            Node[] pDat;
+            double[] pQ;
+            int N; // число разбиений сетки
+            int M; // общее число уровней
+            int M1; // число основных узлов
+            int M2; // число подуузлов
+            int M3; // число "подподузлов"
+
+            double m1;
+            double m2;
+            double c1;
+            double c2;
+            double[] w1 = new double[2];
+            double[] w2 = new double[2];
+
+
+            public eque_lines()
+            {
+                pDat = null;
+                pQ = null;
+            }
+
+            public void CreateDat(int _N, int _M1, int _M2, int _M3)
+            {
+                N = _N;
+                M1 = _M1;
+                M2 = _M2;
+                M3 = _M3;
+                M = M1 + M2 + M3 - 1;
+
+                //	DelDat();
+                if ((pDat = new Node[(N + 1) * (N + 1)]) == null)
+                    return;
+                else
+                    if ((pQ = new double[M + 1]) == null)
+                    return;
+            }
+            public void CreateDat1(double _m1, double _m2, double _c1, double _c2, double[] _w1, double[] _w2)
+            {
+                m1 = _m1;
+                m2 = _m2;
+                c1 = _c1;
+                c2 = _c2;
+                w1 = _w1;
+                w2 = _w2;
+            }
+            public void SetDat(double _a0, double _b0, double _a1, double _b1, bool UseGKLS, int F_Num)
+            {
+                CFunction F;
+                F = new CFunction();
+                if (pDat == null || pQ == null)
+                    return;
+                else
+                {
+                    double Qmin, Qmax, QQ;
+                    int i, j; // номер узла
+                    double hx = (_b0 - _a0) / N; // вычисление шага по x
+                    double hy = (_b1 - _a1) / N; // вычисление шага по y
+                    double[] x_p = new double[2];
+                    // обход сетки
+                    pt = new double[2];
+                    Qmin = 1.7976931348623158e+308;
+                    Qmax = 2.2250738585072014e-308;
+                    if (F_Num == 7)
+                        F.set_func(m1, m2, c1, c2, w1, w2);
+                    F.set(F_Num);
+                    for (i = 0; i <= N; i++)
+                        for (j = 0; j <= N; j++)
+                        {
+                            // заполнение структуры сетки
+                            // координаты узла сетки
+                            x_p[0] = pDat[(N + 1) * i + j].x = _a0 + hx * i;
+                            x_p[1] = pDat[(N + 1) * i + j].y = _a1 + hy * j;
+                            // значение функции в узле
+                            pt[0] = x_p[0];
+                            pt[1] = x_p[1];
+                            QQ = pDat[(N + 1) * i + j].Q = F.GetValue(pt);
+
+                            //		printf("QQ = %f\n",QQ);
+                            // поиск минимального и максимального значения на сетке
+                            if ((i == 0) && (j == 0) || (Qmin > QQ))
+                                Qmin = QQ;
+                            if ((i == 0) && (j == 0) || (Qmax < QQ))
+                                Qmax = QQ;
+                        }
+                    double hQ1 = (Qmax - Qmin) / M1; // шаг функции по уровням
+                    int ku = 0; // позиция в сетке уровней   
+                    for (i = 0; i < M1; i++) // вычисление значений функции на основных уровнях 
+                        pQ[ku++] = Qmax - hQ1 * i;
+
+                    double hQ2 = hQ1 / (M2 + 1); // шаг функции по подуровням
+                    for (i = 1; i <= M2; i++) // вычисление значений функции на подуровнях
+                        pQ[ku++] = pQ[M1 - 1] - hQ2 * i;
+
+                    for (i = 1; i <= M3; i++) // вычисление значений функции на "под-подуровнях"
+                        pQ[ku++] = pQ[M1 + M2 - 1] - (hQ2 / (M3 + 1)) * i;
+
+                }
+
+            }
+
+            public void SendLines(Graphics g, PictureBox pic)
+            {
+                int i, j, u, s;
+                for (i = 0; i < N; i++)
+                    for (j = 0; j < N; j++)
+                    {
+                        for (u = 0; u <= M; u++)
+                        {
+                            double Qu = pQ[u];// Уровень
+                            double[] x = new double[5];
+                            double[] y = new double[5];//Соединяемые точки
+                            int kt = 0;// Количество соединяемых точек
+                            double x0, x1, y0, y1, Q0, Q1;
+
+                            //Нижняя сторона
+                            x0 = pDat[(N + 1) * i + j].x;
+                            x1 = pDat[(N + 1) * (i + 1) + j].x;
+                            y0 = pDat[(N + 1) * i + j].y;
+                            Q0 = pDat[(N + 1) * i + j].Q;
+                            Q1 = pDat[(N + 1) * (i + 1) + j].Q;
+                            if ((Q0 - Qu) * (Qu - Q1) >= 0 && (Q1 != Q0))
+                            {
+                                y[kt] = y0;
+                                x[kt++] = x0 + (x1 - x0) * (Qu - Q0) / (Q1 - Q0);
+                            }
+
+                            //Левая сторона
+                            x0 = pDat[(N + 1) * i + j].x;
+                            y0 = pDat[(N + 1) * i + j].y;
+                            y1 = pDat[(N + 1) * i + j + 1].y;
+                            Q0 = pDat[(N + 1) * i + j].Q;
+                            Q1 = pDat[(N + 1) * i + j + 1].Q;
+                            if ((Q0 - Qu) * (Qu - Q1) >= 0 && (Q1 != Q0))
+                            {
+                                x[kt] = x0;
+                                y[kt++] = y0 + (y1 - y0) * (Qu - Q0) / (Q1 - Q0);
+                            }
+
+                            //Верхняя сторона
+                            x0 = pDat[(N + 1) * i + j + 1].x;
+                            x1 = pDat[(N + 1) * (i + 1) + j + 1].x;
+                            y0 = pDat[(N + 1) * i + j + 1].y;
+                            Q0 = pDat[(N + 1) * i + j + 1].Q;
+                            Q1 = pDat[(N + 1) * (i + 1) + j + 1].Q;
+                            if ((Q0 - Qu) * (Qu - Q1) >= 0 && (Q1 != Q0))
+                            {
+                                y[kt] = y0;
+                                x[kt++] = x0 + (x1 - x0) * (Qu - Q0) / (Q1 - Q0);
+                            }
+
+                            //Правая сторона
+                            x0 = pDat[(N + 1) * (i + 1) + j].x;
+                            y0 = pDat[(N + 1) * (i + 1) + j].y;
+                            y1 = pDat[(N + 1) * (i + 1) + j + 1].y;
+                            Q0 = pDat[(N + 1) * (i + 1) + j].Q;
+                            Q1 = pDat[(N + 1) * (i + 1) + j + 1].Q;
+                            if ((Q0 - Qu) * (Qu - Q1) >= 0 && (Q1 != Q0))
+                            {
+                                x[kt] = x0;
+                                y[kt++] = y0 + (y1 - y0) * (Qu - Q0) / (Q1 - Q0);
+                            }
+
+                            if (kt > 0) //Прорисовка линии
+                            {
+                                if (u < M1)
+                                {
+                                    for (s = 0; s < kt - 1; s++)
+                                    {
+                                        Pen p = new Pen(Color.DimGray, 2);
+                                        g.DrawLine(p, (float)((x[s] - XMin) / (XMax - XMin) * (pic.Width - 1)), (float)((YMax - y[s]) / (YMax - YMin) * (pic.Height - 1)), (float)((x[s + 1] - XMin) / (XMax - XMin) * (pic.Width - 1)), (float)((YMax - y[s + 1]) / (YMax - YMin) * (pic.Height - 1)));
+                                        //	printf("Drawed Line\n");
+
+                                    }
+                                }
+                                else if (u < M1 + M2)
+                                {
+                                    for (s = 0; s < kt - 1; s++)
+                                    {
+                                        Pen p = new Pen(Color.DimGray, 2);
+                                        g.DrawLine(p, (float)((x[s] - XMin) / (XMax - XMin) * (pic.Width - 1)), (float)((YMax - y[s]) / (YMax - YMin) * (pic.Height - 1)), (float)((x[s + 1] - XMin) / (XMax - XMin) * (pic.Width - 1)), (float)((YMax - y[s + 1]) / (YMax - YMin) * (pic.Height - 1)));
+                                        //	printf("Drawed Line\n");
+                                    }
+                                }
+                                else
+                                {
+                                    for (s = 0; s < kt - 1; s++)
+                                    {
+                                        Pen p = new Pen(Color.DimGray, 2);
+                                        g.DrawLine(p, (float)((x[s] - XMin) / (XMax - XMin) * (pic.Width - 1)), (float)((YMax - y[s]) / (YMax - YMin) * (pic.Height - 1)), (float)((x[s + 1] - XMin) / (XMax - XMin) * (pic.Width - 1)), (float)((YMax - y[s + 1]) / (YMax - YMin) * (pic.Height - 1)));
+                                        //	printf("Drawed Line\n");
+                                    }
+                                }
+                            }
+                            //Конец прорисовки линии уровня Qu
+                        }//Конец перебора всех Qu
+                    }
+            }
+        }
+
+
+        eque_lines Draw_Line = new eque_lines();
+        private void button1_Click(object sender, EventArgs e)
+        {
+            int _N = System.Convert.ToInt32(DL_N.Text);
+            int _M1 = System.Convert.ToInt32(DL_M1.Text);
+            int _M2 = System.Convert.ToInt32(DL_M2.Text);
+            int _M3 = System.Convert.ToInt32(DL_M3.Text);
+            Draw_Line.CreateDat(_N, _M1, _M2, _M3);
+            XMin = System.Convert.ToDouble(xmin_t.Text);
+            XMax = System.Convert.ToDouble(xmax_t.Text);
+            YMin = System.Convert.ToDouble(ymin_t.Text);
+            YMax = System.Convert.ToDouble(ymax_t.Text);
+
+            //if (func_num_text.Text == System.Convert.ToString(7))
+            //{
+            //    double _m1 = System.Convert.ToDouble(textBox_m1.Text);
+            //    double _m2 = System.Convert.ToDouble(textBox_m2.Text);
+            //    double _c1 = System.Convert.ToDouble(textBox_c1.Text);
+            //    double _c2 = System.Convert.ToDouble(textBox_c2.Text);
+            //    double[] _w1 = new double[2];
+            //    _w1[0] = System.Convert.ToDouble(textBox_w10.Text);
+            //    _w1[1] = System.Convert.ToDouble(textBox_w11.Text);
+            //    double[] _w2 = new double[2];
+            //    _w2[0] = System.Convert.ToDouble(textBox_w20.Text);
+            //    _w2[1] = System.Convert.ToDouble(textBox_w21.Text);
+
+            //    Draw_Line.CreateDat1(_m1, _m2, _c1, _c2, _w1, _w2);
+            //}
+
+            Draw_Line.SetDat(XMin, XMax, YMin, YMax, false, System.Convert.ToInt32(func_num_text.Text));
+            pic.Invalidate();
+
+        }
+
+        private void pic_Paint(object sender, PaintEventArgs e)
+        {
+            e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.Default;
+            Draw_Line.SendLines(e.Graphics, pic);
+        }
     }
 }
+
+
