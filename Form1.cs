@@ -58,42 +58,13 @@ namespace PortalCraneModel
 
         public int drawStCount;
         public bool inDinamic;
-        private IContainer components;
-        private GroupBox groupBox1;
-        private TextBox textBox_h_fi;
-        private TextBox textBox_B;
-        private TextBox textBox_l;
-        private TextBox textBox_h_x;
-        private TextBox textBox_mmal;
-        private TextBox textBox_M;
-        private TextBox textBox_R;
-        private TextBox textBox_g;
-        private Label label_B;
-        private Label label7;
-        private Label label_h_fi;
-        private Label label_g;
-        private Label label_R;
-        private Label label_l;
-        private Label label_mmal;
-        private Label label_M;
-        private TextBox textBox_fi;
-        private TextBox textBox_x;
-        private TextBox textBox_dfi_dt;
-        private TextBox textBox_dx_dt;
-        private GroupBox groupBox2;
-        private Label labelfi;
-        private Label labeldfi_dt;
-        private Label labelx;
-        private Label labeldx_dt;
-        private Label label_h_x;
-        private TextBox textBox_E;
-        private TextBox textBox_gamma;
-        private Label label_gamma;
-        private Label label_E;
-        private Button Button_setParam;
-        private Button Button_setInitVal;
+        private TabControl tabControl1;
+        private TabPage tabPage1;
         private GroupBox groupBox3;
+        private Label textBox_run_time;
+        private Label label16;
         private Button Button_setCalcParam;
+        private CheckBox checkBox_dinDraw;
         private Label label4;
         private Label label3;
         private Label label2;
@@ -102,35 +73,67 @@ namespace PortalCraneModel
         private TextBox textBox_t_stop;
         private TextBox textBox_t_start;
         private TextBox textBox_step;
-        private Button Button_runCalc;
-        private Label label16;
+        private GroupBox groupBox1;
+        private Button Button_setParam;
+        private TextBox textBox_E;
+        private TextBox textBox_gamma;
+        private Label label_gamma;
+        private Label label_E;
+        private Label label_h_x;
+        private Label label_B;
+        private Label label7;
+        private Label label_h_fi;
+        private Label label_g;
+        private Label label_R;
+        private Label label_l;
+        private Label label_mmal;
+        private Label label_M;
+        private TextBox textBox_h_fi;
+        private TextBox textBox_g;
+        private TextBox textBox_B;
+        private TextBox textBox_R;
+        private TextBox textBox_l;
+        private TextBox textBox_h_x;
+        private TextBox textBox_mmal;
+        private TextBox textBox_M;
         private GroupBox roots_gbox;
+        private Button button2;
+        private Button btn_clear;
+        private Label label11;
+        private Label label10;
+        private TextBox tbox_lambda4_im;
+        private TextBox tbox_lambda4_re;
+        private Button Button_runCalc;
+        private TextBox tbox_lambda2_im;
+        private TextBox tbox_lambda2_re;
+        private Label label9;
+        private Label label8;
         private Label label18;
         private Label root1;
         private TextBox tbox_lambda3_im;
         private TextBox tbox_lambda1_re;
         private TextBox tbox_lambda3_re;
         private TextBox tbox_lambda1_im;
-        private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
         private Chart chart2;
-        private Chart chart3;
         private Chart chart4;
-        private Button btn_clear;
-        private Label label10;
-        private TextBox tbox_lambda4_im;
-        private TextBox tbox_lambda4_re;
-        private TextBox tbox_lambda2_im;
-        private TextBox tbox_lambda2_re;
-        private Label label9;
-        private Label label8;
-        private Label label11;
-        private Button button2;
-        private CheckBox checkBox_dinDraw;
-        private Timer Timer1;
+        private Chart chart3;
+        private Chart chart1;
         private CheckBox cBox_non_linear;
-        private DataGridView dataGridView1;
         private CheckBox cBox_Reg_on;
-        private Label textBox_run_time;
+        private DataGridView dataGridView1;
+        private GroupBox groupBox2;
+        private Button Button_setInitVal;
+        private Label labelfi;
+        private Label labeldfi_dt;
+        private Label labelx;
+        private Label labeldx_dt;
+        private TextBox textBox_fi;
+        private TextBox textBox_dx_dt;
+        private TextBox textBox_x;
+        private TextBox textBox_dfi_dt;
+        private TabPage tabPage2;
+        private Timer Timer1;
+        private IContainer components;
 
         [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetModelParams(double _M, double _m, double _l, double _R, double _g,
@@ -567,18 +570,37 @@ namespace PortalCraneModel
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea7 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend7 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea8 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend8 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.chart2 = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.chart4 = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.chart3 = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.textBox_run_time = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.Button_setCalcParam = new System.Windows.Forms.Button();
+            this.checkBox_dinDraw = new System.Windows.Forms.CheckBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.textBox_drawStCount = new System.Windows.Forms.TextBox();
+            this.textBox_t_stop = new System.Windows.Forms.TextBox();
+            this.textBox_t_start = new System.Windows.Forms.TextBox();
+            this.textBox_step = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.Button_setParam = new System.Windows.Forms.Button();
             this.textBox_E = new System.Windows.Forms.TextBox();
@@ -602,30 +624,6 @@ namespace PortalCraneModel
             this.textBox_h_x = new System.Windows.Forms.TextBox();
             this.textBox_mmal = new System.Windows.Forms.TextBox();
             this.textBox_M = new System.Windows.Forms.TextBox();
-            this.textBox_fi = new System.Windows.Forms.TextBox();
-            this.textBox_x = new System.Windows.Forms.TextBox();
-            this.textBox_dfi_dt = new System.Windows.Forms.TextBox();
-            this.textBox_dx_dt = new System.Windows.Forms.TextBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.Button_setInitVal = new System.Windows.Forms.Button();
-            this.labelfi = new System.Windows.Forms.Label();
-            this.labeldfi_dt = new System.Windows.Forms.Label();
-            this.labelx = new System.Windows.Forms.Label();
-            this.labeldx_dt = new System.Windows.Forms.Label();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.textBox_run_time = new System.Windows.Forms.Label();
-            this.label16 = new System.Windows.Forms.Label();
-            this.Button_setCalcParam = new System.Windows.Forms.Button();
-            this.checkBox_dinDraw = new System.Windows.Forms.CheckBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.textBox_drawStCount = new System.Windows.Forms.TextBox();
-            this.textBox_t_stop = new System.Windows.Forms.TextBox();
-            this.textBox_t_start = new System.Windows.Forms.TextBox();
-            this.textBox_step = new System.Windows.Forms.TextBox();
-            this.Button_runCalc = new System.Windows.Forms.Button();
             this.roots_gbox = new System.Windows.Forms.GroupBox();
             this.button2 = new System.Windows.Forms.Button();
             this.btn_clear = new System.Windows.Forms.Button();
@@ -633,6 +631,7 @@ namespace PortalCraneModel
             this.label10 = new System.Windows.Forms.Label();
             this.tbox_lambda4_im = new System.Windows.Forms.TextBox();
             this.tbox_lambda4_re = new System.Windows.Forms.TextBox();
+            this.Button_runCalc = new System.Windows.Forms.Button();
             this.tbox_lambda2_im = new System.Windows.Forms.TextBox();
             this.tbox_lambda2_re = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
@@ -643,24 +642,282 @@ namespace PortalCraneModel
             this.tbox_lambda1_re = new System.Windows.Forms.TextBox();
             this.tbox_lambda3_re = new System.Windows.Forms.TextBox();
             this.tbox_lambda1_im = new System.Windows.Forms.TextBox();
-            this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.chart2 = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.chart3 = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.chart4 = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.Timer1 = new System.Windows.Forms.Timer(this.components);
             this.cBox_non_linear = new System.Windows.Forms.CheckBox();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.cBox_Reg_on = new System.Windows.Forms.CheckBox();
-            this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.groupBox3.SuspendLayout();
-            this.roots_gbox.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.Button_setInitVal = new System.Windows.Forms.Button();
+            this.labelfi = new System.Windows.Forms.Label();
+            this.labeldfi_dt = new System.Windows.Forms.Label();
+            this.labelx = new System.Windows.Forms.Label();
+            this.labeldx_dt = new System.Windows.Forms.Label();
+            this.textBox_fi = new System.Windows.Forms.TextBox();
+            this.textBox_dx_dt = new System.Windows.Forms.TextBox();
+            this.textBox_x = new System.Windows.Forms.TextBox();
+            this.textBox_dfi_dt = new System.Windows.Forms.TextBox();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.Timer1 = new System.Windows.Forms.Timer(this.components);
+            this.tabControl1.SuspendLayout();
+            this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.chart3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chart4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chart3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
+            this.groupBox3.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            this.roots_gbox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabPage1);
+            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(1364, 767);
+            this.tabControl1.TabIndex = 0;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.chart2);
+            this.tabPage1.Controls.Add(this.chart4);
+            this.tabPage1.Controls.Add(this.chart3);
+            this.tabPage1.Controls.Add(this.chart1);
+            this.tabPage1.Controls.Add(this.groupBox3);
+            this.tabPage1.Controls.Add(this.groupBox1);
+            this.tabPage1.Controls.Add(this.roots_gbox);
+            this.tabPage1.Controls.Add(this.cBox_non_linear);
+            this.tabPage1.Controls.Add(this.cBox_Reg_on);
+            this.tabPage1.Controls.Add(this.dataGridView1);
+            this.tabPage1.Controls.Add(this.groupBox2);
+            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(1356, 741);
+            this.tabPage1.TabIndex = 0;
+            this.tabPage1.Text = "Модель";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // chart2
+            // 
+            this.chart2.BackColor = System.Drawing.SystemColors.Control;
+            chartArea5.Name = "ChartArea1";
+            this.chart2.ChartAreas.Add(chartArea5);
+            legend5.Enabled = false;
+            legend5.Name = "Legend1";
+            this.chart2.Legends.Add(legend5);
+            this.chart2.Location = new System.Drawing.Point(849, 8);
+            this.chart2.Name = "chart2";
+            series5.ChartArea = "ChartArea1";
+            series5.Legend = "Legend1";
+            series5.Name = "Series1";
+            this.chart2.Series.Add(series5);
+            this.chart2.Size = new System.Drawing.Size(500, 350);
+            this.chart2.TabIndex = 55;
+            this.chart2.Text = "chart2";
+            // 
+            // chart4
+            // 
+            this.chart4.BackColor = System.Drawing.SystemColors.Control;
+            chartArea6.Name = "ChartArea1";
+            this.chart4.ChartAreas.Add(chartArea6);
+            legend6.Enabled = false;
+            legend6.Name = "Legend1";
+            this.chart4.Legends.Add(legend6);
+            this.chart4.Location = new System.Drawing.Point(849, 364);
+            this.chart4.Name = "chart4";
+            series6.ChartArea = "ChartArea1";
+            series6.Legend = "Legend1";
+            series6.Name = "Series1";
+            series6.XAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
+            this.chart4.Series.Add(series6);
+            this.chart4.Size = new System.Drawing.Size(500, 350);
+            this.chart4.TabIndex = 52;
+            this.chart4.Text = "chart1";
+            // 
+            // chart3
+            // 
+            this.chart3.BackColor = System.Drawing.SystemColors.Control;
+            chartArea7.Name = "ChartArea1";
+            this.chart3.ChartAreas.Add(chartArea7);
+            legend7.Enabled = false;
+            legend7.Name = "Legend1";
+            this.chart3.Legends.Add(legend7);
+            this.chart3.Location = new System.Drawing.Point(343, 364);
+            this.chart3.Name = "chart3";
+            series7.ChartArea = "ChartArea1";
+            series7.Legend = "Legend1";
+            series7.Name = "Series1";
+            this.chart3.Series.Add(series7);
+            this.chart3.Size = new System.Drawing.Size(500, 350);
+            this.chart3.TabIndex = 53;
+            this.chart3.Text = "chart1";
+            // 
+            // chart1
+            // 
+            this.chart1.BackColor = System.Drawing.SystemColors.Control;
+            chartArea8.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea8);
+            legend8.Enabled = false;
+            legend8.Name = "Legend1";
+            this.chart1.Legends.Add(legend8);
+            this.chart1.Location = new System.Drawing.Point(343, 8);
+            this.chart1.Name = "chart1";
+            series8.ChartArea = "ChartArea1";
+            series8.Legend = "Legend1";
+            series8.Name = "Series1";
+            this.chart1.Series.Add(series8);
+            this.chart1.Size = new System.Drawing.Size(500, 350);
+            this.chart1.TabIndex = 54;
+            this.chart1.Text = "chart1";
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.BackColor = System.Drawing.SystemColors.Control;
+            this.groupBox3.Controls.Add(this.textBox_run_time);
+            this.groupBox3.Controls.Add(this.label16);
+            this.groupBox3.Controls.Add(this.Button_setCalcParam);
+            this.groupBox3.Controls.Add(this.checkBox_dinDraw);
+            this.groupBox3.Controls.Add(this.label4);
+            this.groupBox3.Controls.Add(this.label3);
+            this.groupBox3.Controls.Add(this.label2);
+            this.groupBox3.Controls.Add(this.label1);
+            this.groupBox3.Controls.Add(this.textBox_drawStCount);
+            this.groupBox3.Controls.Add(this.textBox_t_stop);
+            this.groupBox3.Controls.Add(this.textBox_t_start);
+            this.groupBox3.Controls.Add(this.textBox_step);
+            this.groupBox3.Location = new System.Drawing.Point(147, 8);
+            this.groupBox3.Margin = new System.Windows.Forms.Padding(2);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Padding = new System.Windows.Forms.Padding(2);
+            this.groupBox3.Size = new System.Drawing.Size(191, 179);
+            this.groupBox3.TabIndex = 50;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Параметры расчета";
+            // 
+            // textBox_run_time
+            // 
+            this.textBox_run_time.AutoSize = true;
+            this.textBox_run_time.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.textBox_run_time.Location = new System.Drawing.Point(108, 152);
+            this.textBox_run_time.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.textBox_run_time.Name = "textBox_run_time";
+            this.textBox_run_time.Size = new System.Drawing.Size(0, 20);
+            this.textBox_run_time.TabIndex = 11;
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(5, 155);
+            this.label16.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(108, 13);
+            this.label16.TabIndex = 10;
+            this.label16.Text = "Время выполнения:";
+            // 
+            // Button_setCalcParam
+            // 
+            this.Button_setCalcParam.Location = new System.Drawing.Point(4, 130);
+            this.Button_setCalcParam.Margin = new System.Windows.Forms.Padding(2);
+            this.Button_setCalcParam.Name = "Button_setCalcParam";
+            this.Button_setCalcParam.Size = new System.Drawing.Size(75, 19);
+            this.Button_setCalcParam.TabIndex = 9;
+            this.Button_setCalcParam.Text = "Принять";
+            this.Button_setCalcParam.UseVisualStyleBackColor = true;
+            // 
+            // checkBox_dinDraw
+            // 
+            this.checkBox_dinDraw.AutoSize = true;
+            this.checkBox_dinDraw.Location = new System.Drawing.Point(7, 108);
+            this.checkBox_dinDraw.Margin = new System.Windows.Forms.Padding(2);
+            this.checkBox_dinDraw.Name = "checkBox_dinDraw";
+            this.checkBox_dinDraw.Size = new System.Drawing.Size(136, 17);
+            this.checkBox_dinDraw.TabIndex = 8;
+            this.checkBox_dinDraw.Text = "Рисовать в динамике";
+            this.checkBox_dinDraw.UseVisualStyleBackColor = true;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(4, 88);
+            this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(99, 13);
+            this.label4.TabIndex = 7;
+            this.label4.Text = "Шагов инт. в шаге";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(4, 67);
+            this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(39, 13);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "t_stop:";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(4, 44);
+            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(39, 13);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "t_start:";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(4, 20);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(53, 13);
+            this.label1.TabIndex = 4;
+            this.label1.Text = "Шаг инт.:";
+            // 
+            // textBox_drawStCount
+            // 
+            this.textBox_drawStCount.Location = new System.Drawing.Point(112, 85);
+            this.textBox_drawStCount.Margin = new System.Windows.Forms.Padding(2);
+            this.textBox_drawStCount.Name = "textBox_drawStCount";
+            this.textBox_drawStCount.Size = new System.Drawing.Size(76, 20);
+            this.textBox_drawStCount.TabIndex = 3;
+            this.textBox_drawStCount.Text = "10";
+            this.textBox_drawStCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBox_t_stop
+            // 
+            this.textBox_t_stop.Location = new System.Drawing.Point(112, 63);
+            this.textBox_t_stop.Margin = new System.Windows.Forms.Padding(2);
+            this.textBox_t_stop.Name = "textBox_t_stop";
+            this.textBox_t_stop.Size = new System.Drawing.Size(76, 20);
+            this.textBox_t_stop.TabIndex = 2;
+            this.textBox_t_stop.Text = "100";
+            this.textBox_t_stop.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBox_t_start
+            // 
+            this.textBox_t_start.Location = new System.Drawing.Point(112, 40);
+            this.textBox_t_start.Margin = new System.Windows.Forms.Padding(2);
+            this.textBox_t_start.Name = "textBox_t_start";
+            this.textBox_t_start.Size = new System.Drawing.Size(76, 20);
+            this.textBox_t_start.TabIndex = 1;
+            this.textBox_t_start.Text = "0";
+            this.textBox_t_start.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBox_step
+            // 
+            this.textBox_step.Location = new System.Drawing.Point(112, 17);
+            this.textBox_step.Margin = new System.Windows.Forms.Padding(2);
+            this.textBox_step.Name = "textBox_step";
+            this.textBox_step.Size = new System.Drawing.Size(76, 20);
+            this.textBox_step.TabIndex = 0;
+            this.textBox_step.Text = "0,005";
+            this.textBox_step.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // groupBox1
             // 
@@ -688,12 +945,12 @@ namespace PortalCraneModel
             this.groupBox1.Controls.Add(this.textBox_mmal);
             this.groupBox1.Controls.Add(this.textBox_M);
             this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.groupBox1.Location = new System.Drawing.Point(9, 10);
+            this.groupBox1.Location = new System.Drawing.Point(8, 8);
             this.groupBox1.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(2);
             this.groupBox1.Size = new System.Drawing.Size(135, 270);
-            this.groupBox1.TabIndex = 0;
+            this.groupBox1.TabIndex = 48;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Параметры модели";
             // 
@@ -706,7 +963,6 @@ namespace PortalCraneModel
             this.Button_setParam.TabIndex = 27;
             this.Button_setParam.Text = "Принять";
             this.Button_setParam.UseVisualStyleBackColor = true;
-            this.Button_setParam.Click += new System.EventHandler(this.Button_setParam_Click);
             // 
             // textBox_E
             // 
@@ -907,275 +1163,9 @@ namespace PortalCraneModel
             this.textBox_M.TabIndex = 0;
             this.textBox_M.Text = "1,073";
             // 
-            // textBox_fi
-            // 
-            this.textBox_fi.Location = new System.Drawing.Point(55, 17);
-            this.textBox_fi.Margin = new System.Windows.Forms.Padding(2);
-            this.textBox_fi.Name = "textBox_fi";
-            this.textBox_fi.Size = new System.Drawing.Size(76, 20);
-            this.textBox_fi.TabIndex = 8;
-            this.textBox_fi.Text = "0,523";
-            this.textBox_fi.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // textBox_x
-            // 
-            this.textBox_x.Location = new System.Drawing.Point(55, 63);
-            this.textBox_x.Margin = new System.Windows.Forms.Padding(2);
-            this.textBox_x.Name = "textBox_x";
-            this.textBox_x.Size = new System.Drawing.Size(76, 20);
-            this.textBox_x.TabIndex = 9;
-            this.textBox_x.Text = "0,05";
-            this.textBox_x.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // textBox_dfi_dt
-            // 
-            this.textBox_dfi_dt.Location = new System.Drawing.Point(55, 40);
-            this.textBox_dfi_dt.Margin = new System.Windows.Forms.Padding(2);
-            this.textBox_dfi_dt.Name = "textBox_dfi_dt";
-            this.textBox_dfi_dt.Size = new System.Drawing.Size(76, 20);
-            this.textBox_dfi_dt.TabIndex = 10;
-            this.textBox_dfi_dt.Text = "0";
-            this.textBox_dfi_dt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // textBox_dx_dt
-            // 
-            this.textBox_dx_dt.Location = new System.Drawing.Point(55, 85);
-            this.textBox_dx_dt.Margin = new System.Windows.Forms.Padding(2);
-            this.textBox_dx_dt.Name = "textBox_dx_dt";
-            this.textBox_dx_dt.Size = new System.Drawing.Size(76, 20);
-            this.textBox_dx_dt.TabIndex = 11;
-            this.textBox_dx_dt.Text = "0";
-            this.textBox_dx_dt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.Button_setInitVal);
-            this.groupBox2.Controls.Add(this.labelfi);
-            this.groupBox2.Controls.Add(this.labeldfi_dt);
-            this.groupBox2.Controls.Add(this.labelx);
-            this.groupBox2.Controls.Add(this.labeldx_dt);
-            this.groupBox2.Controls.Add(this.textBox_fi);
-            this.groupBox2.Controls.Add(this.textBox_dx_dt);
-            this.groupBox2.Controls.Add(this.textBox_x);
-            this.groupBox2.Controls.Add(this.textBox_dfi_dt);
-            this.groupBox2.Location = new System.Drawing.Point(9, 284);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(2);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox2.Size = new System.Drawing.Size(135, 134);
-            this.groupBox2.TabIndex = 12;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Исходное значение";
-            // 
-            // Button_setInitVal
-            // 
-            this.Button_setInitVal.Location = new System.Drawing.Point(55, 108);
-            this.Button_setInitVal.Margin = new System.Windows.Forms.Padding(2);
-            this.Button_setInitVal.Name = "Button_setInitVal";
-            this.Button_setInitVal.Size = new System.Drawing.Size(75, 19);
-            this.Button_setInitVal.TabIndex = 25;
-            this.Button_setInitVal.Text = "Принять";
-            this.Button_setInitVal.UseVisualStyleBackColor = true;
-            this.Button_setInitVal.Click += new System.EventHandler(this.Button_setInitVal_Click);
-            // 
-            // labelfi
-            // 
-            this.labelfi.AutoSize = true;
-            this.labelfi.Location = new System.Drawing.Point(4, 21);
-            this.labelfi.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.labelfi.Name = "labelfi";
-            this.labelfi.Size = new System.Drawing.Size(15, 13);
-            this.labelfi.TabIndex = 21;
-            this.labelfi.Text = "fi:";
-            // 
-            // labeldfi_dt
-            // 
-            this.labeldfi_dt.AutoSize = true;
-            this.labeldfi_dt.Location = new System.Drawing.Point(4, 44);
-            this.labeldfi_dt.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.labeldfi_dt.Name = "labeldfi_dt";
-            this.labeldfi_dt.Size = new System.Drawing.Size(35, 13);
-            this.labeldfi_dt.TabIndex = 22;
-            this.labeldfi_dt.Text = "dfi/dt:";
-            // 
-            // labelx
-            // 
-            this.labelx.AutoSize = true;
-            this.labelx.Location = new System.Drawing.Point(4, 67);
-            this.labelx.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.labelx.Name = "labelx";
-            this.labelx.Size = new System.Drawing.Size(33, 13);
-            this.labelx.TabIndex = 23;
-            this.labelx.Text = "x - x*:";
-            // 
-            // labeldx_dt
-            // 
-            this.labeldx_dt.AutoSize = true;
-            this.labeldx_dt.Location = new System.Drawing.Point(4, 88);
-            this.labeldx_dt.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.labeldx_dt.Name = "labeldx_dt";
-            this.labeldx_dt.Size = new System.Drawing.Size(35, 13);
-            this.labeldx_dt.TabIndex = 24;
-            this.labeldx_dt.Text = "dx/dt:";
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.textBox_run_time);
-            this.groupBox3.Controls.Add(this.label16);
-            this.groupBox3.Controls.Add(this.Button_setCalcParam);
-            this.groupBox3.Controls.Add(this.checkBox_dinDraw);
-            this.groupBox3.Controls.Add(this.label4);
-            this.groupBox3.Controls.Add(this.label3);
-            this.groupBox3.Controls.Add(this.label2);
-            this.groupBox3.Controls.Add(this.label1);
-            this.groupBox3.Controls.Add(this.textBox_drawStCount);
-            this.groupBox3.Controls.Add(this.textBox_t_stop);
-            this.groupBox3.Controls.Add(this.textBox_t_start);
-            this.groupBox3.Controls.Add(this.textBox_step);
-            this.groupBox3.Location = new System.Drawing.Point(148, 10);
-            this.groupBox3.Margin = new System.Windows.Forms.Padding(2);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Padding = new System.Windows.Forms.Padding(2);
-            this.groupBox3.Size = new System.Drawing.Size(191, 179);
-            this.groupBox3.TabIndex = 13;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Параметры расчета";
-            // 
-            // textBox_run_time
-            // 
-            this.textBox_run_time.AutoSize = true;
-            this.textBox_run_time.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.textBox_run_time.Location = new System.Drawing.Point(108, 152);
-            this.textBox_run_time.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.textBox_run_time.Name = "textBox_run_time";
-            this.textBox_run_time.Size = new System.Drawing.Size(0, 20);
-            this.textBox_run_time.TabIndex = 11;
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(5, 155);
-            this.label16.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(108, 13);
-            this.label16.TabIndex = 10;
-            this.label16.Text = "Время выполнения:";
-            // 
-            // Button_setCalcParam
-            // 
-            this.Button_setCalcParam.Location = new System.Drawing.Point(4, 130);
-            this.Button_setCalcParam.Margin = new System.Windows.Forms.Padding(2);
-            this.Button_setCalcParam.Name = "Button_setCalcParam";
-            this.Button_setCalcParam.Size = new System.Drawing.Size(75, 19);
-            this.Button_setCalcParam.TabIndex = 9;
-            this.Button_setCalcParam.Text = "Принять";
-            this.Button_setCalcParam.UseVisualStyleBackColor = true;
-            this.Button_setCalcParam.Click += new System.EventHandler(this.Button_setCalcParam_Click);
-            // 
-            // checkBox_dinDraw
-            // 
-            this.checkBox_dinDraw.AutoSize = true;
-            this.checkBox_dinDraw.Location = new System.Drawing.Point(7, 108);
-            this.checkBox_dinDraw.Margin = new System.Windows.Forms.Padding(2);
-            this.checkBox_dinDraw.Name = "checkBox_dinDraw";
-            this.checkBox_dinDraw.Size = new System.Drawing.Size(136, 17);
-            this.checkBox_dinDraw.TabIndex = 8;
-            this.checkBox_dinDraw.Text = "Рисовать в динамике";
-            this.checkBox_dinDraw.UseVisualStyleBackColor = true;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(4, 88);
-            this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(99, 13);
-            this.label4.TabIndex = 7;
-            this.label4.Text = "Шагов инт. в шаге";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(4, 67);
-            this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(39, 13);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "t_stop:";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(4, 44);
-            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(39, 13);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "t_start:";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(4, 20);
-            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(53, 13);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "Шаг инт.:";
-            // 
-            // textBox_drawStCount
-            // 
-            this.textBox_drawStCount.Location = new System.Drawing.Point(112, 85);
-            this.textBox_drawStCount.Margin = new System.Windows.Forms.Padding(2);
-            this.textBox_drawStCount.Name = "textBox_drawStCount";
-            this.textBox_drawStCount.Size = new System.Drawing.Size(76, 20);
-            this.textBox_drawStCount.TabIndex = 3;
-            this.textBox_drawStCount.Text = "10";
-            this.textBox_drawStCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // textBox_t_stop
-            // 
-            this.textBox_t_stop.Location = new System.Drawing.Point(112, 63);
-            this.textBox_t_stop.Margin = new System.Windows.Forms.Padding(2);
-            this.textBox_t_stop.Name = "textBox_t_stop";
-            this.textBox_t_stop.Size = new System.Drawing.Size(76, 20);
-            this.textBox_t_stop.TabIndex = 2;
-            this.textBox_t_stop.Text = "100";
-            this.textBox_t_stop.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // textBox_t_start
-            // 
-            this.textBox_t_start.Location = new System.Drawing.Point(112, 40);
-            this.textBox_t_start.Margin = new System.Windows.Forms.Padding(2);
-            this.textBox_t_start.Name = "textBox_t_start";
-            this.textBox_t_start.Size = new System.Drawing.Size(76, 20);
-            this.textBox_t_start.TabIndex = 1;
-            this.textBox_t_start.Text = "0";
-            this.textBox_t_start.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // textBox_step
-            // 
-            this.textBox_step.Location = new System.Drawing.Point(112, 17);
-            this.textBox_step.Margin = new System.Windows.Forms.Padding(2);
-            this.textBox_step.Name = "textBox_step";
-            this.textBox_step.Size = new System.Drawing.Size(76, 20);
-            this.textBox_step.TabIndex = 0;
-            this.textBox_step.Text = "0,005";
-            this.textBox_step.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // Button_runCalc
-            // 
-            this.Button_runCalc.Location = new System.Drawing.Point(0, 174);
-            this.Button_runCalc.Margin = new System.Windows.Forms.Padding(2);
-            this.Button_runCalc.Name = "Button_runCalc";
-            this.Button_runCalc.Size = new System.Drawing.Size(188, 25);
-            this.Button_runCalc.TabIndex = 19;
-            this.Button_runCalc.Text = "Рассчитать";
-            this.Button_runCalc.UseVisualStyleBackColor = true;
-            this.Button_runCalc.Click += new System.EventHandler(this.Button_runCalc_Click);
-            // 
             // roots_gbox
             // 
+            this.roots_gbox.BackColor = System.Drawing.SystemColors.Control;
             this.roots_gbox.Controls.Add(this.button2);
             this.roots_gbox.Controls.Add(this.btn_clear);
             this.roots_gbox.Controls.Add(this.label11);
@@ -1193,10 +1183,10 @@ namespace PortalCraneModel
             this.roots_gbox.Controls.Add(this.tbox_lambda1_re);
             this.roots_gbox.Controls.Add(this.tbox_lambda3_re);
             this.roots_gbox.Controls.Add(this.tbox_lambda1_im);
-            this.roots_gbox.Location = new System.Drawing.Point(148, 194);
+            this.roots_gbox.Location = new System.Drawing.Point(147, 192);
             this.roots_gbox.Name = "roots_gbox";
             this.roots_gbox.Size = new System.Drawing.Size(191, 237);
-            this.roots_gbox.TabIndex = 32;
+            this.roots_gbox.TabIndex = 51;
             this.roots_gbox.TabStop = false;
             this.roots_gbox.Text = "Желаемые корни хар. полинома";
             // 
@@ -1208,7 +1198,6 @@ namespace PortalCraneModel
             this.button2.TabIndex = 45;
             this.button2.Text = "Сбросить";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.Button2_Click);
             // 
             // btn_clear
             // 
@@ -1218,7 +1207,6 @@ namespace PortalCraneModel
             this.btn_clear.TabIndex = 35;
             this.btn_clear.Text = "Очистить";
             this.btn_clear.UseVisualStyleBackColor = true;
-            this.btn_clear.Click += new System.EventHandler(this.Btn_clear_Click);
             // 
             // label11
             // 
@@ -1256,6 +1244,17 @@ namespace PortalCraneModel
             this.tbox_lambda4_re.Text = "0";
             this.tbox_lambda4_re.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
+            // Button_runCalc
+            // 
+            this.Button_runCalc.Location = new System.Drawing.Point(0, 174);
+            this.Button_runCalc.Margin = new System.Windows.Forms.Padding(2);
+            this.Button_runCalc.Name = "Button_runCalc";
+            this.Button_runCalc.Size = new System.Drawing.Size(188, 25);
+            this.Button_runCalc.TabIndex = 19;
+            this.Button_runCalc.Text = "Рассчитать";
+            this.Button_runCalc.UseVisualStyleBackColor = true;
+            this.Button_runCalc.Click += new System.EventHandler(this.Button_runCalc_Click);
+            // 
             // tbox_lambda2_im
             // 
             this.tbox_lambda2_im.Location = new System.Drawing.Point(133, 68);
@@ -1264,7 +1263,6 @@ namespace PortalCraneModel
             this.tbox_lambda2_im.TabIndex = 40;
             this.tbox_lambda2_im.Text = "0";
             this.tbox_lambda2_im.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.tbox_lambda2_im.TextChanged += new System.EventHandler(this.Tbox_lambda2_im_TextChanged);
             // 
             // tbox_lambda2_re
             // 
@@ -1319,7 +1317,6 @@ namespace PortalCraneModel
             this.tbox_lambda3_im.TabIndex = 15;
             this.tbox_lambda3_im.Text = "0";
             this.tbox_lambda3_im.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.tbox_lambda3_im.TextChanged += new System.EventHandler(this.Tbox_lambda3_im_TextChanged);
             // 
             // tbox_lambda1_re
             // 
@@ -1330,7 +1327,6 @@ namespace PortalCraneModel
             this.tbox_lambda1_re.TabIndex = 12;
             this.tbox_lambda1_re.Text = "0";
             this.tbox_lambda1_re.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.tbox_lambda1_re.TextChanged += new System.EventHandler(this.Tbox_lambda1_re_TextChanged);
             // 
             // tbox_lambda3_re
             // 
@@ -1349,151 +1345,193 @@ namespace PortalCraneModel
             this.tbox_lambda1_im.TabIndex = 13;
             this.tbox_lambda1_im.Text = "0";
             this.tbox_lambda1_im.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.tbox_lambda1_im.TextChanged += new System.EventHandler(this.Tbox_lambda1_im_TextChanged);
-            // 
-            // chart1
-            // 
-            chartArea1.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea1);
-            legend1.Enabled = false;
-            legend1.Name = "Legend1";
-            this.chart1.Legends.Add(legend1);
-            this.chart1.Location = new System.Drawing.Point(344, 17);
-            this.chart1.Name = "chart1";
-            series1.ChartArea = "ChartArea1";
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            this.chart1.Series.Add(series1);
-            this.chart1.Size = new System.Drawing.Size(500, 350);
-            this.chart1.TabIndex = 33;
-            this.chart1.Text = "chart1";
-            // 
-            // chart2
-            // 
-            chartArea2.Name = "ChartArea1";
-            this.chart2.ChartAreas.Add(chartArea2);
-            legend2.Enabled = false;
-            legend2.Name = "Legend1";
-            this.chart2.Legends.Add(legend2);
-            this.chart2.Location = new System.Drawing.Point(850, 17);
-            this.chart2.Name = "chart2";
-            series2.ChartArea = "ChartArea1";
-            series2.Legend = "Legend1";
-            series2.Name = "Series1";
-            this.chart2.Series.Add(series2);
-            this.chart2.Size = new System.Drawing.Size(500, 350);
-            this.chart2.TabIndex = 34;
-            this.chart2.Text = "chart2";
-            // 
-            // chart3
-            // 
-            chartArea3.Name = "ChartArea1";
-            this.chart3.ChartAreas.Add(chartArea3);
-            legend3.Enabled = false;
-            legend3.Name = "Legend1";
-            this.chart3.Legends.Add(legend3);
-            this.chart3.Location = new System.Drawing.Point(344, 373);
-            this.chart3.Name = "chart3";
-            series3.ChartArea = "ChartArea1";
-            series3.Legend = "Legend1";
-            series3.Name = "Series1";
-            this.chart3.Series.Add(series3);
-            this.chart3.Size = new System.Drawing.Size(500, 350);
-            this.chart3.TabIndex = 33;
-            this.chart3.Text = "chart1";
-            // 
-            // chart4
-            // 
-            chartArea4.Name = "ChartArea1";
-            this.chart4.ChartAreas.Add(chartArea4);
-            legend4.Enabled = false;
-            legend4.Name = "Legend1";
-            this.chart4.Legends.Add(legend4);
-            this.chart4.Location = new System.Drawing.Point(850, 373);
-            this.chart4.Name = "chart4";
-            series4.ChartArea = "ChartArea1";
-            series4.Legend = "Legend1";
-            series4.Name = "Series1";
-            series4.XAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
-            this.chart4.Series.Add(series4);
-            this.chart4.Size = new System.Drawing.Size(500, 350);
-            this.chart4.TabIndex = 33;
-            this.chart4.Text = "chart1";
-            // 
-            // Timer1
-            // 
-            this.Timer1.Interval = 10;
-            this.Timer1.Tick += new System.EventHandler(this.Timer1_Tick);
             // 
             // cBox_non_linear
             // 
             this.cBox_non_linear.AutoSize = true;
             this.cBox_non_linear.Checked = true;
             this.cBox_non_linear.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cBox_non_linear.Location = new System.Drawing.Point(148, 437);
+            this.cBox_non_linear.Location = new System.Drawing.Point(147, 435);
             this.cBox_non_linear.Name = "cBox_non_linear";
             this.cBox_non_linear.Size = new System.Drawing.Size(122, 17);
-            this.cBox_non_linear.TabIndex = 35;
+            this.cBox_non_linear.TabIndex = 56;
             this.cBox_non_linear.Text = "Линейная система";
             this.cBox_non_linear.UseVisualStyleBackColor = true;
-            // 
-            // dataGridView1
-            // 
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(9, 460);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.RowHeadersVisible = false;
-            this.dataGridView1.Size = new System.Drawing.Size(329, 296);
-            this.dataGridView1.TabIndex = 46;
             // 
             // cBox_Reg_on
             // 
             this.cBox_Reg_on.AutoSize = true;
             this.cBox_Reg_on.Checked = true;
             this.cBox_Reg_on.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cBox_Reg_on.Location = new System.Drawing.Point(9, 437);
+            this.cBox_Reg_on.Location = new System.Drawing.Point(8, 435);
             this.cBox_Reg_on.Name = "cBox_Reg_on";
             this.cBox_Reg_on.Size = new System.Drawing.Size(129, 17);
-            this.cBox_Reg_on.TabIndex = 47;
+            this.cBox_Reg_on.TabIndex = 58;
             this.cBox_Reg_on.Text = "Включить регулятор";
             this.cBox_Reg_on.UseVisualStyleBackColor = true;
+            // 
+            // dataGridView1
+            // 
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Location = new System.Drawing.Point(8, 458);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.RowHeadersVisible = false;
+            this.dataGridView1.Size = new System.Drawing.Size(329, 263);
+            this.dataGridView1.TabIndex = 57;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.BackColor = System.Drawing.SystemColors.Control;
+            this.groupBox2.Controls.Add(this.Button_setInitVal);
+            this.groupBox2.Controls.Add(this.labelfi);
+            this.groupBox2.Controls.Add(this.labeldfi_dt);
+            this.groupBox2.Controls.Add(this.labelx);
+            this.groupBox2.Controls.Add(this.labeldx_dt);
+            this.groupBox2.Controls.Add(this.textBox_fi);
+            this.groupBox2.Controls.Add(this.textBox_dx_dt);
+            this.groupBox2.Controls.Add(this.textBox_x);
+            this.groupBox2.Controls.Add(this.textBox_dfi_dt);
+            this.groupBox2.Location = new System.Drawing.Point(8, 282);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(2);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(2);
+            this.groupBox2.Size = new System.Drawing.Size(135, 134);
+            this.groupBox2.TabIndex = 49;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Исходное значение";
+            // 
+            // Button_setInitVal
+            // 
+            this.Button_setInitVal.Location = new System.Drawing.Point(55, 108);
+            this.Button_setInitVal.Margin = new System.Windows.Forms.Padding(2);
+            this.Button_setInitVal.Name = "Button_setInitVal";
+            this.Button_setInitVal.Size = new System.Drawing.Size(75, 19);
+            this.Button_setInitVal.TabIndex = 25;
+            this.Button_setInitVal.Text = "Принять";
+            this.Button_setInitVal.UseVisualStyleBackColor = true;
+            // 
+            // labelfi
+            // 
+            this.labelfi.AutoSize = true;
+            this.labelfi.Location = new System.Drawing.Point(4, 21);
+            this.labelfi.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.labelfi.Name = "labelfi";
+            this.labelfi.Size = new System.Drawing.Size(15, 13);
+            this.labelfi.TabIndex = 21;
+            this.labelfi.Text = "fi:";
+            // 
+            // labeldfi_dt
+            // 
+            this.labeldfi_dt.AutoSize = true;
+            this.labeldfi_dt.Location = new System.Drawing.Point(4, 44);
+            this.labeldfi_dt.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.labeldfi_dt.Name = "labeldfi_dt";
+            this.labeldfi_dt.Size = new System.Drawing.Size(35, 13);
+            this.labeldfi_dt.TabIndex = 22;
+            this.labeldfi_dt.Text = "dfi/dt:";
+            // 
+            // labelx
+            // 
+            this.labelx.AutoSize = true;
+            this.labelx.Location = new System.Drawing.Point(4, 67);
+            this.labelx.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.labelx.Name = "labelx";
+            this.labelx.Size = new System.Drawing.Size(33, 13);
+            this.labelx.TabIndex = 23;
+            this.labelx.Text = "x - x*:";
+            // 
+            // labeldx_dt
+            // 
+            this.labeldx_dt.AutoSize = true;
+            this.labeldx_dt.Location = new System.Drawing.Point(4, 88);
+            this.labeldx_dt.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.labeldx_dt.Name = "labeldx_dt";
+            this.labeldx_dt.Size = new System.Drawing.Size(35, 13);
+            this.labeldx_dt.TabIndex = 24;
+            this.labeldx_dt.Text = "dx/dt:";
+            // 
+            // textBox_fi
+            // 
+            this.textBox_fi.Location = new System.Drawing.Point(55, 17);
+            this.textBox_fi.Margin = new System.Windows.Forms.Padding(2);
+            this.textBox_fi.Name = "textBox_fi";
+            this.textBox_fi.Size = new System.Drawing.Size(76, 20);
+            this.textBox_fi.TabIndex = 8;
+            this.textBox_fi.Text = "0,523";
+            this.textBox_fi.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBox_dx_dt
+            // 
+            this.textBox_dx_dt.Location = new System.Drawing.Point(55, 85);
+            this.textBox_dx_dt.Margin = new System.Windows.Forms.Padding(2);
+            this.textBox_dx_dt.Name = "textBox_dx_dt";
+            this.textBox_dx_dt.Size = new System.Drawing.Size(76, 20);
+            this.textBox_dx_dt.TabIndex = 11;
+            this.textBox_dx_dt.Text = "0";
+            this.textBox_dx_dt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBox_x
+            // 
+            this.textBox_x.Location = new System.Drawing.Point(55, 63);
+            this.textBox_x.Margin = new System.Windows.Forms.Padding(2);
+            this.textBox_x.Name = "textBox_x";
+            this.textBox_x.Size = new System.Drawing.Size(76, 20);
+            this.textBox_x.TabIndex = 9;
+            this.textBox_x.Text = "0,05";
+            this.textBox_x.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // textBox_dfi_dt
+            // 
+            this.textBox_dfi_dt.Location = new System.Drawing.Point(55, 40);
+            this.textBox_dfi_dt.Margin = new System.Windows.Forms.Padding(2);
+            this.textBox_dfi_dt.Name = "textBox_dfi_dt";
+            this.textBox_dfi_dt.Size = new System.Drawing.Size(76, 20);
+            this.textBox_dfi_dt.TabIndex = 10;
+            this.textBox_dfi_dt.Text = "0";
+            this.textBox_dfi_dt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(1356, 741);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Линии равного уровня";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // Timer1
+            // 
+            this.Timer1.Interval = 10;
             // 
             // PortalCraneModel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(1364, 768);
-            this.Controls.Add(this.cBox_Reg_on);
-            this.Controls.Add(this.dataGridView1);
-            this.Controls.Add(this.cBox_non_linear);
-            this.Controls.Add(this.chart2);
-            this.Controls.Add(this.chart4);
-            this.Controls.Add(this.chart3);
-            this.Controls.Add(this.chart1);
-            this.Controls.Add(this.roots_gbox);
-            this.Controls.Add(this.groupBox3);
-            this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.groupBox1);
+            this.ClientSize = new System.Drawing.Size(1364, 755);
+            this.Controls.Add(this.tabControl1);
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "PortalCraneModel";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.Text = "PortalCraneModel";
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
+            this.tabControl1.ResumeLayout(false);
+            this.tabPage1.ResumeLayout(false);
+            this.tabPage1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chart2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chart4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chart3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.roots_gbox.ResumeLayout(false);
             this.roots_gbox.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.chart2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.chart3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.chart4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -1577,16 +1615,6 @@ namespace PortalCraneModel
             tbox_lambda4_re.ReadOnly = false;
             tbox_lambda4_im.Text = "0";
             tbox_lambda4_im.ReadOnly = false;
-        }
-
-        private void Tbox_lambda2_im_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void Tbox_lambda1_re_TextChanged(object sender, EventArgs e)
-        {
-
         }
     }
 }
