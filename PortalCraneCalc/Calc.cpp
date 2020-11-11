@@ -21,6 +21,7 @@ vector<double> reg(dim); // regulator
 vector<complex<double>> p(dim);  // zhelaemie korni 
 
 vector<point> all_points; // massiv dlya hraneniya poluchennih tochek
+double V = 0; // napryzhenie(regulator)
 
 double a21, a22, a24, a41, a42, a44, b2, b4; // coefficinti matrici A & vectora b (forma Koshi)
 
@@ -114,6 +115,7 @@ void f(const std::vector<double>& _X, std::vector<double>& _k, bool system, bool
       - l * _k[1] / cos(_X[0])
       - g * tan(_X[0]);
   }
+  V = v_t;
 }
 
 void SetModelParams(double _M, double _m, double _l, double _R, double _g, 

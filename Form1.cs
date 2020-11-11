@@ -57,6 +57,8 @@ namespace PortalCraneModel
         public double lambda4_re;
         public double lambda4_im;
 
+        public double mu1, mu2, sigma;
+
 
         public int drawStCount;
         public bool inDinamic;
@@ -146,6 +148,7 @@ namespace PortalCraneModel
         public TextBox DL_M2;
         private TextBox func_num_text;
         private Button button1;
+        private Button button3;
         private IContainer components;
 
         [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
@@ -411,169 +414,169 @@ namespace PortalCraneModel
             PortalCraneModel.SetCalcParams(this.dt, this.t_start, this.t_stop, this.drawStCount, this.inDinamic);
         }
 
-        private void PictureBox1_Paint(object sender, PaintEventArgs e)
-        {
-            Rectangle clipRectangle1 = e.ClipRectangle;
-            int right = clipRectangle1.Right;
-            clipRectangle1 = e.ClipRectangle;
-            int left = clipRectangle1.Left;
-            double num1 = 0.5 * (double)(right + left);
-            Rectangle clipRectangle2 = e.ClipRectangle;
-            int bottom = clipRectangle2.Bottom;
-            clipRectangle2 = e.ClipRectangle;
-            int top = clipRectangle2.Top;
-            double num2 = 0.5 * (double)(bottom + top);
-            double height = (double)e.ClipRectangle.Height;
-            double width = (double)e.ClipRectangle.Width;
-            Pen pen = new Pen(Color.Black, 2f);
-            int num3 = !this.inDinamic ? this.allPoints.drawCount : this.dinPointsCount;
-            int red = 0;
-            int green = 0;
-            int blue = 0;
-            for (int index = 1; index < num3; ++index)
-            {
-                switch (index * 5 / (int)byte.MaxValue % 3)
-                {
-                    case 0:
-                        green = 0;
-                        blue = 0;
-                        red = index * 5 % (int)byte.MaxValue;
-                        break;
-                    case 1:
-                        red = 0;
-                        blue = 0;
-                        green = index * 5 % (int)byte.MaxValue;
-                        break;
-                    case 2:
-                        red = 0;
-                        green = 0;
-                        blue = index * 5 % (int)byte.MaxValue;
-                        break;
-                }
-                pen.Color = Color.FromArgb(red, green, blue);
-                e.Graphics.DrawLine(pen, (float)(num1 + this.DrawPoints[(index - 1) * 5] / this.xMax * width / 2.0), (float)(num2 - this.DrawPoints[(index - 1) * 5 + 1] / this.yMax * height / 2.0), (float)(num1 + this.DrawPoints[index * 5] / this.xMax * width / 2.0), (float)(num2 - this.DrawPoints[index * 5 + 1] / this.yMax * height / 2.0));
-            }
-        }
+        //private void PictureBox1_Paint(object sender, PaintEventArgs e)
+        //{
+        //    Rectangle clipRectangle1 = e.ClipRectangle;
+        //    int right = clipRectangle1.Right;
+        //    clipRectangle1 = e.ClipRectangle;
+        //    int left = clipRectangle1.Left;
+        //    double num1 = 0.5 * (double)(right + left);
+        //    Rectangle clipRectangle2 = e.ClipRectangle;
+        //    int bottom = clipRectangle2.Bottom;
+        //    clipRectangle2 = e.ClipRectangle;
+        //    int top = clipRectangle2.Top;
+        //    double num2 = 0.5 * (double)(bottom + top);
+        //    double height = (double)e.ClipRectangle.Height;
+        //    double width = (double)e.ClipRectangle.Width;
+        //    Pen pen = new Pen(Color.Black, 2f);
+        //    int num3 = !this.inDinamic ? this.allPoints.drawCount : this.dinPointsCount;
+        //    int red = 0;
+        //    int green = 0;
+        //    int blue = 0;
+        //    for (int index = 1; index < num3; ++index)
+        //    {
+        //        switch (index * 5 / (int)byte.MaxValue % 3)
+        //        {
+        //            case 0:
+        //                green = 0;
+        //                blue = 0;
+        //                red = index * 5 % (int)byte.MaxValue;
+        //                break;
+        //            case 1:
+        //                red = 0;
+        //                blue = 0;
+        //                green = index * 5 % (int)byte.MaxValue;
+        //                break;
+        //            case 2:
+        //                red = 0;
+        //                green = 0;
+        //                blue = index * 5 % (int)byte.MaxValue;
+        //                break;
+        //        }
+        //        pen.Color = Color.FromArgb(red, green, blue);
+        //        e.Graphics.DrawLine(pen, (float)(num1 + this.DrawPoints[(index - 1) * 5] / this.xMax * width / 2.0), (float)(num2 - this.DrawPoints[(index - 1) * 5 + 1] / this.yMax * height / 2.0), (float)(num1 + this.DrawPoints[index * 5] / this.xMax * width / 2.0), (float)(num2 - this.DrawPoints[index * 5 + 1] / this.yMax * height / 2.0));
+        //    }
+        //}
 
-        private void PictureBox2_Paint(object sender, PaintEventArgs e)
-        {
-            double left = (double)e.ClipRectangle.Left;
-            Rectangle clipRectangle = e.ClipRectangle;
-            int bottom = clipRectangle.Bottom;
-            clipRectangle = e.ClipRectangle;
-            int top = clipRectangle.Top;
-            double num1 = 0.5 * (double)(bottom + top);
-            double height = (double)e.ClipRectangle.Height;
-            double width = (double)e.ClipRectangle.Width;
-            Pen pen = new Pen(Color.Black, 2f);
-            int num2 = !this.inDinamic ? this.allPoints.drawCount : this.dinPointsCount;
-            int red = 0;
-            int green = 0;
-            int blue = 0;
-            for (int index = 1; index < num2; ++index)
-            {
-                switch (index * 5 / (int)byte.MaxValue % 5)
-                {
-                    case 0:
-                        green = 0;
-                        blue = 0;
-                        red = index * 5 % (int)byte.MaxValue;
-                        break;
-                    case 1:
-                        red = 0;
-                        blue = 0;
-                        green = index * 5 % (int)byte.MaxValue;
-                        break;
-                    case 2:
-                        red = 0;
-                        green = 0;
-                        blue = index * 5 % (int)byte.MaxValue;
-                        break;
-                }
-                pen.Color = Color.FromArgb(red, green, blue);
-                e.Graphics.DrawLine(pen, (float)(left + this.DrawPoints[(index - 1) * 5 + 2] / this.xMax * width / 15.0), (float)(num1 - this.DrawPoints[(index - 1) * 5 + 3] / this.yMax * height / 2.0), (float)(left + this.DrawPoints[index * 5 + 2] / this.xMax * width / 15.0), (float)(num1 - this.DrawPoints[index * 5 + 3] / this.yMax * height / 2.0));
-            }
-        }
+        //private void PictureBox2_Paint(object sender, PaintEventArgs e)
+        //{
+        //    double left = (double)e.ClipRectangle.Left;
+        //    Rectangle clipRectangle = e.ClipRectangle;
+        //    int bottom = clipRectangle.Bottom;
+        //    clipRectangle = e.ClipRectangle;
+        //    int top = clipRectangle.Top;
+        //    double num1 = 0.5 * (double)(bottom + top);
+        //    double height = (double)e.ClipRectangle.Height;
+        //    double width = (double)e.ClipRectangle.Width;
+        //    Pen pen = new Pen(Color.Black, 2f);
+        //    int num2 = !this.inDinamic ? this.allPoints.drawCount : this.dinPointsCount;
+        //    int red = 0;
+        //    int green = 0;
+        //    int blue = 0;
+        //    for (int index = 1; index < num2; ++index)
+        //    {
+        //        switch (index * 5 / (int)byte.MaxValue % 5)
+        //        {
+        //            case 0:
+        //                green = 0;
+        //                blue = 0;
+        //                red = index * 5 % (int)byte.MaxValue;
+        //                break;
+        //            case 1:
+        //                red = 0;
+        //                blue = 0;
+        //                green = index * 5 % (int)byte.MaxValue;
+        //                break;
+        //            case 2:
+        //                red = 0;
+        //                green = 0;
+        //                blue = index * 5 % (int)byte.MaxValue;
+        //                break;
+        //        }
+        //        pen.Color = Color.FromArgb(red, green, blue);
+        //        e.Graphics.DrawLine(pen, (float)(left + this.DrawPoints[(index - 1) * 5 + 2] / this.xMax * width / 15.0), (float)(num1 - this.DrawPoints[(index - 1) * 5 + 3] / this.yMax * height / 2.0), (float)(left + this.DrawPoints[index * 5 + 2] / this.xMax * width / 15.0), (float)(num1 - this.DrawPoints[index * 5 + 3] / this.yMax * height / 2.0));
+        //    }
+        //}
 
-        private void PictureBox3_Paint(object sender, PaintEventArgs e)
-        {
-            double left = (double)e.ClipRectangle.Left;
-            Rectangle clipRectangle = e.ClipRectangle;
-            int bottom = clipRectangle.Bottom;
-            clipRectangle = e.ClipRectangle;
-            int top = clipRectangle.Top;
-            double num1 = 0.5 * (double)(bottom + top);
-            double height = (double)e.ClipRectangle.Height;
-            double width = (double)e.ClipRectangle.Width;
-            Pen pen = new Pen(Color.Black, 2f);
-            int num2 = !this.inDinamic ? this.allPoints.drawCount : this.dinPointsCount;
-            int red = 0;
-            int green = 0;
-            int blue = 0;
-            for (int index = 1; index < num2; ++index)
-            {
-                switch (index * 5 / (int)byte.MaxValue % 5)
-                {
-                    case 0:
-                        green = 0;
-                        blue = 0;
-                        red = index * 5 % (int)byte.MaxValue;
-                        break;
-                    case 1:
-                        red = 0;
-                        blue = 0;
-                        green = index * 5 % (int)byte.MaxValue;
-                        break;
-                    case 2:
-                        red = 0;
-                        green = 0;
-                        blue = index * 5 % (int)byte.MaxValue;
-                        break;
-                }
-                pen.Color = Color.FromArgb(red, green, blue);
-                e.Graphics.DrawLine(pen, (float)(left + this.DrawPoints[(index - 1) * 5 + 4] / this.xMax * width / 70.0), (float)(num1 - this.DrawPoints[(index - 1) * 5] / this.yMax * height), (float)(left + this.DrawPoints[index * 5 + 4] / this.xMax * width / 70.0), (float)(num1 - this.DrawPoints[index * 5] / this.yMax * height));
-            }
-        }
+        //private void PictureBox3_Paint(object sender, PaintEventArgs e)
+        //{
+        //    double left = (double)e.ClipRectangle.Left;
+        //    Rectangle clipRectangle = e.ClipRectangle;
+        //    int bottom = clipRectangle.Bottom;
+        //    clipRectangle = e.ClipRectangle;
+        //    int top = clipRectangle.Top;
+        //    double num1 = 0.5 * (double)(bottom + top);
+        //    double height = (double)e.ClipRectangle.Height;
+        //    double width = (double)e.ClipRectangle.Width;
+        //    Pen pen = new Pen(Color.Black, 2f);
+        //    int num2 = !this.inDinamic ? this.allPoints.drawCount : this.dinPointsCount;
+        //    int red = 0;
+        //    int green = 0;
+        //    int blue = 0;
+        //    for (int index = 1; index < num2; ++index)
+        //    {
+        //        switch (index * 5 / (int)byte.MaxValue % 5)
+        //        {
+        //            case 0:
+        //                green = 0;
+        //                blue = 0;
+        //                red = index * 5 % (int)byte.MaxValue;
+        //                break;
+        //            case 1:
+        //                red = 0;
+        //                blue = 0;
+        //                green = index * 5 % (int)byte.MaxValue;
+        //                break;
+        //            case 2:
+        //                red = 0;
+        //                green = 0;
+        //                blue = index * 5 % (int)byte.MaxValue;
+        //                break;
+        //        }
+        //        pen.Color = Color.FromArgb(red, green, blue);
+        //        e.Graphics.DrawLine(pen, (float)(left + this.DrawPoints[(index - 1) * 5 + 4] / this.xMax * width / 70.0), (float)(num1 - this.DrawPoints[(index - 1) * 5] / this.yMax * height), (float)(left + this.DrawPoints[index * 5 + 4] / this.xMax * width / 70.0), (float)(num1 - this.DrawPoints[index * 5] / this.yMax * height));
+        //    }
+        //}
 
-        private void PictureBox4_Paint(object sender, PaintEventArgs e)
-        {
-            double left = (double)e.ClipRectangle.Left;
-            Rectangle clipRectangle = e.ClipRectangle;
-            int bottom = clipRectangle.Bottom;
-            clipRectangle = e.ClipRectangle;
-            int top = clipRectangle.Top;
-            double num1 = 0.5 * (double)(bottom + top);
-            double height = (double)e.ClipRectangle.Height;
-            double width = (double)e.ClipRectangle.Width;
-            Pen pen = new Pen(Color.Black, 2f);
-            int num2 = !this.inDinamic ? this.allPoints.drawCount : this.dinPointsCount;
-            int red = 0;
-            int green = 0;
-            int blue = 0;
-            for (int index = 1; index < num2; ++index)
-            {
-                switch (index * 5 / (int)byte.MaxValue % 5)
-                {
-                    case 0:
-                        green = 0;
-                        blue = 0;
-                        red = index * 5 % (int)byte.MaxValue;
-                        break;
-                    case 1:
-                        red = 0;
-                        blue = 0;
-                        green = index * 5 % (int)byte.MaxValue;
-                        break;
-                    case 2:
-                        red = 0;
-                        green = 0;
-                        blue = index * 5 % (int)byte.MaxValue;
-                        break;
-                }
-                pen.Color = Color.FromArgb(red, green, blue);
-                e.Graphics.DrawLine(pen, (float)(left + this.DrawPoints[(index - 1) * 5 + 4] / this.xMax * width / 50.0), (float)(num1 - this.DrawPoints[(index - 1) * 5 + 2] / this.yMax * height / 50.0), (float)(left + this.DrawPoints[index * 5 + 4] / this.xMax * width / 50.0), (float)(num1 - this.DrawPoints[index * 5 + 2] / this.yMax * height / 50.0));
-            }
-        }
+        //private void PictureBox4_Paint(object sender, PaintEventArgs e)
+        //{
+        //    double left = (double)e.ClipRectangle.Left;
+        //    Rectangle clipRectangle = e.ClipRectangle;
+        //    int bottom = clipRectangle.Bottom;
+        //    clipRectangle = e.ClipRectangle;
+        //    int top = clipRectangle.Top;
+        //    double num1 = 0.5 * (double)(bottom + top);
+        //    double height = (double)e.ClipRectangle.Height;
+        //    double width = (double)e.ClipRectangle.Width;
+        //    Pen pen = new Pen(Color.Black, 2f);
+        //    int num2 = !this.inDinamic ? this.allPoints.drawCount : this.dinPointsCount;
+        //    int red = 0;
+        //    int green = 0;
+        //    int blue = 0;
+        //    for (int index = 1; index < num2; ++index)
+        //    {
+        //        switch (index * 5 / (int)byte.MaxValue % 5)
+        //        {
+        //            case 0:
+        //                green = 0;
+        //                blue = 0;
+        //                red = index * 5 % (int)byte.MaxValue;
+        //                break;
+        //            case 1:
+        //                red = 0;
+        //                blue = 0;
+        //                green = index * 5 % (int)byte.MaxValue;
+        //                break;
+        //            case 2:
+        //                red = 0;
+        //                green = 0;
+        //                blue = index * 5 % (int)byte.MaxValue;
+        //                break;
+        //        }
+        //        pen.Color = Color.FromArgb(red, green, blue);
+        //        e.Graphics.DrawLine(pen, (float)(left + this.DrawPoints[(index - 1) * 5 + 4] / this.xMax * width / 50.0), (float)(num1 - this.DrawPoints[(index - 1) * 5 + 2] / this.yMax * height / 50.0), (float)(left + this.DrawPoints[index * 5 + 4] / this.xMax * width / 50.0), (float)(num1 - this.DrawPoints[index * 5 + 2] / this.yMax * height / 50.0));
+        //    }
+        //}
 
         protected override void Dispose(bool disposing)
         {
@@ -585,18 +588,18 @@ namespace PortalCraneModel
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea9 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend9 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series9 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea10 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend10 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series10 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea11 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend11 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series11 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea12 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend12 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series12 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea13 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend13 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series13 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea14 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend14 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series14 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea15 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend15 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series15 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea16 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend16 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series16 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.chart2 = new System.Windows.Forms.DataVisualization.Charting.Chart();
@@ -683,6 +686,7 @@ namespace PortalCraneModel
             this.DL_M1 = new System.Windows.Forms.TextBox();
             this.DL_M2 = new System.Windows.Forms.TextBox();
             this.Timer1 = new System.Windows.Forms.Timer(this.components);
+            this.button3 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart2)).BeginInit();
@@ -732,17 +736,17 @@ namespace PortalCraneModel
             // chart2
             // 
             this.chart2.BackColor = System.Drawing.SystemColors.Control;
-            chartArea9.Name = "ChartArea1";
-            this.chart2.ChartAreas.Add(chartArea9);
-            legend9.Enabled = false;
-            legend9.Name = "Legend1";
-            this.chart2.Legends.Add(legend9);
+            chartArea13.Name = "ChartArea1";
+            this.chart2.ChartAreas.Add(chartArea13);
+            legend13.Enabled = false;
+            legend13.Name = "Legend1";
+            this.chart2.Legends.Add(legend13);
             this.chart2.Location = new System.Drawing.Point(849, 8);
             this.chart2.Name = "chart2";
-            series9.ChartArea = "ChartArea1";
-            series9.Legend = "Legend1";
-            series9.Name = "Series1";
-            this.chart2.Series.Add(series9);
+            series13.ChartArea = "ChartArea1";
+            series13.Legend = "Legend1";
+            series13.Name = "Series1";
+            this.chart2.Series.Add(series13);
             this.chart2.Size = new System.Drawing.Size(500, 350);
             this.chart2.TabIndex = 55;
             this.chart2.Text = "chart2";
@@ -750,18 +754,18 @@ namespace PortalCraneModel
             // chart4
             // 
             this.chart4.BackColor = System.Drawing.SystemColors.Control;
-            chartArea10.Name = "ChartArea1";
-            this.chart4.ChartAreas.Add(chartArea10);
-            legend10.Enabled = false;
-            legend10.Name = "Legend1";
-            this.chart4.Legends.Add(legend10);
+            chartArea14.Name = "ChartArea1";
+            this.chart4.ChartAreas.Add(chartArea14);
+            legend14.Enabled = false;
+            legend14.Name = "Legend1";
+            this.chart4.Legends.Add(legend14);
             this.chart4.Location = new System.Drawing.Point(849, 364);
             this.chart4.Name = "chart4";
-            series10.ChartArea = "ChartArea1";
-            series10.Legend = "Legend1";
-            series10.Name = "Series1";
-            series10.XAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
-            this.chart4.Series.Add(series10);
+            series14.ChartArea = "ChartArea1";
+            series14.Legend = "Legend1";
+            series14.Name = "Series1";
+            series14.XAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
+            this.chart4.Series.Add(series14);
             this.chart4.Size = new System.Drawing.Size(500, 350);
             this.chart4.TabIndex = 52;
             this.chart4.Text = "chart1";
@@ -769,17 +773,17 @@ namespace PortalCraneModel
             // chart3
             // 
             this.chart3.BackColor = System.Drawing.SystemColors.Control;
-            chartArea11.Name = "ChartArea1";
-            this.chart3.ChartAreas.Add(chartArea11);
-            legend11.Enabled = false;
-            legend11.Name = "Legend1";
-            this.chart3.Legends.Add(legend11);
+            chartArea15.Name = "ChartArea1";
+            this.chart3.ChartAreas.Add(chartArea15);
+            legend15.Enabled = false;
+            legend15.Name = "Legend1";
+            this.chart3.Legends.Add(legend15);
             this.chart3.Location = new System.Drawing.Point(343, 364);
             this.chart3.Name = "chart3";
-            series11.ChartArea = "ChartArea1";
-            series11.Legend = "Legend1";
-            series11.Name = "Series1";
-            this.chart3.Series.Add(series11);
+            series15.ChartArea = "ChartArea1";
+            series15.Legend = "Legend1";
+            series15.Name = "Series1";
+            this.chart3.Series.Add(series15);
             this.chart3.Size = new System.Drawing.Size(500, 350);
             this.chart3.TabIndex = 53;
             this.chart3.Text = "chart1";
@@ -787,17 +791,17 @@ namespace PortalCraneModel
             // chart1
             // 
             this.chart1.BackColor = System.Drawing.SystemColors.Control;
-            chartArea12.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea12);
-            legend12.Enabled = false;
-            legend12.Name = "Legend1";
-            this.chart1.Legends.Add(legend12);
+            chartArea16.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea16);
+            legend16.Enabled = false;
+            legend16.Name = "Legend1";
+            this.chart1.Legends.Add(legend16);
             this.chart1.Location = new System.Drawing.Point(343, 8);
             this.chart1.Name = "chart1";
-            series12.ChartArea = "ChartArea1";
-            series12.Legend = "Legend1";
-            series12.Name = "Series1";
-            this.chart1.Series.Add(series12);
+            series16.ChartArea = "ChartArea1";
+            series16.Legend = "Legend1";
+            series16.Name = "Series1";
+            this.chart1.Series.Add(series16);
             this.chart1.Size = new System.Drawing.Size(500, 350);
             this.chart1.TabIndex = 54;
             this.chart1.Text = "chart1";
@@ -1196,6 +1200,7 @@ namespace PortalCraneModel
             // roots_gbox
             // 
             this.roots_gbox.BackColor = System.Drawing.SystemColors.Control;
+            this.roots_gbox.Controls.Add(this.button3);
             this.roots_gbox.Controls.Add(this.button2);
             this.roots_gbox.Controls.Add(this.btn_clear);
             this.roots_gbox.Controls.Add(this.label11);
@@ -1222,7 +1227,7 @@ namespace PortalCraneModel
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(83, 146);
+            this.button2.Location = new System.Drawing.Point(104, 146);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(81, 23);
             this.button2.TabIndex = 45;
@@ -1651,6 +1656,16 @@ namespace PortalCraneModel
             // 
             this.Timer1.Interval = 10;
             // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(17, 146);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(81, 23);
+            this.button3.TabIndex = 46;
+            this.button3.Text = "Сл. корни";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.Button3_Click);
+            // 
             // PortalCraneModel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1981,6 +1996,15 @@ namespace PortalCraneModel
                         }//Конец перебора всех Qu
                     }
             }
+        }
+
+        private void Button3_Click(object sender, EventArgs e)
+        {
+            tbox_lambda1_re.Text = (-1).ToString();
+            tbox_lambda1_im.Text = (-1).ToString();
+
+            tbox_lambda3_re.Text = (-1).ToString();
+            tbox_lambda3_im.Text = (-1).ToString();
         }
 
         eque_lines Draw_Line = new eque_lines();
