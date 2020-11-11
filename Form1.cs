@@ -585,18 +585,18 @@ namespace PortalCraneModel
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea9 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend9 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series9 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea10 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend10 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series10 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea11 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend11 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series11 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea12 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend12 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series12 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.chart2 = new System.Windows.Forms.DataVisualization.Charting.Chart();
@@ -732,17 +732,17 @@ namespace PortalCraneModel
             // chart2
             // 
             this.chart2.BackColor = System.Drawing.SystemColors.Control;
-            chartArea1.Name = "ChartArea1";
-            this.chart2.ChartAreas.Add(chartArea1);
-            legend1.Enabled = false;
-            legend1.Name = "Legend1";
-            this.chart2.Legends.Add(legend1);
+            chartArea9.Name = "ChartArea1";
+            this.chart2.ChartAreas.Add(chartArea9);
+            legend9.Enabled = false;
+            legend9.Name = "Legend1";
+            this.chart2.Legends.Add(legend9);
             this.chart2.Location = new System.Drawing.Point(849, 8);
             this.chart2.Name = "chart2";
-            series1.ChartArea = "ChartArea1";
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            this.chart2.Series.Add(series1);
+            series9.ChartArea = "ChartArea1";
+            series9.Legend = "Legend1";
+            series9.Name = "Series1";
+            this.chart2.Series.Add(series9);
             this.chart2.Size = new System.Drawing.Size(500, 350);
             this.chart2.TabIndex = 55;
             this.chart2.Text = "chart2";
@@ -750,18 +750,18 @@ namespace PortalCraneModel
             // chart4
             // 
             this.chart4.BackColor = System.Drawing.SystemColors.Control;
-            chartArea2.Name = "ChartArea1";
-            this.chart4.ChartAreas.Add(chartArea2);
-            legend2.Enabled = false;
-            legend2.Name = "Legend1";
-            this.chart4.Legends.Add(legend2);
+            chartArea10.Name = "ChartArea1";
+            this.chart4.ChartAreas.Add(chartArea10);
+            legend10.Enabled = false;
+            legend10.Name = "Legend1";
+            this.chart4.Legends.Add(legend10);
             this.chart4.Location = new System.Drawing.Point(849, 364);
             this.chart4.Name = "chart4";
-            series2.ChartArea = "ChartArea1";
-            series2.Legend = "Legend1";
-            series2.Name = "Series1";
-            series2.XAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
-            this.chart4.Series.Add(series2);
+            series10.ChartArea = "ChartArea1";
+            series10.Legend = "Legend1";
+            series10.Name = "Series1";
+            series10.XAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
+            this.chart4.Series.Add(series10);
             this.chart4.Size = new System.Drawing.Size(500, 350);
             this.chart4.TabIndex = 52;
             this.chart4.Text = "chart1";
@@ -769,17 +769,17 @@ namespace PortalCraneModel
             // chart3
             // 
             this.chart3.BackColor = System.Drawing.SystemColors.Control;
-            chartArea3.Name = "ChartArea1";
-            this.chart3.ChartAreas.Add(chartArea3);
-            legend3.Enabled = false;
-            legend3.Name = "Legend1";
-            this.chart3.Legends.Add(legend3);
+            chartArea11.Name = "ChartArea1";
+            this.chart3.ChartAreas.Add(chartArea11);
+            legend11.Enabled = false;
+            legend11.Name = "Legend1";
+            this.chart3.Legends.Add(legend11);
             this.chart3.Location = new System.Drawing.Point(343, 364);
             this.chart3.Name = "chart3";
-            series3.ChartArea = "ChartArea1";
-            series3.Legend = "Legend1";
-            series3.Name = "Series1";
-            this.chart3.Series.Add(series3);
+            series11.ChartArea = "ChartArea1";
+            series11.Legend = "Legend1";
+            series11.Name = "Series1";
+            this.chart3.Series.Add(series11);
             this.chart3.Size = new System.Drawing.Size(500, 350);
             this.chart3.TabIndex = 53;
             this.chart3.Text = "chart1";
@@ -787,17 +787,17 @@ namespace PortalCraneModel
             // chart1
             // 
             this.chart1.BackColor = System.Drawing.SystemColors.Control;
-            chartArea4.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea4);
-            legend4.Enabled = false;
-            legend4.Name = "Legend1";
-            this.chart1.Legends.Add(legend4);
+            chartArea12.Name = "ChartArea1";
+            this.chart1.ChartAreas.Add(chartArea12);
+            legend12.Enabled = false;
+            legend12.Name = "Legend1";
+            this.chart1.Legends.Add(legend12);
             this.chart1.Location = new System.Drawing.Point(343, 8);
             this.chart1.Name = "chart1";
-            series4.ChartArea = "ChartArea1";
-            series4.Legend = "Legend1";
-            series4.Name = "Series1";
-            this.chart1.Series.Add(series4);
+            series12.ChartArea = "ChartArea1";
+            series12.Legend = "Legend1";
+            series12.Name = "Series1";
+            this.chart1.Series.Add(series12);
             this.chart1.Size = new System.Drawing.Size(500, 350);
             this.chart1.TabIndex = 54;
             this.chart1.Text = "chart1";
@@ -855,6 +855,7 @@ namespace PortalCraneModel
             this.Button_setCalcParam.TabIndex = 9;
             this.Button_setCalcParam.Text = "Принять";
             this.Button_setCalcParam.UseVisualStyleBackColor = true;
+            this.Button_setCalcParam.Click += new System.EventHandler(this.Button_setCalcParam_Click);
             // 
             // checkBox_dinDraw
             // 
@@ -991,6 +992,7 @@ namespace PortalCraneModel
             this.Button_setParam.TabIndex = 27;
             this.Button_setParam.Text = "Принять";
             this.Button_setParam.UseVisualStyleBackColor = true;
+            this.Button_setParam.Click += new System.EventHandler(this.Button_setParam_Click);
             // 
             // textBox_E
             // 
@@ -1226,6 +1228,7 @@ namespace PortalCraneModel
             this.button2.TabIndex = 45;
             this.button2.Text = "Сбросить";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.Button2_Click);
             // 
             // btn_clear
             // 
@@ -1235,7 +1238,7 @@ namespace PortalCraneModel
             this.btn_clear.TabIndex = 35;
             this.btn_clear.Text = "Очистить";
             this.btn_clear.UseVisualStyleBackColor = true;
-            this.btn_clear.Click += new System.EventHandler(this.Btn_clear_Click_1);
+            this.btn_clear.Click += new System.EventHandler(this.Btn_clear_Click);
             // 
             // label11
             // 
@@ -1346,6 +1349,7 @@ namespace PortalCraneModel
             this.tbox_lambda3_im.TabIndex = 15;
             this.tbox_lambda3_im.Text = "0";
             this.tbox_lambda3_im.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.tbox_lambda3_im.TextChanged += new System.EventHandler(this.Tbox_lambda3_im_TextChanged);
             // 
             // tbox_lambda1_re
             // 
@@ -1374,6 +1378,7 @@ namespace PortalCraneModel
             this.tbox_lambda1_im.TabIndex = 13;
             this.tbox_lambda1_im.Text = "0";
             this.tbox_lambda1_im.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.tbox_lambda1_im.TextChanged += new System.EventHandler(this.Tbox_lambda1_im_TextChanged);
             // 
             // cBox_non_linear
             // 
@@ -1438,6 +1443,7 @@ namespace PortalCraneModel
             this.Button_setInitVal.TabIndex = 25;
             this.Button_setInitVal.Text = "Принять";
             this.Button_setInitVal.UseVisualStyleBackColor = true;
+            this.Button_setInitVal.Click += new System.EventHandler(this.Button_setInitVal_Click);
             // 
             // labelfi
             // 
@@ -1704,6 +1710,8 @@ namespace PortalCraneModel
             chart3.Legends.Clear();
             chart4.Series.Clear();
             chart4.Legends.Clear();
+
+            dataGridView1.Rows.Clear();
 
             buildCount = 0;
         }
@@ -1972,17 +1980,6 @@ namespace PortalCraneModel
                             //Конец прорисовки линии уровня Qu
                         }//Конец перебора всех Qu
                     }
-            }
-        }
-
-        private void Btn_clear_Click_1(object sender, EventArgs e)
-        {
-            for (int i = 0; i < buildCount; ++i)
-            {
-                chart1.Series[i.ToString()].Points.Clear();
-                chart2.Series[i.ToString()].Points.Clear();
-                chart3.Series[i.ToString()].Points.Clear();
-                chart4.Series[i.ToString()].Points.Clear();
             }
         }
 
