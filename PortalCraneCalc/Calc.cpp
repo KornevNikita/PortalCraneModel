@@ -20,6 +20,8 @@ bool inDinamic; // risovat v dinamike (poka ne realizovano)
 vector<double> reg(dim); // regulator
 vector<complex<double>> p(dim);  // zhelaemie korni 
 
+vector<point> all_points; // massiv dlya hraneniya poluchennih tochek
+
 double a21, a22, a24, a41, a42, a44, b2, b4; // coefficinti matrici A & vectora b (forma Koshi)
 
 void mult(std::vector<std::vector<double>>& op1,
@@ -169,14 +171,27 @@ void GetAllDrawPoints(TAllDrawPoints* allDrawData, bool system, bool reg_on)
 {
   point drawPoint(fi, dfi_dt, x, dx_dt, t_start);
   TDinModel model(4, drawPoint);
+
+  all_points.clear();
+
   allDrawData->allDrawPoints[0] = drawPoint;
-  std::ofstream fout;
-  fout.open("values.txt", ios_base::trunc);
+  all_points.push_back(drawPoint);
+
+  std::ofstream fout1, fout2;
+  fout1.open("values.txt", ios_base::trunc);
+  fout1 << drawPoint.fi << " " << drawPoint.dfi_dt << " " << drawPoint.x << " " << drawPoint.dx_dt << endl;
+  fout2.open("values_in_local_vault.txt", ios_base::trunc);
+  fout2 << all_points[0].fi << " " << all_points[0].dfi_dt << " " << all_points[0].x << " " << all_points[0].dx_dt << endl;
+
   for (unsigned i = 1; i < allDrawData->drawCount; i++)
   {
     drawPoint = model.RK4(system, reg_on);
-    allDrawData->allDrawPoints[i] = drawPoint;
-    fout << drawPoint.fi << " " << drawPoint.dfi_dt << " " << drawPoint.x << " " << drawPoint.dx_dt << endl;
+
+    all_points.push_back(drawPoint); // polozhili tochku v local hranilishe
+    allDrawData->allDrawPoints[i] = drawPoint; // v c#
+
+    fout1 << drawPoint.fi << " " << drawPoint.dfi_dt << " " << drawPoint.x << " " << drawPoint.dx_dt << endl;
+    fout2 << all_points[i].fi << " " << all_points[i].dfi_dt << " " << all_points[i].x << " " << all_points[i].dx_dt << endl;
   }
 }
 
