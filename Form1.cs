@@ -35,24 +35,21 @@ namespace PortalCraneModel
     public double[] DrawPoints, DrawCriteria;
 
 
-    public IntPtr ptrTAllDrawPoints, PtrNextPoint,
-        ptrCriteria;
+    public IntPtr ptrTAllDrawPoints, PtrNextPoint, ptrCriteria;
 
     public PortalCraneModel.TAllDrawPoints allPoints, criteria;
 
     public PortalCraneModel.TStatePoint CurrentPoint;
 
     public double M, m, l, R, g,
-        h_fi, h_x, B, gamma, E, // parametri modeli
+      h_fi, h_x, B, gamma, E, // parametri modeli
 
-        fi, dfi_dt, x, dx_dt, // ishodnoye sostoyanie sistemi
+      fi, dfi_dt, x, dx_dt, // ishodnoye sostoyanie sistemi
 
-        dt, t_start, t_stop, // parametri integrirovaniya
+      dt, t_start, t_stop, // parametri integrirovaniya
 
-        lambda1_re, lambda1_im, lambda2_re, lambda2_im,
-        lambda3_re, lambda3_im, lambda4_re, lambda4_im; // zhelaemiye korni har. polinoma
-
-    public bool inDinamic;
+      lambda1_re, lambda1_im, lambda2_re, lambda2_im,
+      lambda3_re, lambda3_im, lambda4_re, lambda4_im; // zhelaemiye korni har. polinoma
 
     private TabControl tabControl1;
     private TabPage tabPage1;
@@ -60,7 +57,6 @@ namespace PortalCraneModel
     private Label textBox_run_time;
     private Label label16;
     private Button Button_setCalcParam;
-    private CheckBox checkBox_dinDraw;
     private Label label4;
     private Label label3;
     private Label label2;
@@ -128,7 +124,6 @@ namespace PortalCraneModel
     private TextBox textBox_x;
     private TextBox textBox_dfi_dt;
     private TabPage tabPage2;
-    private Timer Timer1;
     private PictureBox pBox_T_criterion;
     public TextBox xmin_t;
     public TextBox ymin_t;
@@ -154,6 +149,7 @@ namespace PortalCraneModel
     private Label label_M1;
     private Label label_N;
     private Label label_sigma;
+    private CheckBox drawing_on;
     private IContainer components;
 
     [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
@@ -168,7 +164,7 @@ namespace PortalCraneModel
     public static extern void Calc_regulator();
 
     [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
-    public static extern void SetCalcParams(double _dt, double _t_start, double _t_stop, int _drawStCount, bool _inDinamic);
+    public static extern void SetCalcParams(double _dt, double _t_start, double _t_stop, int _drawStCount);
 
     [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
     public static extern void SetInitParams(double _fi, double _dfi_dt, double _x, double _dx_dt);
@@ -229,31 +225,6 @@ namespace PortalCraneModel
       chart4.ChartAreas[0].AxisY.Title = "x - x*";
     }
 
-    private void Timer1_Tick(object sender, EventArgs e)
-    {
-      if (dinPointsCount == allPoints.drawCount)
-      {
-        Timer1.Enabled = false;
-        Marshal.FreeHGlobal(PtrNextPoint);
-      }
-      else
-      {
-        Marshal.StructureToPtr(CurrentPoint, PtrNextPoint, false);
-        // PortalCraneModel.GetNextDrawPoint(PtrNextPoint);
-        CurrentPoint = (PortalCraneModel.TStatePoint)Marshal.PtrToStructure(PtrNextPoint, typeof(PortalCraneModel.TStatePoint));
-        DrawPoints[dinPointsCount * 5] = CurrentPoint.fi;
-        DrawPoints[dinPointsCount * 5 + 1] = CurrentPoint.dfi_dt;
-        DrawPoints[dinPointsCount * 5 + 2] = CurrentPoint.x;
-        DrawPoints[dinPointsCount * 5 + 3] = CurrentPoint.dx_dt;
-        DrawPoints[dinPointsCount * 5 + 4] = CurrentPoint.t;
-        ++dinPointsCount;
-        //PictureBox1.Refresh();
-        //PictureBox2.Refresh();
-        //PictureBox3.Refresh();
-        //PictureBox4.Refresh();
-      }
-    }
-
     private void Button_setParam_Click(object sender, EventArgs e)
     {
       SetParam();
@@ -271,17 +242,31 @@ namespace PortalCraneModel
 
     private void Button_runCalc_Click(object sender, EventArgs e)
     {
-      Stopwatch stopwatch = new Stopwatch();
-      stopwatch.Start();
-
       dataGridView1.Rows.Clear();
 
-      // считываем:
       SetParam(); // параметры модели
       SetLambdas(); // корни желаемого хар. полинома
       SetCalcParam(); // параметры расчета
       SetInitVal(); // начальное состояние системы
 
+      Stopwatch stopwatch = new Stopwatch();
+      stopwatch.Start();
+
+      Calculate();
+
+      stopwatch.Stop();
+
+      if (drawing_on.Checked)
+        DrawTrajectories();
+
+      PrintGrid();
+
+      textBox_run_time.Text = stopwatch.Elapsed.TotalSeconds.ToString();
+      textBox_run_time.BackColor = Color.LightGreen;
+    }
+
+    public void Calculate()
+    {
       Calc_regulator(); // rasschitivaem parametri regulatora
 
       // определяем количество точек, которые будут отрисованы
@@ -290,95 +275,75 @@ namespace PortalCraneModel
       DrawPoints = new double[allPoints.drawCount * 5];
       DrawPoints = new double[allPoints.drawCount * 5];
 
-      if (inDinamic)
+      int sizeStruct = Marshal.SizeOf(typeof(PortalCraneModel.TAllDrawPoints)); // определяем размер управляемой структуры
+      ptrTAllDrawPoints = Marshal.AllocHGlobal(sizeStruct); // выделяем память под неуправляемую структуру
+      Marshal.StructureToPtr(allPoints, ptrTAllDrawPoints, false); // копируем данные из неуправляемой в управляемую
+      PortalCraneModel.InitAllPointsArray(ptrTAllDrawPoints); // выделяем память под внутренний неуправляемый массив в неупр структуре
+      PortalCraneModel.GetAllDrawPoints(ptrTAllDrawPoints, cBox_non_linear.Checked, cBox_Reg_on.Checked);
+      allPoints = (PortalCraneModel.TAllDrawPoints)Marshal.PtrToStructure(ptrTAllDrawPoints, typeof(PortalCraneModel.TAllDrawPoints));
+      Marshal.Copy(allPoints.allDrawPoints, DrawPoints, 0, allPoints.drawCount * 5);
+      PortalCraneModel.DeleteAllPointsArray(ptrTAllDrawPoints);
+      Marshal.FreeHGlobal(ptrTAllDrawPoints);
+    }
+
+    private void DrawTrajectories()
+    {
+      chart1.Series.Add(buildCount.ToString());
+      chart2.Series.Add(buildCount.ToString());
+      chart3.Series.Add(buildCount.ToString());
+      chart4.Series.Add(buildCount.ToString());
+
+
+      chart1.Series[buildCount.ToString()].ChartType = SeriesChartType.Spline;
+      chart2.Series[buildCount.ToString()].ChartType = SeriesChartType.Spline;
+      chart3.Series[buildCount.ToString()].ChartType = SeriesChartType.Spline;
+      chart4.Series[buildCount.ToString()].ChartType = SeriesChartType.Spline;
+
+      chart1.Series[buildCount.ToString()].BorderWidth = 2;
+      chart2.Series[buildCount.ToString()].BorderWidth = 2;
+      chart3.Series[buildCount.ToString()].BorderWidth = 2;
+      chart4.Series[buildCount.ToString()].BorderWidth = 2;
+
+      //chart2.ChartAreas[0].AxisX.Minimum = DrawPoints[DrawPoints.Length - 3];
+      chart3.ChartAreas[0].AxisX.Minimum = t_start;
+      chart4.ChartAreas[0].AxisX.Minimum = t_start;
+      //chart4.ChartAreas[0].AxisY.Minimum = DrawPoints[DrawPoints.Length - 3];
+
+      chart1.Series[buildCount.ToString()].Color = Color.FromArgb(rand.Next() % 256, rand.Next() % 256, rand.Next() % 256);
+      chart2.Series[buildCount.ToString()].Color = Color.FromArgb(rand.Next() % 256, rand.Next() % 256, rand.Next() % 256);
+      chart3.Series[buildCount.ToString()].Color = Color.FromArgb(rand.Next() % 256, rand.Next() % 256, rand.Next() % 256);
+      chart4.Series[buildCount.ToString()].Color = Color.FromArgb(rand.Next() % 256, rand.Next() % 256, rand.Next() % 256);
+
+      for (int i = 0; i < DrawPoints.Length; i += 5)
+        chart1.Series[buildCount.ToString()].Points.AddXY(DrawPoints[i], DrawPoints[i + 1]);
+
+      for (int i = 2; i < DrawPoints.Length; i += 5)
+        chart2.Series[buildCount.ToString()].Points.AddXY(DrawPoints[i], DrawPoints[i + 1]);
+
+      for (int i = 0; i < DrawPoints.Length; i += 5)
+        chart3.Series[buildCount.ToString()].Points.AddXY(DrawPoints[i + 4], DrawPoints[i]);
+
+      for (int i = 2; i < DrawPoints.Length - 4; i += 5)
+        chart4.Series[buildCount.ToString()].Points.AddXY(DrawPoints[i + 2], DrawPoints[i]);
+      buildCount++;
+    }
+
+    private void PrintGrid()
+    {
+      dataGridView1.ColumnCount = 6;
+      dataGridView1.Columns[0].HeaderText = "n";
+      dataGridView1.Columns[1].HeaderText = "t";
+      dataGridView1.Columns[2].HeaderText = "fi";
+      dataGridView1.Columns[3].HeaderText = "fi_dt";
+      dataGridView1.Columns[4].HeaderText = "x";
+      dataGridView1.Columns[5].HeaderText = "x_dt";
+
+      int count = 0;
+      for (int i = 0; i < DrawPoints.Length; i += 5)
       {
-        CurrentPoint.fi = fi;
-        CurrentPoint.dfi_dt = dfi_dt;
-        CurrentPoint.x = x;
-        CurrentPoint.dx_dt = dx_dt;
-        CurrentPoint.t = t_start;
-        DrawPoints[0] = fi;
-        DrawPoints[1] = dfi_dt;
-        DrawPoints[2] = x;
-        DrawPoints[3] = dx_dt;
-        DrawPoints[4] = t_start;
-        dinPointsCount = 0;
-        PtrNextPoint = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(PortalCraneModel.TStatePoint)));
-        Timer1.Enabled = true;
-      }
-
-      else
-      {
-        int sizeStruct = Marshal.SizeOf(typeof(PortalCraneModel.TAllDrawPoints)); // определяем размер управляемой структуры
-        ptrTAllDrawPoints = Marshal.AllocHGlobal(sizeStruct); // выделяем память под неуправляемую структуру
-        Marshal.StructureToPtr(allPoints, ptrTAllDrawPoints, false); // копируем данные из неуправляемой в управляемую
-        PortalCraneModel.InitAllPointsArray(ptrTAllDrawPoints); // выделяем память под внутренний неуправляемый массив в неупр структуре
-        PortalCraneModel.GetAllDrawPoints(ptrTAllDrawPoints, cBox_non_linear.Checked, cBox_Reg_on.Checked);
-        allPoints = (PortalCraneModel.TAllDrawPoints)Marshal.PtrToStructure(ptrTAllDrawPoints, typeof(PortalCraneModel.TAllDrawPoints));
-        Marshal.Copy(allPoints.allDrawPoints, DrawPoints, 0, allPoints.drawCount * 5);
-        PortalCraneModel.DeleteAllPointsArray(ptrTAllDrawPoints);
-        Marshal.FreeHGlobal(ptrTAllDrawPoints);
-
-        chart1.Series.Add(buildCount.ToString());
-        chart2.Series.Add(buildCount.ToString());
-        chart3.Series.Add(buildCount.ToString());
-        chart4.Series.Add(buildCount.ToString());
-
-
-        chart1.Series[buildCount.ToString()].ChartType = SeriesChartType.Spline;
-        chart2.Series[buildCount.ToString()].ChartType = SeriesChartType.Spline;
-        chart3.Series[buildCount.ToString()].ChartType = SeriesChartType.Spline;
-        chart4.Series[buildCount.ToString()].ChartType = SeriesChartType.Spline;
-
-        chart1.Series[buildCount.ToString()].BorderWidth = 2;
-        chart2.Series[buildCount.ToString()].BorderWidth = 2;
-        chart3.Series[buildCount.ToString()].BorderWidth = 2;
-        chart4.Series[buildCount.ToString()].BorderWidth = 2;
-
-        //chart2.ChartAreas[0].AxisX.Minimum = DrawPoints[DrawPoints.Length - 3];
-        chart3.ChartAreas[0].AxisX.Minimum = t_start;
-        chart4.ChartAreas[0].AxisX.Minimum = t_start;
-        //chart4.ChartAreas[0].AxisY.Minimum = DrawPoints[DrawPoints.Length - 3];
-
-        chart1.Series[buildCount.ToString()].Color = Color.FromArgb(rand.Next() % 256, rand.Next() % 256, rand.Next() % 256);
-        chart2.Series[buildCount.ToString()].Color = Color.FromArgb(rand.Next() % 256, rand.Next() % 256, rand.Next() % 256);
-        chart3.Series[buildCount.ToString()].Color = Color.FromArgb(rand.Next() % 256, rand.Next() % 256, rand.Next() % 256);
-        chart4.Series[buildCount.ToString()].Color = Color.FromArgb(rand.Next() % 256, rand.Next() % 256, rand.Next() % 256);
-
-        for (int i = 0; i < DrawPoints.Length; i += 5)
-          chart1.Series[buildCount.ToString()].Points.AddXY(DrawPoints[i], DrawPoints[i + 1]);
-
-        for (int i = 2; i < DrawPoints.Length; i += 5)
-          chart2.Series[buildCount.ToString()].Points.AddXY(DrawPoints[i], DrawPoints[i + 1]);
-
-        for (int i = 0; i < DrawPoints.Length; i += 5)
-          chart3.Series[buildCount.ToString()].Points.AddXY(DrawPoints[i + 4], DrawPoints[i]);
-
-        for (int i = 2; i < DrawPoints.Length - 4; i += 5)
-          chart4.Series[buildCount.ToString()].Points.AddXY(DrawPoints[i + 2], DrawPoints[i]);
-        buildCount++;
-
-        dataGridView1.ColumnCount = 6;
-        dataGridView1.Columns[0].HeaderText = "n";
-        dataGridView1.Columns[1].HeaderText = "t";
-        dataGridView1.Columns[2].HeaderText = "fi";
-        dataGridView1.Columns[3].HeaderText = "fi_dt";
-        dataGridView1.Columns[4].HeaderText = "x";
-        dataGridView1.Columns[5].HeaderText = "x_dt";
-
-        int count = 0;
-        for (int i = 0; i < DrawPoints.Length; i += 5)
-        {
-          dataGridView1.Rows.Add(count, Math.Round(DrawPoints[i + 4], 12), Math.Round(DrawPoints[i], 12),
-              Math.Round(DrawPoints[i + 1], 12), Math.Round(DrawPoints[i + 2], 12), Math.Round(DrawPoints[i + 3], 12));
-          count++;
-        }
-
-        stopwatch.Stop();
-        textBox_run_time.Text = stopwatch.Elapsed.TotalSeconds.ToString();
-        textBox_run_time.BackColor = Color.LightGreen;
-
-        //button1.Enabled = true;
+        dataGridView1.Rows.Add(count, Math.Round(DrawPoints[i + 4], 12), Math.Round(DrawPoints[i], 12),
+            Math.Round(DrawPoints[i + 1], 12), Math.Round(DrawPoints[i + 2], 12), Math.Round(DrawPoints[i + 3], 12));
+        count++;
       }
     }
 
@@ -394,8 +359,6 @@ namespace PortalCraneModel
       B = double.Parse(textBox_B.Text);
       gamma = double.Parse(textBox_gamma.Text);
       E = double.Parse(textBox_E.Text);
-
-
 
       PortalCraneModel.SetModelParams(M, m, l, R, g,
           h_fi, h_x, B, gamma, E);
@@ -431,8 +394,7 @@ namespace PortalCraneModel
       t_start = double.Parse(textBox_t_start.Text);
       t_stop = double.Parse(textBox_t_stop.Text);
       drawStCount = int.Parse(textBox_drawStCount.Text);
-      inDinamic = checkBox_dinDraw.Checked;
-      PortalCraneModel.SetCalcParams(dt, t_start, t_stop, drawStCount, inDinamic);
+      PortalCraneModel.SetCalcParams(dt, t_start, t_stop, drawStCount);
     }
 
     //private void PictureBox1_Paint(object sender, PaintEventArgs e)
@@ -608,7 +570,6 @@ namespace PortalCraneModel
 
     private void InitializeComponent()
     {
-      components = new System.ComponentModel.Container();
       System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
       System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
       System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
@@ -621,1270 +582,1266 @@ namespace PortalCraneModel
       System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
       System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
       System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
-      tabControl1 = new System.Windows.Forms.TabControl();
-      tabPage1 = new System.Windows.Forms.TabPage();
-      chart2 = new System.Windows.Forms.DataVisualization.Charting.Chart();
-      chart4 = new System.Windows.Forms.DataVisualization.Charting.Chart();
-      chart3 = new System.Windows.Forms.DataVisualization.Charting.Chart();
-      chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
-      groupBox3 = new System.Windows.Forms.GroupBox();
-      textBox_run_time = new System.Windows.Forms.Label();
-      label16 = new System.Windows.Forms.Label();
-      Button_setCalcParam = new System.Windows.Forms.Button();
-      checkBox_dinDraw = new System.Windows.Forms.CheckBox();
-      label4 = new System.Windows.Forms.Label();
-      label3 = new System.Windows.Forms.Label();
-      label2 = new System.Windows.Forms.Label();
-      label1 = new System.Windows.Forms.Label();
-      textBox_drawStCount = new System.Windows.Forms.TextBox();
-      textBox_t_stop = new System.Windows.Forms.TextBox();
-      textBox_t_start = new System.Windows.Forms.TextBox();
-      textBox_step = new System.Windows.Forms.TextBox();
-      groupBox1 = new System.Windows.Forms.GroupBox();
-      Button_setParam = new System.Windows.Forms.Button();
-      textBox_E = new System.Windows.Forms.TextBox();
-      textBox_gamma = new System.Windows.Forms.TextBox();
-      label_gamma = new System.Windows.Forms.Label();
-      label_E = new System.Windows.Forms.Label();
-      label_h_x = new System.Windows.Forms.Label();
-      label_B = new System.Windows.Forms.Label();
-      label7 = new System.Windows.Forms.Label();
-      label_h_fi = new System.Windows.Forms.Label();
-      label_g = new System.Windows.Forms.Label();
-      label_R = new System.Windows.Forms.Label();
-      label_l = new System.Windows.Forms.Label();
-      label_mmal = new System.Windows.Forms.Label();
-      label_M = new System.Windows.Forms.Label();
-      textBox_h_fi = new System.Windows.Forms.TextBox();
-      textBox_g = new System.Windows.Forms.TextBox();
-      textBox_B = new System.Windows.Forms.TextBox();
-      textBox_R = new System.Windows.Forms.TextBox();
-      textBox_l = new System.Windows.Forms.TextBox();
-      textBox_h_x = new System.Windows.Forms.TextBox();
-      textBox_mmal = new System.Windows.Forms.TextBox();
-      textBox_M = new System.Windows.Forms.TextBox();
-      roots_gbox = new System.Windows.Forms.GroupBox();
-      button3 = new System.Windows.Forms.Button();
-      button2 = new System.Windows.Forms.Button();
-      btn_clear = new System.Windows.Forms.Button();
-      label11 = new System.Windows.Forms.Label();
-      label10 = new System.Windows.Forms.Label();
-      tbox_lambda4_im = new System.Windows.Forms.TextBox();
-      tbox_lambda4_re = new System.Windows.Forms.TextBox();
-      Button_runCalc = new System.Windows.Forms.Button();
-      tbox_lambda2_im = new System.Windows.Forms.TextBox();
-      tbox_lambda2_re = new System.Windows.Forms.TextBox();
-      label9 = new System.Windows.Forms.Label();
-      label8 = new System.Windows.Forms.Label();
-      label18 = new System.Windows.Forms.Label();
-      root1 = new System.Windows.Forms.Label();
-      tbox_lambda3_im = new System.Windows.Forms.TextBox();
-      tbox_lambda1_re = new System.Windows.Forms.TextBox();
-      tbox_lambda3_re = new System.Windows.Forms.TextBox();
-      tbox_lambda1_im = new System.Windows.Forms.TextBox();
-      cBox_non_linear = new System.Windows.Forms.CheckBox();
-      cBox_Reg_on = new System.Windows.Forms.CheckBox();
-      dataGridView1 = new System.Windows.Forms.DataGridView();
-      groupBox2 = new System.Windows.Forms.GroupBox();
-      Button_setInitVal = new System.Windows.Forms.Button();
-      labelfi = new System.Windows.Forms.Label();
-      labeldfi_dt = new System.Windows.Forms.Label();
-      labelx = new System.Windows.Forms.Label();
-      labeldx_dt = new System.Windows.Forms.Label();
-      textBox_fi = new System.Windows.Forms.TextBox();
-      textBox_dx_dt = new System.Windows.Forms.TextBox();
-      textBox_x = new System.Windows.Forms.TextBox();
-      textBox_dfi_dt = new System.Windows.Forms.TextBox();
-      tabPage2 = new System.Windows.Forms.TabPage();
-      label5 = new System.Windows.Forms.Label();
-      groupBox4 = new System.Windows.Forms.GroupBox();
-      label_mu1 = new System.Windows.Forms.Label();
-      xmin_t = new System.Windows.Forms.TextBox();
-      label_M3 = new System.Windows.Forms.Label();
-      xmax_t = new System.Windows.Forms.TextBox();
-      label_M2 = new System.Windows.Forms.Label();
-      label_mu2 = new System.Windows.Forms.Label();
-      label_M1 = new System.Windows.Forms.Label();
-      button1 = new System.Windows.Forms.Button();
-      ymin_t = new System.Windows.Forms.TextBox();
-      label_N = new System.Windows.Forms.Label();
-      label_sigma = new System.Windows.Forms.Label();
-      DL_N = new System.Windows.Forms.TextBox();
-      DL_M2 = new System.Windows.Forms.TextBox();
-      DL_M1 = new System.Windows.Forms.TextBox();
-      DL_M3 = new System.Windows.Forms.TextBox();
-      pBox_Vmax_criterion = new System.Windows.Forms.PictureBox();
-      pBox_h2_criterion = new System.Windows.Forms.PictureBox();
-      pBox_h1_criterion = new System.Windows.Forms.PictureBox();
-      pBox_H_criterion = new System.Windows.Forms.PictureBox();
-      pBox_T_criterion = new System.Windows.Forms.PictureBox();
-      func_num_text = new System.Windows.Forms.TextBox();
-      ymax_t = new System.Windows.Forms.TextBox();
-      Timer1 = new System.Windows.Forms.Timer(components);
-      tabControl1.SuspendLayout();
-      tabPage1.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(chart2)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(chart4)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(chart3)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(chart1)).BeginInit();
-      groupBox3.SuspendLayout();
-      groupBox1.SuspendLayout();
-      roots_gbox.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(dataGridView1)).BeginInit();
-      groupBox2.SuspendLayout();
-      tabPage2.SuspendLayout();
-      groupBox4.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(pBox_Vmax_criterion)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(pBox_h2_criterion)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(pBox_h1_criterion)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(pBox_H_criterion)).BeginInit();
-      ((System.ComponentModel.ISupportInitialize)(pBox_T_criterion)).BeginInit();
-      SuspendLayout();
+      this.tabControl1 = new System.Windows.Forms.TabControl();
+      this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.chart2 = new System.Windows.Forms.DataVisualization.Charting.Chart();
+      this.chart4 = new System.Windows.Forms.DataVisualization.Charting.Chart();
+      this.chart3 = new System.Windows.Forms.DataVisualization.Charting.Chart();
+      this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
+      this.groupBox3 = new System.Windows.Forms.GroupBox();
+      this.textBox_run_time = new System.Windows.Forms.Label();
+      this.label16 = new System.Windows.Forms.Label();
+      this.Button_setCalcParam = new System.Windows.Forms.Button();
+      this.label4 = new System.Windows.Forms.Label();
+      this.label3 = new System.Windows.Forms.Label();
+      this.label2 = new System.Windows.Forms.Label();
+      this.label1 = new System.Windows.Forms.Label();
+      this.textBox_drawStCount = new System.Windows.Forms.TextBox();
+      this.textBox_t_stop = new System.Windows.Forms.TextBox();
+      this.textBox_t_start = new System.Windows.Forms.TextBox();
+      this.textBox_step = new System.Windows.Forms.TextBox();
+      this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.Button_setParam = new System.Windows.Forms.Button();
+      this.textBox_E = new System.Windows.Forms.TextBox();
+      this.textBox_gamma = new System.Windows.Forms.TextBox();
+      this.label_gamma = new System.Windows.Forms.Label();
+      this.label_E = new System.Windows.Forms.Label();
+      this.label_h_x = new System.Windows.Forms.Label();
+      this.label_B = new System.Windows.Forms.Label();
+      this.label7 = new System.Windows.Forms.Label();
+      this.label_h_fi = new System.Windows.Forms.Label();
+      this.label_g = new System.Windows.Forms.Label();
+      this.label_R = new System.Windows.Forms.Label();
+      this.label_l = new System.Windows.Forms.Label();
+      this.label_mmal = new System.Windows.Forms.Label();
+      this.label_M = new System.Windows.Forms.Label();
+      this.textBox_h_fi = new System.Windows.Forms.TextBox();
+      this.textBox_g = new System.Windows.Forms.TextBox();
+      this.textBox_B = new System.Windows.Forms.TextBox();
+      this.textBox_R = new System.Windows.Forms.TextBox();
+      this.textBox_l = new System.Windows.Forms.TextBox();
+      this.textBox_h_x = new System.Windows.Forms.TextBox();
+      this.textBox_mmal = new System.Windows.Forms.TextBox();
+      this.textBox_M = new System.Windows.Forms.TextBox();
+      this.roots_gbox = new System.Windows.Forms.GroupBox();
+      this.button3 = new System.Windows.Forms.Button();
+      this.button2 = new System.Windows.Forms.Button();
+      this.btn_clear = new System.Windows.Forms.Button();
+      this.label11 = new System.Windows.Forms.Label();
+      this.label10 = new System.Windows.Forms.Label();
+      this.tbox_lambda4_im = new System.Windows.Forms.TextBox();
+      this.tbox_lambda4_re = new System.Windows.Forms.TextBox();
+      this.Button_runCalc = new System.Windows.Forms.Button();
+      this.tbox_lambda2_im = new System.Windows.Forms.TextBox();
+      this.tbox_lambda2_re = new System.Windows.Forms.TextBox();
+      this.label9 = new System.Windows.Forms.Label();
+      this.label8 = new System.Windows.Forms.Label();
+      this.label18 = new System.Windows.Forms.Label();
+      this.root1 = new System.Windows.Forms.Label();
+      this.tbox_lambda3_im = new System.Windows.Forms.TextBox();
+      this.tbox_lambda1_re = new System.Windows.Forms.TextBox();
+      this.tbox_lambda3_re = new System.Windows.Forms.TextBox();
+      this.tbox_lambda1_im = new System.Windows.Forms.TextBox();
+      this.cBox_non_linear = new System.Windows.Forms.CheckBox();
+      this.cBox_Reg_on = new System.Windows.Forms.CheckBox();
+      this.dataGridView1 = new System.Windows.Forms.DataGridView();
+      this.groupBox2 = new System.Windows.Forms.GroupBox();
+      this.Button_setInitVal = new System.Windows.Forms.Button();
+      this.labelfi = new System.Windows.Forms.Label();
+      this.labeldfi_dt = new System.Windows.Forms.Label();
+      this.labelx = new System.Windows.Forms.Label();
+      this.labeldx_dt = new System.Windows.Forms.Label();
+      this.textBox_fi = new System.Windows.Forms.TextBox();
+      this.textBox_dx_dt = new System.Windows.Forms.TextBox();
+      this.textBox_x = new System.Windows.Forms.TextBox();
+      this.textBox_dfi_dt = new System.Windows.Forms.TextBox();
+      this.tabPage2 = new System.Windows.Forms.TabPage();
+      this.label5 = new System.Windows.Forms.Label();
+      this.groupBox4 = new System.Windows.Forms.GroupBox();
+      this.label_mu1 = new System.Windows.Forms.Label();
+      this.xmin_t = new System.Windows.Forms.TextBox();
+      this.label_M3 = new System.Windows.Forms.Label();
+      this.xmax_t = new System.Windows.Forms.TextBox();
+      this.label_M2 = new System.Windows.Forms.Label();
+      this.label_mu2 = new System.Windows.Forms.Label();
+      this.label_M1 = new System.Windows.Forms.Label();
+      this.button1 = new System.Windows.Forms.Button();
+      this.ymin_t = new System.Windows.Forms.TextBox();
+      this.label_N = new System.Windows.Forms.Label();
+      this.label_sigma = new System.Windows.Forms.Label();
+      this.DL_N = new System.Windows.Forms.TextBox();
+      this.DL_M2 = new System.Windows.Forms.TextBox();
+      this.DL_M1 = new System.Windows.Forms.TextBox();
+      this.DL_M3 = new System.Windows.Forms.TextBox();
+      this.pBox_Vmax_criterion = new System.Windows.Forms.PictureBox();
+      this.pBox_h2_criterion = new System.Windows.Forms.PictureBox();
+      this.pBox_h1_criterion = new System.Windows.Forms.PictureBox();
+      this.pBox_H_criterion = new System.Windows.Forms.PictureBox();
+      this.pBox_T_criterion = new System.Windows.Forms.PictureBox();
+      this.func_num_text = new System.Windows.Forms.TextBox();
+      this.ymax_t = new System.Windows.Forms.TextBox();
+      this.drawing_on = new System.Windows.Forms.CheckBox();
+      this.tabControl1.SuspendLayout();
+      this.tabPage1.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.chart2)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.chart4)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.chart3)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
+      this.groupBox3.SuspendLayout();
+      this.groupBox1.SuspendLayout();
+      this.roots_gbox.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+      this.groupBox2.SuspendLayout();
+      this.tabPage2.SuspendLayout();
+      this.groupBox4.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pBox_Vmax_criterion)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pBox_h2_criterion)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pBox_h1_criterion)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pBox_H_criterion)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pBox_T_criterion)).BeginInit();
+      this.SuspendLayout();
       // 
       // tabControl1
       // 
-      tabControl1.Controls.Add(tabPage1);
-      tabControl1.Controls.Add(tabPage2);
-      tabControl1.Location = new System.Drawing.Point(0, 0);
-      tabControl1.Name = "tabControl1";
-      tabControl1.SelectedIndex = 0;
-      tabControl1.Size = new System.Drawing.Size(1364, 767);
-      tabControl1.TabIndex = 0;
+      this.tabControl1.Controls.Add(this.tabPage1);
+      this.tabControl1.Controls.Add(this.tabPage2);
+      this.tabControl1.Location = new System.Drawing.Point(0, 0);
+      this.tabControl1.Name = "tabControl1";
+      this.tabControl1.SelectedIndex = 0;
+      this.tabControl1.Size = new System.Drawing.Size(1364, 767);
+      this.tabControl1.TabIndex = 0;
       // 
       // tabPage1
       // 
-      tabPage1.Controls.Add(chart2);
-      tabPage1.Controls.Add(chart4);
-      tabPage1.Controls.Add(chart3);
-      tabPage1.Controls.Add(chart1);
-      tabPage1.Controls.Add(groupBox3);
-      tabPage1.Controls.Add(groupBox1);
-      tabPage1.Controls.Add(roots_gbox);
-      tabPage1.Controls.Add(cBox_non_linear);
-      tabPage1.Controls.Add(cBox_Reg_on);
-      tabPage1.Controls.Add(dataGridView1);
-      tabPage1.Controls.Add(groupBox2);
-      tabPage1.Location = new System.Drawing.Point(4, 22);
-      tabPage1.Name = "tabPage1";
-      tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      tabPage1.Size = new System.Drawing.Size(1356, 741);
-      tabPage1.TabIndex = 0;
-      tabPage1.Text = "Модель";
-      tabPage1.UseVisualStyleBackColor = true;
+      this.tabPage1.Controls.Add(this.chart2);
+      this.tabPage1.Controls.Add(this.chart4);
+      this.tabPage1.Controls.Add(this.chart3);
+      this.tabPage1.Controls.Add(this.chart1);
+      this.tabPage1.Controls.Add(this.groupBox3);
+      this.tabPage1.Controls.Add(this.groupBox1);
+      this.tabPage1.Controls.Add(this.roots_gbox);
+      this.tabPage1.Controls.Add(this.cBox_non_linear);
+      this.tabPage1.Controls.Add(this.cBox_Reg_on);
+      this.tabPage1.Controls.Add(this.dataGridView1);
+      this.tabPage1.Controls.Add(this.groupBox2);
+      this.tabPage1.Location = new System.Drawing.Point(4, 22);
+      this.tabPage1.Name = "tabPage1";
+      this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPage1.Size = new System.Drawing.Size(1356, 741);
+      this.tabPage1.TabIndex = 0;
+      this.tabPage1.Text = "Модель";
+      this.tabPage1.UseVisualStyleBackColor = true;
       // 
       // chart2
       // 
-      chart2.BackColor = System.Drawing.SystemColors.Control;
+      this.chart2.BackColor = System.Drawing.SystemColors.Control;
       chartArea1.Name = "ChartArea1";
-      chart2.ChartAreas.Add(chartArea1);
+      this.chart2.ChartAreas.Add(chartArea1);
       legend1.Enabled = false;
       legend1.Name = "Legend1";
-      chart2.Legends.Add(legend1);
-      chart2.Location = new System.Drawing.Point(849, 8);
-      chart2.Name = "chart2";
+      this.chart2.Legends.Add(legend1);
+      this.chart2.Location = new System.Drawing.Point(849, 8);
+      this.chart2.Name = "chart2";
       series1.ChartArea = "ChartArea1";
       series1.Legend = "Legend1";
       series1.Name = "Series1";
-      chart2.Series.Add(series1);
-      chart2.Size = new System.Drawing.Size(500, 350);
-      chart2.TabIndex = 55;
-      chart2.Text = "chart2";
+      this.chart2.Series.Add(series1);
+      this.chart2.Size = new System.Drawing.Size(500, 350);
+      this.chart2.TabIndex = 55;
+      this.chart2.Text = "chart2";
       // 
       // chart4
       // 
-      chart4.BackColor = System.Drawing.SystemColors.Control;
+      this.chart4.BackColor = System.Drawing.SystemColors.Control;
       chartArea2.Name = "ChartArea1";
-      chart4.ChartAreas.Add(chartArea2);
+      this.chart4.ChartAreas.Add(chartArea2);
       legend2.Enabled = false;
       legend2.Name = "Legend1";
-      chart4.Legends.Add(legend2);
-      chart4.Location = new System.Drawing.Point(849, 364);
-      chart4.Name = "chart4";
+      this.chart4.Legends.Add(legend2);
+      this.chart4.Location = new System.Drawing.Point(849, 364);
+      this.chart4.Name = "chart4";
       series2.ChartArea = "ChartArea1";
       series2.Legend = "Legend1";
       series2.Name = "Series1";
       series2.XAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
-      chart4.Series.Add(series2);
-      chart4.Size = new System.Drawing.Size(500, 350);
-      chart4.TabIndex = 52;
-      chart4.Text = "chart1";
+      this.chart4.Series.Add(series2);
+      this.chart4.Size = new System.Drawing.Size(500, 350);
+      this.chart4.TabIndex = 52;
+      this.chart4.Text = "chart1";
       // 
       // chart3
       // 
-      chart3.BackColor = System.Drawing.SystemColors.Control;
+      this.chart3.BackColor = System.Drawing.SystemColors.Control;
       chartArea3.Name = "ChartArea1";
-      chart3.ChartAreas.Add(chartArea3);
+      this.chart3.ChartAreas.Add(chartArea3);
       legend3.Enabled = false;
       legend3.Name = "Legend1";
-      chart3.Legends.Add(legend3);
-      chart3.Location = new System.Drawing.Point(343, 364);
-      chart3.Name = "chart3";
+      this.chart3.Legends.Add(legend3);
+      this.chart3.Location = new System.Drawing.Point(343, 364);
+      this.chart3.Name = "chart3";
       series3.ChartArea = "ChartArea1";
       series3.Legend = "Legend1";
       series3.Name = "Series1";
-      chart3.Series.Add(series3);
-      chart3.Size = new System.Drawing.Size(500, 350);
-      chart3.TabIndex = 53;
-      chart3.Text = "chart1";
+      this.chart3.Series.Add(series3);
+      this.chart3.Size = new System.Drawing.Size(500, 350);
+      this.chart3.TabIndex = 53;
+      this.chart3.Text = "chart1";
       // 
       // chart1
       // 
-      chart1.BackColor = System.Drawing.SystemColors.Control;
+      this.chart1.BackColor = System.Drawing.SystemColors.Control;
       chartArea4.Name = "ChartArea1";
-      chart1.ChartAreas.Add(chartArea4);
+      this.chart1.ChartAreas.Add(chartArea4);
       legend4.Enabled = false;
       legend4.Name = "Legend1";
-      chart1.Legends.Add(legend4);
-      chart1.Location = new System.Drawing.Point(343, 8);
-      chart1.Name = "chart1";
+      this.chart1.Legends.Add(legend4);
+      this.chart1.Location = new System.Drawing.Point(343, 8);
+      this.chart1.Name = "chart1";
       series4.ChartArea = "ChartArea1";
       series4.Legend = "Legend1";
       series4.Name = "Series1";
-      chart1.Series.Add(series4);
-      chart1.Size = new System.Drawing.Size(500, 350);
-      chart1.TabIndex = 54;
-      chart1.Text = "chart1";
+      this.chart1.Series.Add(series4);
+      this.chart1.Size = new System.Drawing.Size(500, 350);
+      this.chart1.TabIndex = 54;
+      this.chart1.Text = "chart1";
       // 
       // groupBox3
       // 
-      groupBox3.BackColor = System.Drawing.SystemColors.Control;
-      groupBox3.Controls.Add(textBox_run_time);
-      groupBox3.Controls.Add(label16);
-      groupBox3.Controls.Add(Button_setCalcParam);
-      groupBox3.Controls.Add(checkBox_dinDraw);
-      groupBox3.Controls.Add(label4);
-      groupBox3.Controls.Add(label3);
-      groupBox3.Controls.Add(label2);
-      groupBox3.Controls.Add(label1);
-      groupBox3.Controls.Add(textBox_drawStCount);
-      groupBox3.Controls.Add(textBox_t_stop);
-      groupBox3.Controls.Add(textBox_t_start);
-      groupBox3.Controls.Add(textBox_step);
-      groupBox3.Location = new System.Drawing.Point(147, 8);
-      groupBox3.Margin = new System.Windows.Forms.Padding(2);
-      groupBox3.Name = "groupBox3";
-      groupBox3.Padding = new System.Windows.Forms.Padding(2);
-      groupBox3.Size = new System.Drawing.Size(191, 179);
-      groupBox3.TabIndex = 50;
-      groupBox3.TabStop = false;
-      groupBox3.Text = "Параметры расчета";
+      this.groupBox3.BackColor = System.Drawing.SystemColors.Control;
+      this.groupBox3.Controls.Add(this.drawing_on);
+      this.groupBox3.Controls.Add(this.textBox_run_time);
+      this.groupBox3.Controls.Add(this.label16);
+      this.groupBox3.Controls.Add(this.Button_setCalcParam);
+      this.groupBox3.Controls.Add(this.label4);
+      this.groupBox3.Controls.Add(this.label3);
+      this.groupBox3.Controls.Add(this.label2);
+      this.groupBox3.Controls.Add(this.label1);
+      this.groupBox3.Controls.Add(this.textBox_drawStCount);
+      this.groupBox3.Controls.Add(this.textBox_t_stop);
+      this.groupBox3.Controls.Add(this.textBox_t_start);
+      this.groupBox3.Controls.Add(this.textBox_step);
+      this.groupBox3.Location = new System.Drawing.Point(147, 8);
+      this.groupBox3.Margin = new System.Windows.Forms.Padding(2);
+      this.groupBox3.Name = "groupBox3";
+      this.groupBox3.Padding = new System.Windows.Forms.Padding(2);
+      this.groupBox3.Size = new System.Drawing.Size(191, 171);
+      this.groupBox3.TabIndex = 50;
+      this.groupBox3.TabStop = false;
+      this.groupBox3.Text = "Параметры расчета";
       // 
       // textBox_run_time
       // 
-      textBox_run_time.AutoSize = true;
-      textBox_run_time.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      textBox_run_time.Location = new System.Drawing.Point(108, 152);
-      textBox_run_time.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      textBox_run_time.Name = "textBox_run_time";
-      textBox_run_time.Size = new System.Drawing.Size(0, 20);
-      textBox_run_time.TabIndex = 11;
+      this.textBox_run_time.AutoSize = true;
+      this.textBox_run_time.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.textBox_run_time.Location = new System.Drawing.Point(112, 147);
+      this.textBox_run_time.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+      this.textBox_run_time.Name = "textBox_run_time";
+      this.textBox_run_time.Size = new System.Drawing.Size(0, 16);
+      this.textBox_run_time.TabIndex = 11;
       // 
       // label16
       // 
-      label16.AutoSize = true;
-      label16.Location = new System.Drawing.Point(5, 155);
-      label16.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      label16.Name = "label16";
-      label16.Size = new System.Drawing.Size(108, 13);
-      label16.TabIndex = 10;
-      label16.Text = "Время выполнения:";
+      this.label16.AutoSize = true;
+      this.label16.Location = new System.Drawing.Point(0, 149);
+      this.label16.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+      this.label16.Name = "label16";
+      this.label16.Size = new System.Drawing.Size(108, 13);
+      this.label16.TabIndex = 10;
+      this.label16.Text = "Время выполнения:";
       // 
       // Button_setCalcParam
       // 
-      Button_setCalcParam.Location = new System.Drawing.Point(4, 130);
-      Button_setCalcParam.Margin = new System.Windows.Forms.Padding(2);
-      Button_setCalcParam.Name = "Button_setCalcParam";
-      Button_setCalcParam.Size = new System.Drawing.Size(75, 25);
-      Button_setCalcParam.TabIndex = 9;
-      Button_setCalcParam.Text = "Принять";
-      Button_setCalcParam.UseVisualStyleBackColor = true;
-      Button_setCalcParam.Click += new System.EventHandler(Button_setCalcParam_Click);
-      // 
-      // checkBox_dinDraw
-      // 
-      checkBox_dinDraw.AutoSize = true;
-      checkBox_dinDraw.Location = new System.Drawing.Point(7, 108);
-      checkBox_dinDraw.Margin = new System.Windows.Forms.Padding(2);
-      checkBox_dinDraw.Name = "checkBox_dinDraw";
-      checkBox_dinDraw.Size = new System.Drawing.Size(136, 17);
-      checkBox_dinDraw.TabIndex = 8;
-      checkBox_dinDraw.Text = "Рисовать в динамике";
-      checkBox_dinDraw.UseVisualStyleBackColor = true;
+      this.Button_setCalcParam.Location = new System.Drawing.Point(112, 109);
+      this.Button_setCalcParam.Margin = new System.Windows.Forms.Padding(2);
+      this.Button_setCalcParam.Name = "Button_setCalcParam";
+      this.Button_setCalcParam.Size = new System.Drawing.Size(75, 25);
+      this.Button_setCalcParam.TabIndex = 9;
+      this.Button_setCalcParam.Text = "Принять";
+      this.Button_setCalcParam.UseVisualStyleBackColor = true;
+      this.Button_setCalcParam.Click += new System.EventHandler(this.Button_setCalcParam_Click);
       // 
       // label4
       // 
-      label4.AutoSize = true;
-      label4.Location = new System.Drawing.Point(4, 88);
-      label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      label4.Name = "label4";
-      label4.Size = new System.Drawing.Size(99, 13);
-      label4.TabIndex = 7;
-      label4.Text = "Шагов инт. в шаге";
+      this.label4.AutoSize = true;
+      this.label4.Location = new System.Drawing.Point(4, 88);
+      this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+      this.label4.Name = "label4";
+      this.label4.Size = new System.Drawing.Size(99, 13);
+      this.label4.TabIndex = 7;
+      this.label4.Text = "Шагов инт. в шаге";
       // 
       // label3
       // 
-      label3.AutoSize = true;
-      label3.Location = new System.Drawing.Point(4, 67);
-      label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      label3.Name = "label3";
-      label3.Size = new System.Drawing.Size(39, 13);
-      label3.TabIndex = 6;
-      label3.Text = "t_stop:";
+      this.label3.AutoSize = true;
+      this.label3.Location = new System.Drawing.Point(4, 67);
+      this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(39, 13);
+      this.label3.TabIndex = 6;
+      this.label3.Text = "t_stop:";
       // 
       // label2
       // 
-      label2.AutoSize = true;
-      label2.Location = new System.Drawing.Point(4, 44);
-      label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      label2.Name = "label2";
-      label2.Size = new System.Drawing.Size(39, 13);
-      label2.TabIndex = 5;
-      label2.Text = "t_start:";
+      this.label2.AutoSize = true;
+      this.label2.Location = new System.Drawing.Point(4, 44);
+      this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(39, 13);
+      this.label2.TabIndex = 5;
+      this.label2.Text = "t_start:";
       // 
       // label1
       // 
-      label1.AutoSize = true;
-      label1.Location = new System.Drawing.Point(4, 20);
-      label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      label1.Name = "label1";
-      label1.Size = new System.Drawing.Size(53, 13);
-      label1.TabIndex = 4;
-      label1.Text = "Шаг инт.:";
+      this.label1.AutoSize = true;
+      this.label1.Location = new System.Drawing.Point(4, 20);
+      this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(53, 13);
+      this.label1.TabIndex = 4;
+      this.label1.Text = "Шаг инт.:";
       // 
       // textBox_drawStCount
       // 
-      textBox_drawStCount.Location = new System.Drawing.Point(112, 85);
-      textBox_drawStCount.Margin = new System.Windows.Forms.Padding(2);
-      textBox_drawStCount.Name = "textBox_drawStCount";
-      textBox_drawStCount.Size = new System.Drawing.Size(76, 20);
-      textBox_drawStCount.TabIndex = 3;
-      textBox_drawStCount.Text = "10";
-      textBox_drawStCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.textBox_drawStCount.Location = new System.Drawing.Point(112, 85);
+      this.textBox_drawStCount.Margin = new System.Windows.Forms.Padding(2);
+      this.textBox_drawStCount.Name = "textBox_drawStCount";
+      this.textBox_drawStCount.Size = new System.Drawing.Size(76, 20);
+      this.textBox_drawStCount.TabIndex = 3;
+      this.textBox_drawStCount.Text = "10";
+      this.textBox_drawStCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // textBox_t_stop
       // 
-      textBox_t_stop.Location = new System.Drawing.Point(112, 63);
-      textBox_t_stop.Margin = new System.Windows.Forms.Padding(2);
-      textBox_t_stop.Name = "textBox_t_stop";
-      textBox_t_stop.Size = new System.Drawing.Size(76, 20);
-      textBox_t_stop.TabIndex = 2;
-      textBox_t_stop.Text = "100";
-      textBox_t_stop.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.textBox_t_stop.Location = new System.Drawing.Point(112, 63);
+      this.textBox_t_stop.Margin = new System.Windows.Forms.Padding(2);
+      this.textBox_t_stop.Name = "textBox_t_stop";
+      this.textBox_t_stop.Size = new System.Drawing.Size(76, 20);
+      this.textBox_t_stop.TabIndex = 2;
+      this.textBox_t_stop.Text = "100";
+      this.textBox_t_stop.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // textBox_t_start
       // 
-      textBox_t_start.Location = new System.Drawing.Point(112, 40);
-      textBox_t_start.Margin = new System.Windows.Forms.Padding(2);
-      textBox_t_start.Name = "textBox_t_start";
-      textBox_t_start.Size = new System.Drawing.Size(76, 20);
-      textBox_t_start.TabIndex = 1;
-      textBox_t_start.Text = "0";
-      textBox_t_start.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.textBox_t_start.Location = new System.Drawing.Point(112, 40);
+      this.textBox_t_start.Margin = new System.Windows.Forms.Padding(2);
+      this.textBox_t_start.Name = "textBox_t_start";
+      this.textBox_t_start.Size = new System.Drawing.Size(76, 20);
+      this.textBox_t_start.TabIndex = 1;
+      this.textBox_t_start.Text = "0";
+      this.textBox_t_start.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // textBox_step
       // 
-      textBox_step.Location = new System.Drawing.Point(112, 17);
-      textBox_step.Margin = new System.Windows.Forms.Padding(2);
-      textBox_step.Name = "textBox_step";
-      textBox_step.Size = new System.Drawing.Size(76, 20);
-      textBox_step.TabIndex = 0;
-      textBox_step.Text = "0,005";
-      textBox_step.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.textBox_step.Location = new System.Drawing.Point(112, 17);
+      this.textBox_step.Margin = new System.Windows.Forms.Padding(2);
+      this.textBox_step.Name = "textBox_step";
+      this.textBox_step.Size = new System.Drawing.Size(76, 20);
+      this.textBox_step.TabIndex = 0;
+      this.textBox_step.Text = "0,005";
+      this.textBox_step.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // groupBox1
       // 
-      groupBox1.BackColor = System.Drawing.SystemColors.Control;
-      groupBox1.Controls.Add(Button_setParam);
-      groupBox1.Controls.Add(textBox_E);
-      groupBox1.Controls.Add(textBox_gamma);
-      groupBox1.Controls.Add(label_gamma);
-      groupBox1.Controls.Add(label_E);
-      groupBox1.Controls.Add(label_h_x);
-      groupBox1.Controls.Add(label_B);
-      groupBox1.Controls.Add(label7);
-      groupBox1.Controls.Add(label_h_fi);
-      groupBox1.Controls.Add(label_g);
-      groupBox1.Controls.Add(label_R);
-      groupBox1.Controls.Add(label_l);
-      groupBox1.Controls.Add(label_mmal);
-      groupBox1.Controls.Add(label_M);
-      groupBox1.Controls.Add(textBox_h_fi);
-      groupBox1.Controls.Add(textBox_g);
-      groupBox1.Controls.Add(textBox_B);
-      groupBox1.Controls.Add(textBox_R);
-      groupBox1.Controls.Add(textBox_l);
-      groupBox1.Controls.Add(textBox_h_x);
-      groupBox1.Controls.Add(textBox_mmal);
-      groupBox1.Controls.Add(textBox_M);
-      groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-      groupBox1.Location = new System.Drawing.Point(8, 8);
-      groupBox1.Margin = new System.Windows.Forms.Padding(2);
-      groupBox1.Name = "groupBox1";
-      groupBox1.Padding = new System.Windows.Forms.Padding(2);
-      groupBox1.Size = new System.Drawing.Size(135, 270);
-      groupBox1.TabIndex = 48;
-      groupBox1.TabStop = false;
-      groupBox1.Text = "Параметры модели";
+      this.groupBox1.BackColor = System.Drawing.SystemColors.Control;
+      this.groupBox1.Controls.Add(this.Button_setParam);
+      this.groupBox1.Controls.Add(this.textBox_E);
+      this.groupBox1.Controls.Add(this.textBox_gamma);
+      this.groupBox1.Controls.Add(this.label_gamma);
+      this.groupBox1.Controls.Add(this.label_E);
+      this.groupBox1.Controls.Add(this.label_h_x);
+      this.groupBox1.Controls.Add(this.label_B);
+      this.groupBox1.Controls.Add(this.label7);
+      this.groupBox1.Controls.Add(this.label_h_fi);
+      this.groupBox1.Controls.Add(this.label_g);
+      this.groupBox1.Controls.Add(this.label_R);
+      this.groupBox1.Controls.Add(this.label_l);
+      this.groupBox1.Controls.Add(this.label_mmal);
+      this.groupBox1.Controls.Add(this.label_M);
+      this.groupBox1.Controls.Add(this.textBox_h_fi);
+      this.groupBox1.Controls.Add(this.textBox_g);
+      this.groupBox1.Controls.Add(this.textBox_B);
+      this.groupBox1.Controls.Add(this.textBox_R);
+      this.groupBox1.Controls.Add(this.textBox_l);
+      this.groupBox1.Controls.Add(this.textBox_h_x);
+      this.groupBox1.Controls.Add(this.textBox_mmal);
+      this.groupBox1.Controls.Add(this.textBox_M);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+      this.groupBox1.Location = new System.Drawing.Point(8, 8);
+      this.groupBox1.Margin = new System.Windows.Forms.Padding(2);
+      this.groupBox1.Name = "groupBox1";
+      this.groupBox1.Padding = new System.Windows.Forms.Padding(2);
+      this.groupBox1.Size = new System.Drawing.Size(135, 270);
+      this.groupBox1.TabIndex = 48;
+      this.groupBox1.TabStop = false;
+      this.groupBox1.Text = "Параметры модели";
       // 
       // Button_setParam
       // 
-      Button_setParam.Location = new System.Drawing.Point(55, 245);
-      Button_setParam.Margin = new System.Windows.Forms.Padding(2);
-      Button_setParam.Name = "Button_setParam";
-      Button_setParam.Size = new System.Drawing.Size(75, 25);
-      Button_setParam.TabIndex = 27;
-      Button_setParam.Text = "Принять";
-      Button_setParam.UseVisualStyleBackColor = true;
-      Button_setParam.Click += new System.EventHandler(Button_setParam_Click);
+      this.Button_setParam.Location = new System.Drawing.Point(55, 245);
+      this.Button_setParam.Margin = new System.Windows.Forms.Padding(2);
+      this.Button_setParam.Name = "Button_setParam";
+      this.Button_setParam.Size = new System.Drawing.Size(75, 25);
+      this.Button_setParam.TabIndex = 27;
+      this.Button_setParam.Text = "Принять";
+      this.Button_setParam.UseVisualStyleBackColor = true;
+      this.Button_setParam.Click += new System.EventHandler(this.Button_setParam_Click);
       // 
       // textBox_E
       // 
-      textBox_E.Location = new System.Drawing.Point(55, 222);
-      textBox_E.Margin = new System.Windows.Forms.Padding(2);
-      textBox_E.Name = "textBox_E";
-      textBox_E.Size = new System.Drawing.Size(76, 20);
-      textBox_E.TabIndex = 26;
-      textBox_E.Text = "0,00767";
+      this.textBox_E.Location = new System.Drawing.Point(55, 222);
+      this.textBox_E.Margin = new System.Windows.Forms.Padding(2);
+      this.textBox_E.Name = "textBox_E";
+      this.textBox_E.Size = new System.Drawing.Size(76, 20);
+      this.textBox_E.TabIndex = 26;
+      this.textBox_E.Text = "0,00767";
       // 
       // textBox_gamma
       // 
-      textBox_gamma.Location = new System.Drawing.Point(55, 199);
-      textBox_gamma.Margin = new System.Windows.Forms.Padding(2);
-      textBox_gamma.Name = "textBox_gamma";
-      textBox_gamma.Size = new System.Drawing.Size(76, 20);
-      textBox_gamma.TabIndex = 25;
-      textBox_gamma.Text = "4,481";
+      this.textBox_gamma.Location = new System.Drawing.Point(55, 199);
+      this.textBox_gamma.Margin = new System.Windows.Forms.Padding(2);
+      this.textBox_gamma.Name = "textBox_gamma";
+      this.textBox_gamma.Size = new System.Drawing.Size(76, 20);
+      this.textBox_gamma.TabIndex = 25;
+      this.textBox_gamma.Text = "4,481";
       // 
       // label_gamma
       // 
-      label_gamma.AutoSize = true;
-      label_gamma.Location = new System.Drawing.Point(4, 202);
-      label_gamma.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      label_gamma.Name = "label_gamma";
-      label_gamma.Size = new System.Drawing.Size(44, 13);
-      label_gamma.TabIndex = 24;
-      label_gamma.Text = "gamma:";
+      this.label_gamma.AutoSize = true;
+      this.label_gamma.Location = new System.Drawing.Point(4, 202);
+      this.label_gamma.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+      this.label_gamma.Name = "label_gamma";
+      this.label_gamma.Size = new System.Drawing.Size(44, 13);
+      this.label_gamma.TabIndex = 24;
+      this.label_gamma.Text = "gamma:";
       // 
       // label_E
       // 
-      label_E.AutoSize = true;
-      label_E.Location = new System.Drawing.Point(4, 226);
-      label_E.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      label_E.Name = "label_E";
-      label_E.Size = new System.Drawing.Size(17, 13);
-      label_E.TabIndex = 23;
-      label_E.Text = "E:";
+      this.label_E.AutoSize = true;
+      this.label_E.Location = new System.Drawing.Point(4, 226);
+      this.label_E.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+      this.label_E.Name = "label_E";
+      this.label_E.Size = new System.Drawing.Size(17, 13);
+      this.label_E.TabIndex = 23;
+      this.label_E.Text = "E:";
       // 
       // label_h_x
       // 
-      label_h_x.AutoSize = true;
-      label_h_x.Location = new System.Drawing.Point(4, 158);
-      label_h_x.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      label_h_x.Name = "label_h_x";
-      label_h_x.Size = new System.Drawing.Size(27, 13);
-      label_h_x.TabIndex = 21;
-      label_h_x.Text = "h_x:";
+      this.label_h_x.AutoSize = true;
+      this.label_h_x.Location = new System.Drawing.Point(4, 158);
+      this.label_h_x.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+      this.label_h_x.Name = "label_h_x";
+      this.label_h_x.Size = new System.Drawing.Size(27, 13);
+      this.label_h_x.TabIndex = 21;
+      this.label_h_x.Text = "h_x:";
       // 
       // label_B
       // 
-      label_B.AutoSize = true;
-      label_B.Location = new System.Drawing.Point(4, 180);
-      label_B.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      label_B.Name = "label_B";
-      label_B.Size = new System.Drawing.Size(17, 13);
-      label_B.TabIndex = 20;
-      label_B.Text = "B:";
+      this.label_B.AutoSize = true;
+      this.label_B.Location = new System.Drawing.Point(4, 180);
+      this.label_B.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+      this.label_B.Name = "label_B";
+      this.label_B.Size = new System.Drawing.Size(17, 13);
+      this.label_B.TabIndex = 20;
+      this.label_B.Text = "B:";
       // 
       // label7
       // 
-      label7.AutoSize = true;
-      label7.Location = new System.Drawing.Point(16, 158);
-      label7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      label7.Name = "label7";
-      label7.Size = new System.Drawing.Size(0, 13);
-      label7.TabIndex = 19;
+      this.label7.AutoSize = true;
+      this.label7.Location = new System.Drawing.Point(16, 158);
+      this.label7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+      this.label7.Name = "label7";
+      this.label7.Size = new System.Drawing.Size(0, 13);
+      this.label7.TabIndex = 19;
       // 
       // label_h_fi
       // 
-      label_h_fi.AutoSize = true;
-      label_h_fi.Location = new System.Drawing.Point(4, 135);
-      label_h_fi.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      label_h_fi.Name = "label_h_fi";
-      label_h_fi.Size = new System.Drawing.Size(27, 13);
-      label_h_fi.TabIndex = 18;
-      label_h_fi.Text = "h_fi:";
+      this.label_h_fi.AutoSize = true;
+      this.label_h_fi.Location = new System.Drawing.Point(4, 135);
+      this.label_h_fi.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+      this.label_h_fi.Name = "label_h_fi";
+      this.label_h_fi.Size = new System.Drawing.Size(27, 13);
+      this.label_h_fi.TabIndex = 18;
+      this.label_h_fi.Text = "h_fi:";
       // 
       // label_g
       // 
-      label_g.AutoSize = true;
-      label_g.Location = new System.Drawing.Point(4, 112);
-      label_g.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      label_g.Name = "label_g";
-      label_g.Size = new System.Drawing.Size(16, 13);
-      label_g.TabIndex = 17;
-      label_g.Text = "g:";
+      this.label_g.AutoSize = true;
+      this.label_g.Location = new System.Drawing.Point(4, 112);
+      this.label_g.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+      this.label_g.Name = "label_g";
+      this.label_g.Size = new System.Drawing.Size(16, 13);
+      this.label_g.TabIndex = 17;
+      this.label_g.Text = "g:";
       // 
       // label_R
       // 
-      label_R.AutoSize = true;
-      label_R.Location = new System.Drawing.Point(4, 89);
-      label_R.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      label_R.Name = "label_R";
-      label_R.Size = new System.Drawing.Size(18, 13);
-      label_R.TabIndex = 16;
-      label_R.Text = "R:";
+      this.label_R.AutoSize = true;
+      this.label_R.Location = new System.Drawing.Point(4, 89);
+      this.label_R.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+      this.label_R.Name = "label_R";
+      this.label_R.Size = new System.Drawing.Size(18, 13);
+      this.label_R.TabIndex = 16;
+      this.label_R.Text = "R:";
       // 
       // label_l
       // 
-      label_l.AutoSize = true;
-      label_l.Location = new System.Drawing.Point(4, 67);
-      label_l.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      label_l.Name = "label_l";
-      label_l.Size = new System.Drawing.Size(12, 13);
-      label_l.TabIndex = 15;
-      label_l.Text = "l:";
+      this.label_l.AutoSize = true;
+      this.label_l.Location = new System.Drawing.Point(4, 67);
+      this.label_l.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+      this.label_l.Name = "label_l";
+      this.label_l.Size = new System.Drawing.Size(12, 13);
+      this.label_l.TabIndex = 15;
+      this.label_l.Text = "l:";
       // 
       // label_mmal
       // 
-      label_mmal.AutoSize = true;
-      label_mmal.Location = new System.Drawing.Point(4, 44);
-      label_mmal.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      label_mmal.Name = "label_mmal";
-      label_mmal.Size = new System.Drawing.Size(18, 13);
-      label_mmal.TabIndex = 14;
-      label_mmal.Text = "m:";
+      this.label_mmal.AutoSize = true;
+      this.label_mmal.Location = new System.Drawing.Point(4, 44);
+      this.label_mmal.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+      this.label_mmal.Name = "label_mmal";
+      this.label_mmal.Size = new System.Drawing.Size(18, 13);
+      this.label_mmal.TabIndex = 14;
+      this.label_mmal.Text = "m:";
       // 
       // label_M
       // 
-      label_M.AutoSize = true;
-      label_M.Location = new System.Drawing.Point(4, 21);
-      label_M.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      label_M.Name = "label_M";
-      label_M.Size = new System.Drawing.Size(19, 13);
-      label_M.TabIndex = 13;
-      label_M.Text = "M:";
+      this.label_M.AutoSize = true;
+      this.label_M.Location = new System.Drawing.Point(4, 21);
+      this.label_M.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+      this.label_M.Name = "label_M";
+      this.label_M.Size = new System.Drawing.Size(19, 13);
+      this.label_M.TabIndex = 13;
+      this.label_M.Text = "M:";
       // 
       // textBox_h_fi
       // 
-      textBox_h_fi.Location = new System.Drawing.Point(55, 131);
-      textBox_h_fi.Margin = new System.Windows.Forms.Padding(2);
-      textBox_h_fi.Name = "textBox_h_fi";
-      textBox_h_fi.Size = new System.Drawing.Size(76, 20);
-      textBox_h_fi.TabIndex = 7;
-      textBox_h_fi.Text = "0,0024";
+      this.textBox_h_fi.Location = new System.Drawing.Point(55, 131);
+      this.textBox_h_fi.Margin = new System.Windows.Forms.Padding(2);
+      this.textBox_h_fi.Name = "textBox_h_fi";
+      this.textBox_h_fi.Size = new System.Drawing.Size(76, 20);
+      this.textBox_h_fi.TabIndex = 7;
+      this.textBox_h_fi.Text = "0,0024";
       // 
       // textBox_g
       // 
-      textBox_g.Location = new System.Drawing.Point(55, 108);
-      textBox_g.Margin = new System.Windows.Forms.Padding(2);
-      textBox_g.Name = "textBox_g";
-      textBox_g.Size = new System.Drawing.Size(76, 20);
-      textBox_g.TabIndex = 3;
-      textBox_g.Text = "9,81";
+      this.textBox_g.Location = new System.Drawing.Point(55, 108);
+      this.textBox_g.Margin = new System.Windows.Forms.Padding(2);
+      this.textBox_g.Name = "textBox_g";
+      this.textBox_g.Size = new System.Drawing.Size(76, 20);
+      this.textBox_g.TabIndex = 3;
+      this.textBox_g.Text = "9,81";
       // 
       // textBox_B
       // 
-      textBox_B.Location = new System.Drawing.Point(55, 176);
-      textBox_B.Margin = new System.Windows.Forms.Padding(2);
-      textBox_B.Name = "textBox_B";
-      textBox_B.Size = new System.Drawing.Size(76, 20);
-      textBox_B.TabIndex = 6;
-      textBox_B.Text = "0,024";
+      this.textBox_B.Location = new System.Drawing.Point(55, 176);
+      this.textBox_B.Margin = new System.Windows.Forms.Padding(2);
+      this.textBox_B.Name = "textBox_B";
+      this.textBox_B.Size = new System.Drawing.Size(76, 20);
+      this.textBox_B.TabIndex = 6;
+      this.textBox_B.Text = "0,024";
       // 
       // textBox_R
       // 
-      textBox_R.Location = new System.Drawing.Point(55, 85);
-      textBox_R.Margin = new System.Windows.Forms.Padding(2);
-      textBox_R.Name = "textBox_R";
-      textBox_R.Size = new System.Drawing.Size(76, 20);
-      textBox_R.TabIndex = 2;
-      textBox_R.Text = "2,6";
+      this.textBox_R.Location = new System.Drawing.Point(55, 85);
+      this.textBox_R.Margin = new System.Windows.Forms.Padding(2);
+      this.textBox_R.Name = "textBox_R";
+      this.textBox_R.Size = new System.Drawing.Size(76, 20);
+      this.textBox_R.TabIndex = 2;
+      this.textBox_R.Text = "2,6";
       // 
       // textBox_l
       // 
-      textBox_l.Location = new System.Drawing.Point(55, 63);
-      textBox_l.Margin = new System.Windows.Forms.Padding(2);
-      textBox_l.Name = "textBox_l";
-      textBox_l.Size = new System.Drawing.Size(76, 20);
-      textBox_l.TabIndex = 5;
-      textBox_l.Text = "0,641";
+      this.textBox_l.Location = new System.Drawing.Point(55, 63);
+      this.textBox_l.Margin = new System.Windows.Forms.Padding(2);
+      this.textBox_l.Name = "textBox_l";
+      this.textBox_l.Size = new System.Drawing.Size(76, 20);
+      this.textBox_l.TabIndex = 5;
+      this.textBox_l.Text = "0,641";
       // 
       // textBox_h_x
       // 
-      textBox_h_x.Location = new System.Drawing.Point(55, 154);
-      textBox_h_x.Margin = new System.Windows.Forms.Padding(2);
-      textBox_h_x.Name = "textBox_h_x";
-      textBox_h_x.Size = new System.Drawing.Size(76, 20);
-      textBox_h_x.TabIndex = 4;
-      textBox_h_x.Text = "5,4";
+      this.textBox_h_x.Location = new System.Drawing.Point(55, 154);
+      this.textBox_h_x.Margin = new System.Windows.Forms.Padding(2);
+      this.textBox_h_x.Name = "textBox_h_x";
+      this.textBox_h_x.Size = new System.Drawing.Size(76, 20);
+      this.textBox_h_x.TabIndex = 4;
+      this.textBox_h_x.Text = "5,4";
       // 
       // textBox_mmal
       // 
-      textBox_mmal.Location = new System.Drawing.Point(55, 40);
-      textBox_mmal.Margin = new System.Windows.Forms.Padding(2);
-      textBox_mmal.Name = "textBox_mmal";
-      textBox_mmal.Size = new System.Drawing.Size(76, 20);
-      textBox_mmal.TabIndex = 1;
-      textBox_mmal.Text = "0,019";
+      this.textBox_mmal.Location = new System.Drawing.Point(55, 40);
+      this.textBox_mmal.Margin = new System.Windows.Forms.Padding(2);
+      this.textBox_mmal.Name = "textBox_mmal";
+      this.textBox_mmal.Size = new System.Drawing.Size(76, 20);
+      this.textBox_mmal.TabIndex = 1;
+      this.textBox_mmal.Text = "0,019";
       // 
       // textBox_M
       // 
-      textBox_M.Location = new System.Drawing.Point(55, 17);
-      textBox_M.Margin = new System.Windows.Forms.Padding(2);
-      textBox_M.Name = "textBox_M";
-      textBox_M.Size = new System.Drawing.Size(76, 20);
-      textBox_M.TabIndex = 0;
-      textBox_M.Text = "1,073";
+      this.textBox_M.Location = new System.Drawing.Point(55, 17);
+      this.textBox_M.Margin = new System.Windows.Forms.Padding(2);
+      this.textBox_M.Name = "textBox_M";
+      this.textBox_M.Size = new System.Drawing.Size(76, 20);
+      this.textBox_M.TabIndex = 0;
+      this.textBox_M.Text = "1,073";
       // 
       // roots_gbox
       // 
-      roots_gbox.BackColor = System.Drawing.SystemColors.Control;
-      roots_gbox.Controls.Add(button3);
-      roots_gbox.Controls.Add(button2);
-      roots_gbox.Controls.Add(btn_clear);
-      roots_gbox.Controls.Add(label11);
-      roots_gbox.Controls.Add(label10);
-      roots_gbox.Controls.Add(tbox_lambda4_im);
-      roots_gbox.Controls.Add(tbox_lambda4_re);
-      roots_gbox.Controls.Add(Button_runCalc);
-      roots_gbox.Controls.Add(tbox_lambda2_im);
-      roots_gbox.Controls.Add(tbox_lambda2_re);
-      roots_gbox.Controls.Add(label9);
-      roots_gbox.Controls.Add(label8);
-      roots_gbox.Controls.Add(label18);
-      roots_gbox.Controls.Add(root1);
-      roots_gbox.Controls.Add(tbox_lambda3_im);
-      roots_gbox.Controls.Add(tbox_lambda1_re);
-      roots_gbox.Controls.Add(tbox_lambda3_re);
-      roots_gbox.Controls.Add(tbox_lambda1_im);
-      roots_gbox.Location = new System.Drawing.Point(147, 192);
-      roots_gbox.Name = "roots_gbox";
-      roots_gbox.Size = new System.Drawing.Size(191, 237);
-      roots_gbox.TabIndex = 51;
-      roots_gbox.TabStop = false;
-      roots_gbox.Text = "Желаемые корни хар. полинома";
+      this.roots_gbox.BackColor = System.Drawing.SystemColors.Control;
+      this.roots_gbox.Controls.Add(this.button3);
+      this.roots_gbox.Controls.Add(this.button2);
+      this.roots_gbox.Controls.Add(this.btn_clear);
+      this.roots_gbox.Controls.Add(this.label11);
+      this.roots_gbox.Controls.Add(this.label10);
+      this.roots_gbox.Controls.Add(this.tbox_lambda4_im);
+      this.roots_gbox.Controls.Add(this.tbox_lambda4_re);
+      this.roots_gbox.Controls.Add(this.Button_runCalc);
+      this.roots_gbox.Controls.Add(this.tbox_lambda2_im);
+      this.roots_gbox.Controls.Add(this.tbox_lambda2_re);
+      this.roots_gbox.Controls.Add(this.label9);
+      this.roots_gbox.Controls.Add(this.label8);
+      this.roots_gbox.Controls.Add(this.label18);
+      this.roots_gbox.Controls.Add(this.root1);
+      this.roots_gbox.Controls.Add(this.tbox_lambda3_im);
+      this.roots_gbox.Controls.Add(this.tbox_lambda1_re);
+      this.roots_gbox.Controls.Add(this.tbox_lambda3_re);
+      this.roots_gbox.Controls.Add(this.tbox_lambda1_im);
+      this.roots_gbox.Location = new System.Drawing.Point(148, 184);
+      this.roots_gbox.Name = "roots_gbox";
+      this.roots_gbox.Size = new System.Drawing.Size(191, 232);
+      this.roots_gbox.TabIndex = 51;
+      this.roots_gbox.TabStop = false;
+      this.roots_gbox.Text = "Желаемые корни хар. полинома";
       // 
       // button3
       // 
-      button3.Location = new System.Drawing.Point(17, 146);
-      button3.Name = "button3";
-      button3.Size = new System.Drawing.Size(80, 25);
-      button3.TabIndex = 46;
-      button3.Text = "Сл. корни";
-      button3.UseVisualStyleBackColor = true;
-      button3.Click += new System.EventHandler(Button3_Click);
+      this.button3.Location = new System.Drawing.Point(17, 146);
+      this.button3.Name = "button3";
+      this.button3.Size = new System.Drawing.Size(80, 25);
+      this.button3.TabIndex = 46;
+      this.button3.Text = "Сл. корни";
+      this.button3.UseVisualStyleBackColor = true;
+      this.button3.Click += new System.EventHandler(this.Button3_Click);
       // 
       // button2
       // 
-      button2.Location = new System.Drawing.Point(104, 146);
-      button2.Name = "button2";
-      button2.Size = new System.Drawing.Size(80, 25);
-      button2.TabIndex = 45;
-      button2.Text = "Сбросить";
-      button2.UseVisualStyleBackColor = true;
-      button2.Click += new System.EventHandler(Button2_Click);
+      this.button2.Location = new System.Drawing.Point(104, 146);
+      this.button2.Name = "button2";
+      this.button2.Size = new System.Drawing.Size(80, 25);
+      this.button2.TabIndex = 45;
+      this.button2.Text = "Сбросить";
+      this.button2.UseVisualStyleBackColor = true;
+      this.button2.Click += new System.EventHandler(this.Button2_Click);
       // 
       // btn_clear
       // 
-      btn_clear.Location = new System.Drawing.Point(0, 204);
-      btn_clear.Name = "btn_clear";
-      btn_clear.Size = new System.Drawing.Size(188, 25);
-      btn_clear.TabIndex = 35;
-      btn_clear.Text = "Очистить";
-      btn_clear.UseVisualStyleBackColor = true;
-      btn_clear.Click += new System.EventHandler(Btn_clear_Click);
+      this.btn_clear.Location = new System.Drawing.Point(0, 204);
+      this.btn_clear.Name = "btn_clear";
+      this.btn_clear.Size = new System.Drawing.Size(188, 25);
+      this.btn_clear.TabIndex = 35;
+      this.btn_clear.Text = "Очистить";
+      this.btn_clear.UseVisualStyleBackColor = true;
+      this.btn_clear.Click += new System.EventHandler(this.Btn_clear_Click);
       // 
       // label11
       // 
-      label11.AutoSize = true;
-      label11.Location = new System.Drawing.Point(6, 123);
-      label11.Name = "label11";
-      label11.Size = new System.Drawing.Size(56, 13);
-      label11.TabIndex = 44;
-      label11.Text = "lambda_4:";
+      this.label11.AutoSize = true;
+      this.label11.Location = new System.Drawing.Point(6, 123);
+      this.label11.Name = "label11";
+      this.label11.Size = new System.Drawing.Size(56, 13);
+      this.label11.TabIndex = 44;
+      this.label11.Text = "lambda_4:";
       // 
       // label10
       // 
-      label10.AutoSize = true;
-      label10.Location = new System.Drawing.Point(6, 71);
-      label10.Name = "label10";
-      label10.Size = new System.Drawing.Size(56, 13);
-      label10.TabIndex = 43;
-      label10.Text = "lambda_2:";
+      this.label10.AutoSize = true;
+      this.label10.Location = new System.Drawing.Point(6, 71);
+      this.label10.Name = "label10";
+      this.label10.Size = new System.Drawing.Size(56, 13);
+      this.label10.TabIndex = 43;
+      this.label10.Text = "lambda_2:";
       // 
       // tbox_lambda4_im
       // 
-      tbox_lambda4_im.Location = new System.Drawing.Point(133, 120);
-      tbox_lambda4_im.Name = "tbox_lambda4_im";
-      tbox_lambda4_im.Size = new System.Drawing.Size(31, 20);
-      tbox_lambda4_im.TabIndex = 42;
-      tbox_lambda4_im.Text = "0";
-      tbox_lambda4_im.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.tbox_lambda4_im.Location = new System.Drawing.Point(133, 120);
+      this.tbox_lambda4_im.Name = "tbox_lambda4_im";
+      this.tbox_lambda4_im.Size = new System.Drawing.Size(31, 20);
+      this.tbox_lambda4_im.TabIndex = 42;
+      this.tbox_lambda4_im.Text = "0";
+      this.tbox_lambda4_im.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // tbox_lambda4_re
       // 
-      tbox_lambda4_re.Location = new System.Drawing.Point(83, 120);
-      tbox_lambda4_re.Name = "tbox_lambda4_re";
-      tbox_lambda4_re.Size = new System.Drawing.Size(31, 20);
-      tbox_lambda4_re.TabIndex = 41;
-      tbox_lambda4_re.Text = "0";
-      tbox_lambda4_re.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.tbox_lambda4_re.Location = new System.Drawing.Point(83, 120);
+      this.tbox_lambda4_re.Name = "tbox_lambda4_re";
+      this.tbox_lambda4_re.Size = new System.Drawing.Size(31, 20);
+      this.tbox_lambda4_re.TabIndex = 41;
+      this.tbox_lambda4_re.Text = "0";
+      this.tbox_lambda4_re.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // Button_runCalc
       // 
-      Button_runCalc.Location = new System.Drawing.Point(0, 174);
-      Button_runCalc.Margin = new System.Windows.Forms.Padding(2);
-      Button_runCalc.Name = "Button_runCalc";
-      Button_runCalc.Size = new System.Drawing.Size(188, 25);
-      Button_runCalc.TabIndex = 19;
-      Button_runCalc.Text = "Рассчитать";
-      Button_runCalc.UseVisualStyleBackColor = true;
-      Button_runCalc.Click += new System.EventHandler(Button_runCalc_Click);
+      this.Button_runCalc.Location = new System.Drawing.Point(0, 174);
+      this.Button_runCalc.Margin = new System.Windows.Forms.Padding(2);
+      this.Button_runCalc.Name = "Button_runCalc";
+      this.Button_runCalc.Size = new System.Drawing.Size(188, 25);
+      this.Button_runCalc.TabIndex = 19;
+      this.Button_runCalc.Text = "Рассчитать";
+      this.Button_runCalc.UseVisualStyleBackColor = true;
+      this.Button_runCalc.Click += new System.EventHandler(this.Button_runCalc_Click);
       // 
       // tbox_lambda2_im
       // 
-      tbox_lambda2_im.Location = new System.Drawing.Point(133, 68);
-      tbox_lambda2_im.Name = "tbox_lambda2_im";
-      tbox_lambda2_im.Size = new System.Drawing.Size(31, 20);
-      tbox_lambda2_im.TabIndex = 40;
-      tbox_lambda2_im.Text = "0";
-      tbox_lambda2_im.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.tbox_lambda2_im.Location = new System.Drawing.Point(133, 68);
+      this.tbox_lambda2_im.Name = "tbox_lambda2_im";
+      this.tbox_lambda2_im.Size = new System.Drawing.Size(31, 20);
+      this.tbox_lambda2_im.TabIndex = 40;
+      this.tbox_lambda2_im.Text = "0";
+      this.tbox_lambda2_im.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // tbox_lambda2_re
       // 
-      tbox_lambda2_re.Location = new System.Drawing.Point(83, 68);
-      tbox_lambda2_re.Name = "tbox_lambda2_re";
-      tbox_lambda2_re.Size = new System.Drawing.Size(31, 20);
-      tbox_lambda2_re.TabIndex = 39;
-      tbox_lambda2_re.Text = "0";
-      tbox_lambda2_re.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.tbox_lambda2_re.Location = new System.Drawing.Point(83, 68);
+      this.tbox_lambda2_re.Name = "tbox_lambda2_re";
+      this.tbox_lambda2_re.Size = new System.Drawing.Size(31, 20);
+      this.tbox_lambda2_re.TabIndex = 39;
+      this.tbox_lambda2_re.Text = "0";
+      this.tbox_lambda2_re.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // label9
       // 
-      label9.AutoSize = true;
-      label9.Location = new System.Drawing.Point(130, 22);
-      label9.Name = "label9";
-      label9.Size = new System.Drawing.Size(21, 13);
-      label9.TabIndex = 38;
-      label9.Text = "Im:";
+      this.label9.AutoSize = true;
+      this.label9.Location = new System.Drawing.Point(130, 22);
+      this.label9.Name = "label9";
+      this.label9.Size = new System.Drawing.Size(21, 13);
+      this.label9.TabIndex = 38;
+      this.label9.Text = "Im:";
       // 
       // label8
       // 
-      label8.AutoSize = true;
-      label8.Location = new System.Drawing.Point(80, 22);
-      label8.Name = "label8";
-      label8.Size = new System.Drawing.Size(24, 13);
-      label8.TabIndex = 37;
-      label8.Text = "Re:";
+      this.label8.AutoSize = true;
+      this.label8.Location = new System.Drawing.Point(80, 22);
+      this.label8.Name = "label8";
+      this.label8.Size = new System.Drawing.Size(24, 13);
+      this.label8.TabIndex = 37;
+      this.label8.Text = "Re:";
       // 
       // label18
       // 
-      label18.AutoSize = true;
-      label18.Location = new System.Drawing.Point(6, 97);
-      label18.Name = "label18";
-      label18.Size = new System.Drawing.Size(56, 13);
-      label18.TabIndex = 35;
-      label18.Text = "lambda_3:";
+      this.label18.AutoSize = true;
+      this.label18.Location = new System.Drawing.Point(6, 97);
+      this.label18.Name = "label18";
+      this.label18.Size = new System.Drawing.Size(56, 13);
+      this.label18.TabIndex = 35;
+      this.label18.Text = "lambda_3:";
       // 
       // root1
       // 
-      root1.AutoSize = true;
-      root1.Location = new System.Drawing.Point(6, 45);
-      root1.Name = "root1";
-      root1.Size = new System.Drawing.Size(56, 13);
-      root1.TabIndex = 33;
-      root1.Text = "lambda_1:";
+      this.root1.AutoSize = true;
+      this.root1.Location = new System.Drawing.Point(6, 45);
+      this.root1.Name = "root1";
+      this.root1.Size = new System.Drawing.Size(56, 13);
+      this.root1.TabIndex = 33;
+      this.root1.Text = "lambda_1:";
       // 
       // tbox_lambda3_im
       // 
-      tbox_lambda3_im.Location = new System.Drawing.Point(133, 94);
-      tbox_lambda3_im.Name = "tbox_lambda3_im";
-      tbox_lambda3_im.Size = new System.Drawing.Size(31, 20);
-      tbox_lambda3_im.TabIndex = 15;
-      tbox_lambda3_im.Text = "0";
-      tbox_lambda3_im.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      tbox_lambda3_im.TextChanged += new System.EventHandler(Tbox_lambda3_im_TextChanged);
+      this.tbox_lambda3_im.Location = new System.Drawing.Point(133, 94);
+      this.tbox_lambda3_im.Name = "tbox_lambda3_im";
+      this.tbox_lambda3_im.Size = new System.Drawing.Size(31, 20);
+      this.tbox_lambda3_im.TabIndex = 15;
+      this.tbox_lambda3_im.Text = "0";
+      this.tbox_lambda3_im.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.tbox_lambda3_im.TextChanged += new System.EventHandler(this.Tbox_lambda3_im_TextChanged);
       // 
       // tbox_lambda1_re
       // 
-      tbox_lambda1_re.Location = new System.Drawing.Point(83, 42);
-      tbox_lambda1_re.Name = "tbox_lambda1_re";
-      tbox_lambda1_re.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-      tbox_lambda1_re.Size = new System.Drawing.Size(31, 20);
-      tbox_lambda1_re.TabIndex = 12;
-      tbox_lambda1_re.Text = "0";
-      tbox_lambda1_re.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.tbox_lambda1_re.Location = new System.Drawing.Point(83, 42);
+      this.tbox_lambda1_re.Name = "tbox_lambda1_re";
+      this.tbox_lambda1_re.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
+      this.tbox_lambda1_re.Size = new System.Drawing.Size(31, 20);
+      this.tbox_lambda1_re.TabIndex = 12;
+      this.tbox_lambda1_re.Text = "0";
+      this.tbox_lambda1_re.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // tbox_lambda3_re
       // 
-      tbox_lambda3_re.Location = new System.Drawing.Point(83, 94);
-      tbox_lambda3_re.Name = "tbox_lambda3_re";
-      tbox_lambda3_re.Size = new System.Drawing.Size(31, 20);
-      tbox_lambda3_re.TabIndex = 14;
-      tbox_lambda3_re.Text = "0";
-      tbox_lambda3_re.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.tbox_lambda3_re.Location = new System.Drawing.Point(83, 94);
+      this.tbox_lambda3_re.Name = "tbox_lambda3_re";
+      this.tbox_lambda3_re.Size = new System.Drawing.Size(31, 20);
+      this.tbox_lambda3_re.TabIndex = 14;
+      this.tbox_lambda3_re.Text = "0";
+      this.tbox_lambda3_re.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // tbox_lambda1_im
       // 
-      tbox_lambda1_im.Location = new System.Drawing.Point(133, 42);
-      tbox_lambda1_im.Name = "tbox_lambda1_im";
-      tbox_lambda1_im.Size = new System.Drawing.Size(31, 20);
-      tbox_lambda1_im.TabIndex = 13;
-      tbox_lambda1_im.Text = "0";
-      tbox_lambda1_im.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      tbox_lambda1_im.TextChanged += new System.EventHandler(Tbox_lambda1_im_TextChanged);
+      this.tbox_lambda1_im.Location = new System.Drawing.Point(133, 42);
+      this.tbox_lambda1_im.Name = "tbox_lambda1_im";
+      this.tbox_lambda1_im.Size = new System.Drawing.Size(31, 20);
+      this.tbox_lambda1_im.TabIndex = 13;
+      this.tbox_lambda1_im.Text = "0";
+      this.tbox_lambda1_im.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.tbox_lambda1_im.TextChanged += new System.EventHandler(this.Tbox_lambda1_im_TextChanged);
       // 
       // cBox_non_linear
       // 
-      cBox_non_linear.AutoSize = true;
-      cBox_non_linear.Checked = true;
-      cBox_non_linear.CheckState = System.Windows.Forms.CheckState.Checked;
-      cBox_non_linear.Location = new System.Drawing.Point(147, 435);
-      cBox_non_linear.Name = "cBox_non_linear";
-      cBox_non_linear.Size = new System.Drawing.Size(122, 17);
-      cBox_non_linear.TabIndex = 56;
-      cBox_non_linear.Text = "Линейная система";
-      cBox_non_linear.UseVisualStyleBackColor = true;
+      this.cBox_non_linear.AutoSize = true;
+      this.cBox_non_linear.Checked = true;
+      this.cBox_non_linear.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.cBox_non_linear.Location = new System.Drawing.Point(147, 421);
+      this.cBox_non_linear.Name = "cBox_non_linear";
+      this.cBox_non_linear.Size = new System.Drawing.Size(122, 17);
+      this.cBox_non_linear.TabIndex = 56;
+      this.cBox_non_linear.Text = "Линейная система";
+      this.cBox_non_linear.UseVisualStyleBackColor = true;
       // 
       // cBox_Reg_on
       // 
-      cBox_Reg_on.AutoSize = true;
-      cBox_Reg_on.Checked = true;
-      cBox_Reg_on.CheckState = System.Windows.Forms.CheckState.Checked;
-      cBox_Reg_on.Location = new System.Drawing.Point(8, 435);
-      cBox_Reg_on.Name = "cBox_Reg_on";
-      cBox_Reg_on.Size = new System.Drawing.Size(129, 17);
-      cBox_Reg_on.TabIndex = 58;
-      cBox_Reg_on.Text = "Включить регулятор";
-      cBox_Reg_on.UseVisualStyleBackColor = true;
+      this.cBox_Reg_on.AutoSize = true;
+      this.cBox_Reg_on.Checked = true;
+      this.cBox_Reg_on.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.cBox_Reg_on.Location = new System.Drawing.Point(8, 421);
+      this.cBox_Reg_on.Name = "cBox_Reg_on";
+      this.cBox_Reg_on.Size = new System.Drawing.Size(129, 17);
+      this.cBox_Reg_on.TabIndex = 58;
+      this.cBox_Reg_on.Text = "Включить регулятор";
+      this.cBox_Reg_on.UseVisualStyleBackColor = true;
       // 
       // dataGridView1
       // 
-      dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-      dataGridView1.Location = new System.Drawing.Point(8, 458);
-      dataGridView1.Name = "dataGridView1";
-      dataGridView1.RowHeadersVisible = false;
-      dataGridView1.Size = new System.Drawing.Size(329, 263);
-      dataGridView1.TabIndex = 57;
+      this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+      this.dataGridView1.Location = new System.Drawing.Point(8, 444);
+      this.dataGridView1.Name = "dataGridView1";
+      this.dataGridView1.RowHeadersVisible = false;
+      this.dataGridView1.Size = new System.Drawing.Size(329, 277);
+      this.dataGridView1.TabIndex = 57;
       // 
       // groupBox2
       // 
-      groupBox2.BackColor = System.Drawing.SystemColors.Control;
-      groupBox2.Controls.Add(Button_setInitVal);
-      groupBox2.Controls.Add(labelfi);
-      groupBox2.Controls.Add(labeldfi_dt);
-      groupBox2.Controls.Add(labelx);
-      groupBox2.Controls.Add(labeldx_dt);
-      groupBox2.Controls.Add(textBox_fi);
-      groupBox2.Controls.Add(textBox_dx_dt);
-      groupBox2.Controls.Add(textBox_x);
-      groupBox2.Controls.Add(textBox_dfi_dt);
-      groupBox2.Location = new System.Drawing.Point(8, 282);
-      groupBox2.Margin = new System.Windows.Forms.Padding(2);
-      groupBox2.Name = "groupBox2";
-      groupBox2.Padding = new System.Windows.Forms.Padding(2);
-      groupBox2.Size = new System.Drawing.Size(135, 134);
-      groupBox2.TabIndex = 49;
-      groupBox2.TabStop = false;
-      groupBox2.Text = "Исходное значение";
+      this.groupBox2.BackColor = System.Drawing.SystemColors.Control;
+      this.groupBox2.Controls.Add(this.Button_setInitVal);
+      this.groupBox2.Controls.Add(this.labelfi);
+      this.groupBox2.Controls.Add(this.labeldfi_dt);
+      this.groupBox2.Controls.Add(this.labelx);
+      this.groupBox2.Controls.Add(this.labeldx_dt);
+      this.groupBox2.Controls.Add(this.textBox_fi);
+      this.groupBox2.Controls.Add(this.textBox_dx_dt);
+      this.groupBox2.Controls.Add(this.textBox_x);
+      this.groupBox2.Controls.Add(this.textBox_dfi_dt);
+      this.groupBox2.Location = new System.Drawing.Point(8, 282);
+      this.groupBox2.Margin = new System.Windows.Forms.Padding(2);
+      this.groupBox2.Name = "groupBox2";
+      this.groupBox2.Padding = new System.Windows.Forms.Padding(2);
+      this.groupBox2.Size = new System.Drawing.Size(135, 134);
+      this.groupBox2.TabIndex = 49;
+      this.groupBox2.TabStop = false;
+      this.groupBox2.Text = "Исходное значение";
       // 
       // Button_setInitVal
       // 
-      Button_setInitVal.Location = new System.Drawing.Point(55, 108);
-      Button_setInitVal.Margin = new System.Windows.Forms.Padding(2);
-      Button_setInitVal.Name = "Button_setInitVal";
-      Button_setInitVal.Size = new System.Drawing.Size(75, 25);
-      Button_setInitVal.TabIndex = 25;
-      Button_setInitVal.Text = "Принять";
-      Button_setInitVal.UseVisualStyleBackColor = true;
-      Button_setInitVal.Click += new System.EventHandler(Button_setInitVal_Click);
+      this.Button_setInitVal.Location = new System.Drawing.Point(55, 108);
+      this.Button_setInitVal.Margin = new System.Windows.Forms.Padding(2);
+      this.Button_setInitVal.Name = "Button_setInitVal";
+      this.Button_setInitVal.Size = new System.Drawing.Size(75, 25);
+      this.Button_setInitVal.TabIndex = 25;
+      this.Button_setInitVal.Text = "Принять";
+      this.Button_setInitVal.UseVisualStyleBackColor = true;
+      this.Button_setInitVal.Click += new System.EventHandler(this.Button_setInitVal_Click);
       // 
       // labelfi
       // 
-      labelfi.AutoSize = true;
-      labelfi.Location = new System.Drawing.Point(4, 21);
-      labelfi.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      labelfi.Name = "labelfi";
-      labelfi.Size = new System.Drawing.Size(15, 13);
-      labelfi.TabIndex = 21;
-      labelfi.Text = "fi:";
+      this.labelfi.AutoSize = true;
+      this.labelfi.Location = new System.Drawing.Point(4, 21);
+      this.labelfi.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+      this.labelfi.Name = "labelfi";
+      this.labelfi.Size = new System.Drawing.Size(15, 13);
+      this.labelfi.TabIndex = 21;
+      this.labelfi.Text = "fi:";
       // 
       // labeldfi_dt
       // 
-      labeldfi_dt.AutoSize = true;
-      labeldfi_dt.Location = new System.Drawing.Point(4, 44);
-      labeldfi_dt.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      labeldfi_dt.Name = "labeldfi_dt";
-      labeldfi_dt.Size = new System.Drawing.Size(35, 13);
-      labeldfi_dt.TabIndex = 22;
-      labeldfi_dt.Text = "dfi/dt:";
+      this.labeldfi_dt.AutoSize = true;
+      this.labeldfi_dt.Location = new System.Drawing.Point(4, 44);
+      this.labeldfi_dt.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+      this.labeldfi_dt.Name = "labeldfi_dt";
+      this.labeldfi_dt.Size = new System.Drawing.Size(35, 13);
+      this.labeldfi_dt.TabIndex = 22;
+      this.labeldfi_dt.Text = "dfi/dt:";
       // 
       // labelx
       // 
-      labelx.AutoSize = true;
-      labelx.Location = new System.Drawing.Point(4, 67);
-      labelx.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      labelx.Name = "labelx";
-      labelx.Size = new System.Drawing.Size(33, 13);
-      labelx.TabIndex = 23;
-      labelx.Text = "x - x*:";
+      this.labelx.AutoSize = true;
+      this.labelx.Location = new System.Drawing.Point(4, 67);
+      this.labelx.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+      this.labelx.Name = "labelx";
+      this.labelx.Size = new System.Drawing.Size(33, 13);
+      this.labelx.TabIndex = 23;
+      this.labelx.Text = "x - x*:";
       // 
       // labeldx_dt
       // 
-      labeldx_dt.AutoSize = true;
-      labeldx_dt.Location = new System.Drawing.Point(4, 88);
-      labeldx_dt.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-      labeldx_dt.Name = "labeldx_dt";
-      labeldx_dt.Size = new System.Drawing.Size(35, 13);
-      labeldx_dt.TabIndex = 24;
-      labeldx_dt.Text = "dx/dt:";
+      this.labeldx_dt.AutoSize = true;
+      this.labeldx_dt.Location = new System.Drawing.Point(4, 88);
+      this.labeldx_dt.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+      this.labeldx_dt.Name = "labeldx_dt";
+      this.labeldx_dt.Size = new System.Drawing.Size(35, 13);
+      this.labeldx_dt.TabIndex = 24;
+      this.labeldx_dt.Text = "dx/dt:";
       // 
       // textBox_fi
       // 
-      textBox_fi.Location = new System.Drawing.Point(55, 17);
-      textBox_fi.Margin = new System.Windows.Forms.Padding(2);
-      textBox_fi.Name = "textBox_fi";
-      textBox_fi.Size = new System.Drawing.Size(76, 20);
-      textBox_fi.TabIndex = 8;
-      textBox_fi.Text = "0,523";
-      textBox_fi.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.textBox_fi.Location = new System.Drawing.Point(55, 17);
+      this.textBox_fi.Margin = new System.Windows.Forms.Padding(2);
+      this.textBox_fi.Name = "textBox_fi";
+      this.textBox_fi.Size = new System.Drawing.Size(76, 20);
+      this.textBox_fi.TabIndex = 8;
+      this.textBox_fi.Text = "0,523";
+      this.textBox_fi.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // textBox_dx_dt
       // 
-      textBox_dx_dt.Location = new System.Drawing.Point(55, 85);
-      textBox_dx_dt.Margin = new System.Windows.Forms.Padding(2);
-      textBox_dx_dt.Name = "textBox_dx_dt";
-      textBox_dx_dt.Size = new System.Drawing.Size(76, 20);
-      textBox_dx_dt.TabIndex = 11;
-      textBox_dx_dt.Text = "0";
-      textBox_dx_dt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.textBox_dx_dt.Location = new System.Drawing.Point(55, 85);
+      this.textBox_dx_dt.Margin = new System.Windows.Forms.Padding(2);
+      this.textBox_dx_dt.Name = "textBox_dx_dt";
+      this.textBox_dx_dt.Size = new System.Drawing.Size(76, 20);
+      this.textBox_dx_dt.TabIndex = 11;
+      this.textBox_dx_dt.Text = "0";
+      this.textBox_dx_dt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // textBox_x
       // 
-      textBox_x.Location = new System.Drawing.Point(55, 63);
-      textBox_x.Margin = new System.Windows.Forms.Padding(2);
-      textBox_x.Name = "textBox_x";
-      textBox_x.Size = new System.Drawing.Size(76, 20);
-      textBox_x.TabIndex = 9;
-      textBox_x.Text = "0,05";
-      textBox_x.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.textBox_x.Location = new System.Drawing.Point(55, 63);
+      this.textBox_x.Margin = new System.Windows.Forms.Padding(2);
+      this.textBox_x.Name = "textBox_x";
+      this.textBox_x.Size = new System.Drawing.Size(76, 20);
+      this.textBox_x.TabIndex = 9;
+      this.textBox_x.Text = "0,05";
+      this.textBox_x.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // textBox_dfi_dt
       // 
-      textBox_dfi_dt.Location = new System.Drawing.Point(55, 40);
-      textBox_dfi_dt.Margin = new System.Windows.Forms.Padding(2);
-      textBox_dfi_dt.Name = "textBox_dfi_dt";
-      textBox_dfi_dt.Size = new System.Drawing.Size(76, 20);
-      textBox_dfi_dt.TabIndex = 10;
-      textBox_dfi_dt.Text = "0";
-      textBox_dfi_dt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.textBox_dfi_dt.Location = new System.Drawing.Point(55, 40);
+      this.textBox_dfi_dt.Margin = new System.Windows.Forms.Padding(2);
+      this.textBox_dfi_dt.Name = "textBox_dfi_dt";
+      this.textBox_dfi_dt.Size = new System.Drawing.Size(76, 20);
+      this.textBox_dfi_dt.TabIndex = 10;
+      this.textBox_dfi_dt.Text = "0";
+      this.textBox_dfi_dt.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // tabPage2
       // 
-      tabPage2.Controls.Add(label5);
-      tabPage2.Controls.Add(groupBox4);
-      tabPage2.Controls.Add(pBox_Vmax_criterion);
-      tabPage2.Controls.Add(pBox_h2_criterion);
-      tabPage2.Controls.Add(pBox_h1_criterion);
-      tabPage2.Controls.Add(pBox_H_criterion);
-      tabPage2.Controls.Add(pBox_T_criterion);
-      tabPage2.Controls.Add(func_num_text);
-      tabPage2.Controls.Add(ymax_t);
-      tabPage2.Location = new System.Drawing.Point(4, 22);
-      tabPage2.Name = "tabPage2";
-      tabPage2.Padding = new System.Windows.Forms.Padding(3);
-      tabPage2.Size = new System.Drawing.Size(1356, 741);
-      tabPage2.TabIndex = 1;
-      tabPage2.Text = "Линии равного уровня";
-      tabPage2.UseVisualStyleBackColor = true;
+      this.tabPage2.Controls.Add(this.label5);
+      this.tabPage2.Controls.Add(this.groupBox4);
+      this.tabPage2.Controls.Add(this.pBox_Vmax_criterion);
+      this.tabPage2.Controls.Add(this.pBox_h2_criterion);
+      this.tabPage2.Controls.Add(this.pBox_h1_criterion);
+      this.tabPage2.Controls.Add(this.pBox_H_criterion);
+      this.tabPage2.Controls.Add(this.pBox_T_criterion);
+      this.tabPage2.Controls.Add(this.func_num_text);
+      this.tabPage2.Controls.Add(this.ymax_t);
+      this.tabPage2.Location = new System.Drawing.Point(4, 22);
+      this.tabPage2.Name = "tabPage2";
+      this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+      this.tabPage2.Size = new System.Drawing.Size(1356, 741);
+      this.tabPage2.TabIndex = 1;
+      this.tabPage2.Text = "Линии равного уровня";
+      this.tabPage2.UseVisualStyleBackColor = true;
       // 
       // label5
       // 
-      label5.AutoSize = true;
-      label5.BackColor = System.Drawing.Color.PeachPuff;
-      label5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-      label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      label5.ForeColor = System.Drawing.SystemColors.ControlText;
-      label5.Location = new System.Drawing.Point(280, 6);
-      label5.Name = "label5";
-      label5.Size = new System.Drawing.Size(290, 62);
-      label5.TabIndex = 24;
-      label5.Text = "-mu2 < Re(lambda_i) < -mu1;\r\n|Im(lambda_i)| < -sigma * Re(lambda_i),\r\ni = (1, ..." +
-", 4);";
+      this.label5.AutoSize = true;
+      this.label5.BackColor = System.Drawing.Color.PeachPuff;
+      this.label5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+      this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.label5.ForeColor = System.Drawing.SystemColors.ControlText;
+      this.label5.Location = new System.Drawing.Point(280, 6);
+      this.label5.Name = "label5";
+      this.label5.Size = new System.Drawing.Size(290, 62);
+      this.label5.TabIndex = 24;
+      this.label5.Text = "-mu2 < Re(lambda_i) < -mu1;\r\n|Im(lambda_i)| < -sigma * Re(lambda_i),\r\ni = (1, ..." +
+    ", 4);";
       // 
       // groupBox4
       // 
-      groupBox4.BackColor = System.Drawing.SystemColors.Control;
-      groupBox4.Controls.Add(label_mu1);
-      groupBox4.Controls.Add(xmin_t);
-      groupBox4.Controls.Add(label_M3);
-      groupBox4.Controls.Add(xmax_t);
-      groupBox4.Controls.Add(label_M2);
-      groupBox4.Controls.Add(label_mu2);
-      groupBox4.Controls.Add(label_M1);
-      groupBox4.Controls.Add(button1);
-      groupBox4.Controls.Add(ymin_t);
-      groupBox4.Controls.Add(label_N);
-      groupBox4.Controls.Add(label_sigma);
-      groupBox4.Controls.Add(DL_N);
-      groupBox4.Controls.Add(DL_M2);
-      groupBox4.Controls.Add(DL_M1);
-      groupBox4.Controls.Add(DL_M3);
-      groupBox4.Location = new System.Drawing.Point(6, 6);
-      groupBox4.Name = "groupBox4";
-      groupBox4.Size = new System.Drawing.Size(268, 153);
-      groupBox4.TabIndex = 23;
-      groupBox4.TabStop = false;
-      groupBox4.Text = "Параметры отрисовки:";
+      this.groupBox4.BackColor = System.Drawing.SystemColors.Control;
+      this.groupBox4.Controls.Add(this.label_mu1);
+      this.groupBox4.Controls.Add(this.xmin_t);
+      this.groupBox4.Controls.Add(this.label_M3);
+      this.groupBox4.Controls.Add(this.xmax_t);
+      this.groupBox4.Controls.Add(this.label_M2);
+      this.groupBox4.Controls.Add(this.label_mu2);
+      this.groupBox4.Controls.Add(this.label_M1);
+      this.groupBox4.Controls.Add(this.button1);
+      this.groupBox4.Controls.Add(this.ymin_t);
+      this.groupBox4.Controls.Add(this.label_N);
+      this.groupBox4.Controls.Add(this.label_sigma);
+      this.groupBox4.Controls.Add(this.DL_N);
+      this.groupBox4.Controls.Add(this.DL_M2);
+      this.groupBox4.Controls.Add(this.DL_M1);
+      this.groupBox4.Controls.Add(this.DL_M3);
+      this.groupBox4.Location = new System.Drawing.Point(6, 6);
+      this.groupBox4.Name = "groupBox4";
+      this.groupBox4.Size = new System.Drawing.Size(268, 153);
+      this.groupBox4.TabIndex = 23;
+      this.groupBox4.TabStop = false;
+      this.groupBox4.Text = "Параметры отрисовки:";
       // 
       // label_mu1
       // 
-      label_mu1.AutoSize = true;
-      label_mu1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      label_mu1.Location = new System.Drawing.Point(6, 16);
-      label_mu1.Name = "label_mu1";
-      label_mu1.Size = new System.Drawing.Size(44, 20);
-      label_mu1.TabIndex = 16;
-      label_mu1.Text = "mu1:";
+      this.label_mu1.AutoSize = true;
+      this.label_mu1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.label_mu1.Location = new System.Drawing.Point(6, 16);
+      this.label_mu1.Name = "label_mu1";
+      this.label_mu1.Size = new System.Drawing.Size(44, 20);
+      this.label_mu1.TabIndex = 16;
+      this.label_mu1.Text = "mu1:";
       // 
       // xmin_t
       // 
-      xmin_t.Location = new System.Drawing.Point(67, 18);
-      xmin_t.Name = "xmin_t";
-      xmin_t.Size = new System.Drawing.Size(75, 20);
-      xmin_t.TabIndex = 8;
-      xmin_t.Text = "6";
-      xmin_t.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.xmin_t.Location = new System.Drawing.Point(67, 18);
+      this.xmin_t.Name = "xmin_t";
+      this.xmin_t.Size = new System.Drawing.Size(75, 20);
+      this.xmin_t.TabIndex = 8;
+      this.xmin_t.Text = "6";
+      this.xmin_t.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // label_M3
       // 
-      label_M3.AutoSize = true;
-      label_M3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      label_M3.Location = new System.Drawing.Point(148, 94);
-      label_M3.Name = "label_M3";
-      label_M3.Size = new System.Drawing.Size(35, 20);
-      label_M3.TabIndex = 22;
-      label_M3.Text = "M3:";
+      this.label_M3.AutoSize = true;
+      this.label_M3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.label_M3.Location = new System.Drawing.Point(148, 94);
+      this.label_M3.Name = "label_M3";
+      this.label_M3.Size = new System.Drawing.Size(35, 20);
+      this.label_M3.TabIndex = 22;
+      this.label_M3.Text = "M3:";
       // 
       // xmax_t
       // 
-      xmax_t.Location = new System.Drawing.Point(67, 44);
-      xmax_t.Name = "xmax_t";
-      xmax_t.Size = new System.Drawing.Size(75, 20);
-      xmax_t.TabIndex = 6;
-      xmax_t.Text = "0,1";
-      xmax_t.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.xmax_t.Location = new System.Drawing.Point(67, 44);
+      this.xmax_t.Name = "xmax_t";
+      this.xmax_t.Size = new System.Drawing.Size(75, 20);
+      this.xmax_t.TabIndex = 6;
+      this.xmax_t.Text = "0,1";
+      this.xmax_t.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // label_M2
       // 
-      label_M2.AutoSize = true;
-      label_M2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      label_M2.Location = new System.Drawing.Point(148, 68);
-      label_M2.Name = "label_M2";
-      label_M2.Size = new System.Drawing.Size(35, 20);
-      label_M2.TabIndex = 21;
-      label_M2.Text = "M2:";
+      this.label_M2.AutoSize = true;
+      this.label_M2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.label_M2.Location = new System.Drawing.Point(148, 68);
+      this.label_M2.Name = "label_M2";
+      this.label_M2.Size = new System.Drawing.Size(35, 20);
+      this.label_M2.TabIndex = 21;
+      this.label_M2.Text = "M2:";
       // 
       // label_mu2
       // 
-      label_mu2.AutoSize = true;
-      label_mu2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      label_mu2.Location = new System.Drawing.Point(6, 42);
-      label_mu2.Name = "label_mu2";
-      label_mu2.Size = new System.Drawing.Size(44, 20);
-      label_mu2.TabIndex = 17;
-      label_mu2.Text = "mu2:";
+      this.label_mu2.AutoSize = true;
+      this.label_mu2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.label_mu2.Location = new System.Drawing.Point(6, 42);
+      this.label_mu2.Name = "label_mu2";
+      this.label_mu2.Size = new System.Drawing.Size(44, 20);
+      this.label_mu2.TabIndex = 17;
+      this.label_mu2.Text = "mu2:";
       // 
       // label_M1
       // 
-      label_M1.AutoSize = true;
-      label_M1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      label_M1.Location = new System.Drawing.Point(148, 42);
-      label_M1.Name = "label_M1";
-      label_M1.Size = new System.Drawing.Size(35, 20);
-      label_M1.TabIndex = 20;
-      label_M1.Text = "M1:";
+      this.label_M1.AutoSize = true;
+      this.label_M1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.label_M1.Location = new System.Drawing.Point(148, 42);
+      this.label_M1.Name = "label_M1";
+      this.label_M1.Size = new System.Drawing.Size(35, 20);
+      this.label_M1.TabIndex = 20;
+      this.label_M1.Text = "M1:";
       // 
       // button1
       // 
-      button1.Location = new System.Drawing.Point(2, 122);
-      button1.Name = "button1";
-      button1.Size = new System.Drawing.Size(262, 25);
-      button1.TabIndex = 10;
-      button1.Text = "Рассчитать";
-      button1.UseVisualStyleBackColor = true;
-      button1.Click += new System.EventHandler(button1_Click);
+      this.button1.Location = new System.Drawing.Point(2, 122);
+      this.button1.Name = "button1";
+      this.button1.Size = new System.Drawing.Size(262, 25);
+      this.button1.TabIndex = 10;
+      this.button1.Text = "Рассчитать";
+      this.button1.UseVisualStyleBackColor = true;
+      this.button1.Click += new System.EventHandler(this.button1_Click);
       // 
       // ymin_t
       // 
-      ymin_t.Location = new System.Drawing.Point(67, 70);
-      ymin_t.Name = "ymin_t";
-      ymin_t.Size = new System.Drawing.Size(75, 20);
-      ymin_t.TabIndex = 7;
-      ymin_t.Text = "1";
-      ymin_t.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.ymin_t.Location = new System.Drawing.Point(67, 70);
+      this.ymin_t.Name = "ymin_t";
+      this.ymin_t.Size = new System.Drawing.Size(75, 20);
+      this.ymin_t.TabIndex = 7;
+      this.ymin_t.Text = "1";
+      this.ymin_t.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // label_N
       // 
-      label_N.AutoSize = true;
-      label_N.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      label_N.Location = new System.Drawing.Point(159, 16);
-      label_N.Name = "label_N";
-      label_N.Size = new System.Drawing.Size(24, 20);
-      label_N.TabIndex = 19;
-      label_N.Text = "N:";
+      this.label_N.AutoSize = true;
+      this.label_N.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.label_N.Location = new System.Drawing.Point(159, 16);
+      this.label_N.Name = "label_N";
+      this.label_N.Size = new System.Drawing.Size(24, 20);
+      this.label_N.TabIndex = 19;
+      this.label_N.Text = "N:";
       // 
       // label_sigma
       // 
-      label_sigma.AutoSize = true;
-      label_sigma.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      label_sigma.Location = new System.Drawing.Point(6, 68);
-      label_sigma.Name = "label_sigma";
-      label_sigma.Size = new System.Drawing.Size(55, 20);
-      label_sigma.TabIndex = 18;
-      label_sigma.Text = "sigma:";
+      this.label_sigma.AutoSize = true;
+      this.label_sigma.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      this.label_sigma.Location = new System.Drawing.Point(6, 68);
+      this.label_sigma.Name = "label_sigma";
+      this.label_sigma.Size = new System.Drawing.Size(55, 20);
+      this.label_sigma.TabIndex = 18;
+      this.label_sigma.Text = "sigma:";
       // 
       // DL_N
       // 
-      DL_N.Location = new System.Drawing.Point(189, 18);
-      DL_N.Name = "DL_N";
-      DL_N.Size = new System.Drawing.Size(75, 20);
-      DL_N.TabIndex = 3;
-      DL_N.Text = "50";
-      DL_N.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.DL_N.Location = new System.Drawing.Point(189, 18);
+      this.DL_N.Name = "DL_N";
+      this.DL_N.Size = new System.Drawing.Size(75, 20);
+      this.DL_N.TabIndex = 3;
+      this.DL_N.Text = "50";
+      this.DL_N.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // DL_M2
       // 
-      DL_M2.Location = new System.Drawing.Point(189, 70);
-      DL_M2.Name = "DL_M2";
-      DL_M2.Size = new System.Drawing.Size(75, 20);
-      DL_M2.TabIndex = 1;
-      DL_M2.Text = "5";
-      DL_M2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.DL_M2.Location = new System.Drawing.Point(189, 70);
+      this.DL_M2.Name = "DL_M2";
+      this.DL_M2.Size = new System.Drawing.Size(75, 20);
+      this.DL_M2.TabIndex = 1;
+      this.DL_M2.Text = "5";
+      this.DL_M2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // DL_M1
       // 
-      DL_M1.Location = new System.Drawing.Point(189, 44);
-      DL_M1.Name = "DL_M1";
-      DL_M1.Size = new System.Drawing.Size(75, 20);
-      DL_M1.TabIndex = 2;
-      DL_M1.Text = "10";
-      DL_M1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.DL_M1.Location = new System.Drawing.Point(189, 44);
+      this.DL_M1.Name = "DL_M1";
+      this.DL_M1.Size = new System.Drawing.Size(75, 20);
+      this.DL_M1.TabIndex = 2;
+      this.DL_M1.Text = "10";
+      this.DL_M1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // DL_M3
       // 
-      DL_M3.Location = new System.Drawing.Point(189, 96);
-      DL_M3.Name = "DL_M3";
-      DL_M3.Size = new System.Drawing.Size(75, 20);
-      DL_M3.TabIndex = 4;
-      DL_M3.Text = "3";
-      DL_M3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.DL_M3.Location = new System.Drawing.Point(189, 96);
+      this.DL_M3.Name = "DL_M3";
+      this.DL_M3.Size = new System.Drawing.Size(75, 20);
+      this.DL_M3.TabIndex = 4;
+      this.DL_M3.Text = "3";
+      this.DL_M3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // pBox_Vmax_criterion
       // 
-      pBox_Vmax_criterion.BackColor = System.Drawing.SystemColors.Control;
-      pBox_Vmax_criterion.Location = new System.Drawing.Point(1003, 362);
-      pBox_Vmax_criterion.Name = "pBox_Vmax_criterion";
-      pBox_Vmax_criterion.Size = new System.Drawing.Size(350, 350);
-      pBox_Vmax_criterion.TabIndex = 15;
-      pBox_Vmax_criterion.TabStop = false;
+      this.pBox_Vmax_criterion.BackColor = System.Drawing.SystemColors.Control;
+      this.pBox_Vmax_criterion.Location = new System.Drawing.Point(1003, 362);
+      this.pBox_Vmax_criterion.Name = "pBox_Vmax_criterion";
+      this.pBox_Vmax_criterion.Size = new System.Drawing.Size(350, 350);
+      this.pBox_Vmax_criterion.TabIndex = 15;
+      this.pBox_Vmax_criterion.TabStop = false;
       // 
       // pBox_h2_criterion
       // 
-      pBox_h2_criterion.BackColor = System.Drawing.SystemColors.Control;
-      pBox_h2_criterion.Location = new System.Drawing.Point(647, 362);
-      pBox_h2_criterion.Name = "pBox_h2_criterion";
-      pBox_h2_criterion.Size = new System.Drawing.Size(350, 350);
-      pBox_h2_criterion.TabIndex = 14;
-      pBox_h2_criterion.TabStop = false;
+      this.pBox_h2_criterion.BackColor = System.Drawing.SystemColors.Control;
+      this.pBox_h2_criterion.Location = new System.Drawing.Point(647, 362);
+      this.pBox_h2_criterion.Name = "pBox_h2_criterion";
+      this.pBox_h2_criterion.Size = new System.Drawing.Size(350, 350);
+      this.pBox_h2_criterion.TabIndex = 14;
+      this.pBox_h2_criterion.TabStop = false;
       // 
       // pBox_h1_criterion
       // 
-      pBox_h1_criterion.BackColor = System.Drawing.SystemColors.Control;
-      pBox_h1_criterion.Location = new System.Drawing.Point(291, 362);
-      pBox_h1_criterion.Name = "pBox_h1_criterion";
-      pBox_h1_criterion.Size = new System.Drawing.Size(350, 350);
-      pBox_h1_criterion.TabIndex = 13;
-      pBox_h1_criterion.TabStop = false;
+      this.pBox_h1_criterion.BackColor = System.Drawing.SystemColors.Control;
+      this.pBox_h1_criterion.Location = new System.Drawing.Point(291, 362);
+      this.pBox_h1_criterion.Name = "pBox_h1_criterion";
+      this.pBox_h1_criterion.Size = new System.Drawing.Size(350, 350);
+      this.pBox_h1_criterion.TabIndex = 13;
+      this.pBox_h1_criterion.TabStop = false;
       // 
       // pBox_H_criterion
       // 
-      pBox_H_criterion.BackColor = System.Drawing.SystemColors.Control;
-      pBox_H_criterion.Location = new System.Drawing.Point(1003, 6);
-      pBox_H_criterion.Name = "pBox_H_criterion";
-      pBox_H_criterion.Size = new System.Drawing.Size(350, 350);
-      pBox_H_criterion.TabIndex = 12;
-      pBox_H_criterion.TabStop = false;
+      this.pBox_H_criterion.BackColor = System.Drawing.SystemColors.Control;
+      this.pBox_H_criterion.Location = new System.Drawing.Point(1003, 6);
+      this.pBox_H_criterion.Name = "pBox_H_criterion";
+      this.pBox_H_criterion.Size = new System.Drawing.Size(350, 350);
+      this.pBox_H_criterion.TabIndex = 12;
+      this.pBox_H_criterion.TabStop = false;
       // 
       // pBox_T_criterion
       // 
-      pBox_T_criterion.BackColor = System.Drawing.SystemColors.Control;
-      pBox_T_criterion.Location = new System.Drawing.Point(647, 6);
-      pBox_T_criterion.Name = "pBox_T_criterion";
-      pBox_T_criterion.Size = new System.Drawing.Size(350, 350);
-      pBox_T_criterion.TabIndex = 0;
-      pBox_T_criterion.TabStop = false;
-      pBox_T_criterion.Paint += new System.Windows.Forms.PaintEventHandler(pic_Paint);
+      this.pBox_T_criterion.BackColor = System.Drawing.SystemColors.Control;
+      this.pBox_T_criterion.Location = new System.Drawing.Point(647, 6);
+      this.pBox_T_criterion.Name = "pBox_T_criterion";
+      this.pBox_T_criterion.Size = new System.Drawing.Size(350, 350);
+      this.pBox_T_criterion.TabIndex = 0;
+      this.pBox_T_criterion.TabStop = false;
+      this.pBox_T_criterion.Paint += new System.Windows.Forms.PaintEventHandler(this.pic_Paint);
       // 
       // func_num_text
       // 
-      func_num_text.Location = new System.Drawing.Point(392, 205);
-      func_num_text.Name = "func_num_text";
-      func_num_text.Size = new System.Drawing.Size(100, 20);
-      func_num_text.TabIndex = 9;
-      func_num_text.Text = "2";
-      func_num_text.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.func_num_text.Location = new System.Drawing.Point(392, 205);
+      this.func_num_text.Name = "func_num_text";
+      this.func_num_text.Size = new System.Drawing.Size(100, 20);
+      this.func_num_text.TabIndex = 9;
+      this.func_num_text.Text = "2";
+      this.func_num_text.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // ymax_t
       // 
-      ymax_t.Location = new System.Drawing.Point(498, 205);
-      ymax_t.Name = "ymax_t";
-      ymax_t.Size = new System.Drawing.Size(75, 20);
-      ymax_t.TabIndex = 5;
-      ymax_t.Text = "10";
-      ymax_t.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.ymax_t.Location = new System.Drawing.Point(498, 205);
+      this.ymax_t.Name = "ymax_t";
+      this.ymax_t.Size = new System.Drawing.Size(75, 20);
+      this.ymax_t.TabIndex = 5;
+      this.ymax_t.Text = "10";
+      this.ymax_t.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
-      // Timer1
+      // drawing_on
       // 
-      Timer1.Interval = 10;
+      this.drawing_on.AutoSize = true;
+      this.drawing_on.Checked = true;
+      this.drawing_on.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.drawing_on.Location = new System.Drawing.Point(5, 104);
+      this.drawing_on.Name = "drawing_on";
+      this.drawing_on.Size = new System.Drawing.Size(81, 17);
+      this.drawing_on.TabIndex = 47;
+      this.drawing_on.Text = "Отрисовка";
+      this.drawing_on.UseVisualStyleBackColor = true;
       // 
       // PortalCraneModel
       // 
-      AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      AutoSize = true;
-      ClientSize = new System.Drawing.Size(1364, 755);
-      Controls.Add(tabControl1);
-      Margin = new System.Windows.Forms.Padding(2);
-      Name = "PortalCraneModel";
-      SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
-      Text = "PortalCraneModel";
-      tabControl1.ResumeLayout(false);
-      tabPage1.ResumeLayout(false);
-      tabPage1.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(chart2)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(chart4)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(chart3)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(chart1)).EndInit();
-      groupBox3.ResumeLayout(false);
-      groupBox3.PerformLayout();
-      groupBox1.ResumeLayout(false);
-      groupBox1.PerformLayout();
-      roots_gbox.ResumeLayout(false);
-      roots_gbox.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(dataGridView1)).EndInit();
-      groupBox2.ResumeLayout(false);
-      groupBox2.PerformLayout();
-      tabPage2.ResumeLayout(false);
-      tabPage2.PerformLayout();
-      groupBox4.ResumeLayout(false);
-      groupBox4.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(pBox_Vmax_criterion)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(pBox_h2_criterion)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(pBox_h1_criterion)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(pBox_H_criterion)).EndInit();
-      ((System.ComponentModel.ISupportInitialize)(pBox_T_criterion)).EndInit();
-      ResumeLayout(false);
+      this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+      this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.AutoSize = true;
+      this.ClientSize = new System.Drawing.Size(1364, 755);
+      this.Controls.Add(this.tabControl1);
+      this.Margin = new System.Windows.Forms.Padding(2);
+      this.Name = "PortalCraneModel";
+      this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
+      this.Text = "PortalCraneModel";
+      this.tabControl1.ResumeLayout(false);
+      this.tabPage1.ResumeLayout(false);
+      this.tabPage1.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.chart2)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.chart4)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.chart3)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
+      this.groupBox3.ResumeLayout(false);
+      this.groupBox3.PerformLayout();
+      this.groupBox1.ResumeLayout(false);
+      this.groupBox1.PerformLayout();
+      this.roots_gbox.ResumeLayout(false);
+      this.roots_gbox.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+      this.groupBox2.ResumeLayout(false);
+      this.groupBox2.PerformLayout();
+      this.tabPage2.ResumeLayout(false);
+      this.tabPage2.PerformLayout();
+      this.groupBox4.ResumeLayout(false);
+      this.groupBox4.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.pBox_Vmax_criterion)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pBox_h2_criterion)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pBox_h1_criterion)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pBox_H_criterion)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.pBox_T_criterion)).EndInit();
+      this.ResumeLayout(false);
 
     }
 

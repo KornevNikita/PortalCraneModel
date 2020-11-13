@@ -133,9 +133,9 @@ void SetInitParams(double _fi, double _dfi_dt, double _x, double _dx_dt)
   fi = _fi, dfi_dt = _dfi_dt, x = _x, dx_dt = _dx_dt;
 }
 
-void SetCalcParams(double _dt, double _t_start, double _t_stop, int _drawStCount, bool _inDinamic)
+void SetCalcParams(double _dt, double _t_start, double _t_stop, int _drawStCount)
 {
-  dt = _dt, t_start = _t_start, t_stop = _t_stop, drawStCount = _drawStCount, inDinamic = _inDinamic;
+  dt = _dt, t_start = _t_start, t_stop = _t_stop, drawStCount = _drawStCount;
 }
 
 int GetAllDrawPointsCount()

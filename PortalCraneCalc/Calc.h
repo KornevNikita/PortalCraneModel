@@ -49,7 +49,7 @@ void SetModelLambdas(double _p1_re, double _p1_im, double _p2_re, double _p2_im,
 
 extern "C" __declspec(dllexport)
 void SetCalcParams(double _dt, double _t_start, double _t_stop,
-  int _drawStCount, bool _inDinamic);
+  int _drawStCount);
 
 extern "C" __declspec(dllexport)
 void SetInitParams(double _fi, double _dfi_dt, double _x, double _dx_dt);
