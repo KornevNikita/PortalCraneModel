@@ -1,4 +1,5 @@
 ﻿using System;
+using PortalCraneModel;
 
 namespace Contour_line
 {
@@ -39,6 +40,16 @@ namespace Contour_line
                         double y = C2 + M2 / 2 * ((_x[0] - W2[0]) * (_x[0] - W2[0]) + (_x[1] - W2[1]) * (_x[1] - W2[1]));
                         return Math.Max(x, y);
                     }
+                case 8:
+                    //PortalCraneModel.PortalCraneModel.
+                    //lambda1_re = double.Parse(tbox_lambda1_re.Text);
+                    //lambda1_im = double.Parse(tbox_lambda1_im.Text);
+                    //lambda2_re = double.Parse(tbox_lambda2_re.Text);
+                    //lambda2_im = double.Parse(tbox_lambda2_im.Text);
+                    //lambda3_re = double.Parse(tbox_lambda3_re.Text);
+                    //lambda3_im = double.Parse(tbox_lambda3_im.Text);
+                    //lambda4_re = double.Parse(tbox_lambda4_re.Text);
+                    //lambda4_im = double.Parse(tbox_lambda4_im.Text);
 
                 default: return 0; // тут мы вернем 0;
             }

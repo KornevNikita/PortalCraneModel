@@ -27,7 +27,7 @@ namespace PortalCraneModel
         public PortalCraneModel.TStatePoint CurrentPoint;
         public IntPtr PtrNextPoint;
         public int dinPointsCount;
-        public double[] roots; // zhelaemie korni
+        //public double[] roots; // zhelaemie korni
         public double M;
         public double m;
         public double l;
@@ -56,9 +56,6 @@ namespace PortalCraneModel
         public double lambda3_im;
         public double lambda4_re;
         public double lambda4_im;
-
-        public double mu1, mu2, sigma;
-
 
         public int drawStCount;
         public bool inDinamic;
@@ -166,9 +163,14 @@ namespace PortalCraneModel
 
         [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetModelParams(double _M, double _m, double _l, double _R, double _g,
-            double _h_fi, double _h_x, double _B, double _gamma, double _E,
-            double _p1_re, double _p1_im, double _p2_re, double _p2_im,
+            double _h_fi, double _h_x, double _B, double _gamma, double _E);
+
+        [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetModelLambdas(double _p1_re, double _p1_im, double _p2_re, double _p2_im,
             double _p3_re, double _p3_im, double _p4_re, double _p4_im);
+
+        [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void Calc_regulator();
 
         [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetCalcParams(double _dt, double _t_start, double _t_stop, int _drawStCount, bool _inDinamic);
@@ -279,8 +281,11 @@ namespace PortalCraneModel
             // считываем:
             dataGridView1.Rows.Clear();
             this.SetParam(); // параметры модели
+            SetLambdas(); // корни желаемого хар. полинома
             this.SetCalcParam(); // параметры расчета
             this.SetInitVal(); // начальное состояние системы
+
+            Calc_regulator(); // rasschitivaem parametri regulatora
 
             // определяем количество точек, которые будут отрисованы
             this.allPoints.drawCount = GetAllDrawPointsCount();
@@ -395,6 +400,15 @@ namespace PortalCraneModel
             this.B = double.Parse(this.textBox_B.Text);
             this.gamma = double.Parse(this.textBox_gamma.Text);
             this.E = double.Parse(this.textBox_E.Text);
+
+
+
+            PortalCraneModel.SetModelParams(this.M, this.m, this.l, this.R, this.g,
+                this.h_fi, this.h_x, this.B, this.gamma, this.E);
+        }
+
+        private void SetLambdas()
+        {
             lambda1_re = double.Parse(tbox_lambda1_re.Text);
             lambda1_im = double.Parse(tbox_lambda1_im.Text);
             lambda2_re = double.Parse(tbox_lambda2_re.Text);
@@ -403,9 +417,9 @@ namespace PortalCraneModel
             lambda3_im = double.Parse(tbox_lambda3_im.Text);
             lambda4_re = double.Parse(tbox_lambda4_re.Text);
             lambda4_im = double.Parse(tbox_lambda4_im.Text);
-            PortalCraneModel.SetModelParams(this.M, this.m, this.l, this.R, this.g, this.h_fi, this.h_x, this.B, this.gamma, this.E,
-                this.lambda1_re, this.lambda1_im, this.lambda2_re, this.lambda2_im,
-                this.lambda3_re, this.lambda3_im, this.lambda4_re, this.lambda4_im);
+
+            SetModelLambdas(lambda1_re, lambda1_im, lambda2_re, lambda2_im,
+                lambda3_re, lambda3_im, lambda4_re, lambda4_im);
         }
 
         private void SetInitVal()

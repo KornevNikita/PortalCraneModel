@@ -123,8 +123,15 @@ void f(const std::vector<double>& _X, std::vector<double>& _k, bool system, bool
 }
 
 void SetModelParams(double _M, double _m, double _l, double _R, double _g, 
-  double _h_fi, double _h_x, double _Beta, double _gamma, double _E,
-  double _p1_re, double _p1_im, double _p2_re, double _p2_im,
+  double _h_fi, double _h_x, double _Beta, double _gamma, double _E)
+{
+  M = _M, m = _m, l = _l, R = _R, g = _g,
+    h_fi = _h_fi, h_x = _h_x, Beta = _Beta, gamma = _gamma, E = _E;
+  
+  init_matrix_A();
+}
+
+void SetModelLambdas(double _p1_re, double _p1_im, double _p2_re, double _p2_im,
   double _p3_re, double _p3_im, double _p4_re, double _p4_im)
 {
   std::ofstream fout;
@@ -133,19 +140,12 @@ void SetModelParams(double _M, double _m, double _l, double _R, double _g,
     << _p1_re << " " << _p1_im << endl << _p2_re << " " << _p2_im << endl
     << _p3_re << " " << _p3_im << endl << _p4_re << " " << _p4_im << endl;
 
-  M = _M, m = _m, l = _l, R = _R, g = _g,
-    h_fi = _h_fi, h_x = _h_x, Beta = _Beta, gamma = _gamma, E = _E;
-  
   complex<double> p1(_p1_re, _p1_im), p2(_p2_re, _p2_im),
-  p3(_p3_re, _p3_im), p4(_p4_re, _p4_im);
+    p3(_p3_re, _p3_im), p4(_p4_re, _p4_im);
 
   p[0] = p1, p[1] = p2, p[2] = p3, p[3] = p4;
 
   fout << p[0] << endl << p[1] << endl << p[2] << endl << p[3] << endl;
-
-  init_matrix_A();
-
-  calc_regulator();
 }
 
 void SetInitParams(double _fi, double _dfi_dt, double _x, double _dx_dt)
@@ -456,7 +456,7 @@ void transp(const vector<vector<double>>& P, vector<vector<double>>& P_T)
   }
 }
 
-void calc_regulator()
+void Calc_regulator()
 {
   std::ofstream fout;
   fout.open("calc_reg.txt", ios_base::trunc);

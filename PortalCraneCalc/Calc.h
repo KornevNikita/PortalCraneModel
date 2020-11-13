@@ -50,9 +50,11 @@ void Gauss(vector<vector<double>>& _A, vector<double>& _b,
   vector<double>& res);
 
 extern "C" __declspec(dllexport)
-void SetModelParams(double _M, double _m, double _l, double _R, double _g, 
-  double _h_fi, double _h_x, double _B, double _gamma, double _E,
-  double _p1_re, double _p1_im, double _p2_re, double _p2_im,
+void SetModelParams(double _M, double _m, double _l, double _R, double _g,
+  double _h_fi, double _h_x, double _B, double _gamma, double _E);
+
+extern "C" __declspec(dllexport)
+void SetModelLambdas(double _p1_re, double _p1_im, double _p2_re, double _p2_im,
   double _p3_re, double _p3_im, double _p4_re, double _p4_im);
 
 extern "C" __declspec(dllexport)
@@ -61,6 +63,9 @@ void SetCalcParams(double _dt, double _t_start, double _t_stop,
 
 extern "C" __declspec(dllexport)
 void SetInitParams(double _fi, double _dfi_dt, double _x, double _dx_dt);
+
+extern "C" __declspec(dllexport)
+void Calc_regulator();
 
 extern "C" __declspec(dllexport)
 int GetAllDrawPointsCount();
