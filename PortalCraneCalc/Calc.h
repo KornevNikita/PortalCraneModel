@@ -30,24 +30,14 @@ struct TAllDrawPoints {
   }
 };
 
-void mult(std::vector<std::vector<double>>& op1,
-  std::vector<std::vector<double>>& op2,
-  std::vector<std::vector<double>>& res);
-
 void f(const std::vector<double>& _X, std::vector<double>& _k,
   bool system, bool reg_on);
 
-void calc_regulator();
-
 void calc_coeffs(const vector<complex<double>>& p, vector<double>& g);
-vector<vector<double>> inv(const vector<vector<double>>& A);
-
-void transp(const vector<vector<double>>& P, vector<vector<double>>& P_T);
 
 void init_matrix_A();
 
-void Gauss(vector<vector<double>>& _A, vector<double>& _b,
-  vector<double>& res);
+/* ============================= Export functions: ============================== */
 
 extern "C" __declspec(dllexport)
 void SetModelParams(double _M, double _m, double _l, double _R, double _g,
@@ -65,9 +55,6 @@ extern "C" __declspec(dllexport)
 void SetInitParams(double _fi, double _dfi_dt, double _x, double _dx_dt);
 
 extern "C" __declspec(dllexport)
-void Calc_regulator();
-
-extern "C" __declspec(dllexport)
 int GetAllDrawPointsCount();
 
 extern "C" __declspec(dllexport)
@@ -79,3 +66,9 @@ void DeleteAllPointsArray(TAllDrawPoints* allDrawData);
 extern "C" __declspec(dllexport)
 void GetAllDrawPoints(TAllDrawPoints* ptrAllDrawPoints,
   bool system, bool reg_on);
+
+extern "C" __declspec(dllexport)
+void Calc_regulator();
+
+extern "C" __declspec(dllexport)
+void Calc_criteria();

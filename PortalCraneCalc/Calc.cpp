@@ -3,6 +3,7 @@
 #include "TDinModel.h"
 #include "Calc.h"
 #include "quality_criteria.h"
+#include "Matrix_operations.h"
 
 #include <fstream>
 #include <complex>
@@ -26,28 +27,7 @@ vector<double> V; // napryzhenie(regulator)
 double v;
 double delta = 1e-3;
 
-double a21, a22, a24, a41, a42, a44, b2, b4; // coefficinti matrici A & vectora b (forma Koshi)
-
-void mult(std::vector<std::vector<double>>& op1,
-  std::vector<std::vector<double>>& op2,
-  std::vector<std::vector<double>>& res)
-{
-  std::ofstream fout;
-  fout.open("mult.txt");
-  double sum = 0;
-  for (int i = 0; i < res.size(); i++)
-  {
-    for (int j = 0; j < res[0].size(); j++)
-    {
-      for (int k = 0; k < op1.size(); k++)
-      {
-        res[i][j] += op1[i][k] * op2[k][j];
-      }
-      fout << res[i][j] << " ";
-    }
-    fout << std::endl;
-  }
-}
+double a21, a22, a24, a41, a42, a44, b2, b4; // coefficienti matrici A & vectora b (forma Koshi)
 
 void f(const std::vector<double>& _X, std::vector<double>& _k, bool system, bool reg_on)
 {
@@ -173,47 +153,6 @@ void DeleteAllPointsArray(TAllDrawPoints* allDrawData)
   allDrawData->FreeMem();
 }
 
-void GetAllDrawPoints(TAllDrawPoints* allDrawData, bool system, bool reg_on)
-{
-  point drawPoint(fi, dfi_dt, x, dx_dt, t_start);
-  TDinModel model(4, drawPoint);
-
-  all_points.clear();
-
-  allDrawData->allDrawPoints[0] = drawPoint;
-  all_points.push_back(drawPoint);
-
-  std::ofstream fout1, fout2;
-  fout1.open("values.txt", ios_base::trunc);
-  fout1 << drawPoint.fi << " " << drawPoint.dfi_dt << " " << drawPoint.x << " " << drawPoint.dx_dt << endl;
-  fout2.open("values_in_local_vault.txt", ios_base::trunc);
-  fout2 << all_points[0].fi << " " << all_points[0].dfi_dt << " " << all_points[0].x << " " << all_points[0].dx_dt << endl;
-
-  for (unsigned i = 1; i < allDrawData->drawCount; i++)
-  {
-    drawPoint = model.RK4(system, reg_on);
-
-    all_points.push_back(drawPoint); // polozhili tochku v local hranilishe
-    allDrawData->allDrawPoints[i] = drawPoint; // v c#
-
-    fout1 << drawPoint.fi << " " << drawPoint.dfi_dt << " " << drawPoint.x << " " << drawPoint.dx_dt << endl;
-    fout2 << all_points[i].fi << " " << all_points[i].dfi_dt << " " << all_points[i].x << " " << all_points[i].dx_dt << endl;
-  }
-
-  std::ofstream fout3;
-  fout3.open("quality_criteria.txt", ios_base::trunc);
-  fout3.precision(12); // 12 znakov posle zapyatoy
-  double T, H, h1, h2, Vmax; // kriterii
-
-  calc_quality_criteria(T, H, h1, h2, Vmax);
-  fout3 << "T: " << T << endl
-    << "H: " << H << endl
-    << "h1: " << h1 << endl
-    << "h2: " << h2 << endl
-    << "Vmax: " << Vmax << endl;
-
-}
-
 void calc_coeffs(const vector<complex<double>>& p, vector<double>& g)
 {
   if (dim == 2)
@@ -258,201 +197,6 @@ void calc_coeffs(const vector<complex<double>>& p, vector<double>& g)
     temp = (-1.0) * (p[0] + p[1] + p[2] + p[3]);
 
     g[3] = temp.real();  // p0 + p1 + p2 + p3 = (-a3) / a4
-  }
-}
-
-vector<vector<double>> inv(const vector<vector<double>>& _A)
-{
-  std::ofstream fout;
-  fout.open("inv.txt", ios_base::trunc);
-
-  size_t n = _A.size();
-
-  fout << "Ishodnaya:" << endl << "size = " << n << endl;
-  for (int i = 0; i < n; i++)
-  {
-    for (int j = 0; j < n; j++)
-      fout << _A[i][j] << "\t";
-    fout << endl;
-  }
-  fout << endl;
-
-  vector<vector<double>> A(_A);
-  vector<vector<double>> E(n, vector<double>(n));
-  for (int i = 0; i < n; i++)
-    E[i][i] = 1;
-
-  // ïðÿìîé õîä
-  for (size_t i = 0; i < n; i++)
-  {
-    double pivot;
-    pivot = A[i][i];
-
-    if (pivot == 0) // åñëè ýëåìåíò íà äèàãîíàëè = 0, èùåì â ýòîì ñòîëáöå íå ðàâíûé 0
-    {
-      for (int j = 0; j < n; j++)
-      {
-        if (A[j][i] != 0)
-        {
-          pivot = A[j][i];
-          vector<double> temp = A[j];
-          A[j] = A[i];
-          A[i] = temp;
-
-          temp = E[j];
-          E[j] = E[i];
-          E[i] = temp;
-          break;
-        }
-      }
-      if (pivot == 0) 
-        throw("no inv matrix");
-    }
-
-    for (size_t j = 0; j < n; j++)
-    {
-      A[i][j] /= pivot;
-      E[i][j] /= pivot;
-    }
-
-    for (size_t j = i + 1; j < n; j++)
-    {
-      pivot = A[j][i];
-      for (int k = 0; k < n; k++)
-      {
-        A[j][k] -= A[i][k] * pivot;
-        E[j][k] -= E[i][k] * pivot;
-      }
-    }
-
-    fout << "i = " << i << endl;
-    fout << "==================================================" << endl
-      << "A:" << endl;
-    for (int i = 0; i < n; i++)
-    {
-      for (int j = 0; j < n; j++)
-        fout << A[i][j] << "\t";
-      fout << endl;
-    }
-    fout << endl;
-
-    fout << "==================================================" << endl
-      << "E:" << endl;
-    fout << "i = " << i << endl;
-    for (int i = 0; i < n; i++)
-    {
-      for (int j = 0; j < n; j++)
-        fout << E[i][j] << "\t";
-      fout << endl;
-    }
-    fout << endl
-      << "==================================================" << endl;
-  }
-
-  // obratniy hod
-  fout << endl << "Obratniy hod:" << endl;
-  for (int i = static_cast<int>(n) - 1; i > 0; i--)
-  {
-    for (int j = i - 1; j >= 0; j--)
-    {
-      double pivot = A[j][i];
-      fout << "pivot = " << pivot << endl;
-      for (int k = 0; k < n; k++)
-      {
-        fout << E[j][k] << " " << E[i][k] * pivot << " " << E[j][k] - E[i][k] * pivot << endl;
-        A[j][k] -= A[i][k] * pivot;
-        E[j][k] -= E[i][k] * pivot;
-        fout << E[j][k] << endl;
-      }
-    }
-    fout << "i = " << i << endl;
-    fout << "==================================================" << endl
-      << "A:" << endl;
-    for (int i = 0; i < n; i++)
-    {
-      for (int j = 0; j < n; j++)
-        fout << A[i][j] << "\t";
-      fout << endl;
-    }
-    fout << endl;
-
-    fout << "==================================================" << endl
-      << "E:" << endl;
-    fout << "i = " << i << endl;
-    for (int i = 0; i < n; i++)
-    {
-      for (int j = 0; j < n; j++)
-        fout << E[i][j] << "\t";
-      fout << endl;
-    }
-    fout << endl
-      << "==================================================" << endl;
-  }
-
-  fout << "Ishodnaya preobrazovannaya k edinichnoy:" << endl;
-  for (int i = 0; i < n; i++)
-  {
-    for (int j = 0; j < n; j++)
-      fout << A[i][j] << "\t";
-    fout << endl;
-  }
-  fout << endl;
-
-  fout << "Result:" << endl;
-  for (int i = 0; i < n; i++)
-  {
-    for (int j = 0; j < n; j++)
-      fout << E[i][j] << "\t";
-    fout << endl;
-  }
-  
-  fout << endl << "Proverka A * A^-1 = E:" << endl;
-  vector <vector<double>> res(dim, vector<double>(dim)), proverka(_A);
-
-  mult(proverka, E, res);
-
-  for (int i = 0; i < n; i++)
-  {
-    for (int j = 0; j < n; j++)
-      fout << res[i][j] << "\t";
-    fout << endl;
-  }
-
-  fout.close();
-  return E;
-}
-
-void transp(const vector<vector<double>>& P, vector<vector<double>>& P_T)
-{
-
-  std::ofstream fout;
-  fout.open("transp.txt", ios_base::trunc);
-
-  int n = static_cast<int>(P.size());
-  for (int i = 0; i < P.size(); i++)
-    for (int j = 0; j < P.size(); j++)
-      P_T[i][j] = P[j][i];
-
-  fout << "Ishodnaya matrica:" << endl;
-  for (int i = 0; i < dim; i++)
-  {
-    for (int j = 0; j < dim; j++)
-    {
-      fout << P[i][j] << " ";
-    }
-    fout << endl;
-  }
-
-  fout << endl;
-
-  fout << "Transponirovannaya matrica:" << endl;
-  for (int i = 0; i < dim; i++)
-  {
-    for (int j = 0; j < dim; j++)
-    {
-      fout << P_T[i][j] << " ";
-    }
-    fout << endl;
   }
 }
 
@@ -724,87 +468,45 @@ void init_matrix_A()
     b4 = gamma / (M * R);
 }
 
-void Gauss(vector<vector<double>>& _A, vector<double>& _b, vector<double>& res)
+void Calc_criteria()
 {
-  vector<vector<double>> A(_A); 
-  vector<double>b(_b);
-  std::ofstream fout;
-  fout.open("Gauss.txt", ios_base::trunc);
+  std::ofstream fout3;
+  fout3.open("quality_criteria.txt", ios_base::trunc);
+  fout3.precision(12); // 12 znakov posle zapyatoy
+  double T, H, h1, h2, Vmax; // kriterii
 
-  int n = static_cast<int>(_A.size());
+  calc_quality_criteria(T, H, h1, h2, Vmax);
+  fout3 << "T: " << T << endl
+    << "H: " << H << endl
+    << "h1: " << h1 << endl
+    << "h2: " << h2 << endl
+    << "Vmax: " << Vmax << endl;
+}
 
-  // pryamoy hod:
-  fout << "size = " << n << endl << "Ishodnaya:" << endl << endl;
-  for (int i = 0; i < n; i++)
+void GetAllDrawPoints(TAllDrawPoints* allDrawData, bool system, bool reg_on)
+{
+  point drawPoint(fi, dfi_dt, x, dx_dt, t_start);
+  TDinModel model(4, drawPoint);
+
+  all_points.clear();
+
+  allDrawData->allDrawPoints[0] = drawPoint;
+  all_points.push_back(drawPoint);
+
+  std::ofstream fout1, fout2;
+  fout1.open("values.txt", ios_base::trunc);
+  fout1 << drawPoint.fi << " " << drawPoint.dfi_dt << " " << drawPoint.x << " " << drawPoint.dx_dt << endl;
+  fout2.open("values_in_local_vault.txt", ios_base::trunc);
+  fout2 << all_points[0].fi << " " << all_points[0].dfi_dt << " " << all_points[0].x << " " << all_points[0].dx_dt << endl;
+
+  for (unsigned i = 1; i < allDrawData->drawCount; i++)
   {
-    fout << "(";
-    for (int j = 0; j < n - 1; j++)
-      fout << A[i][j] << " ";
-    fout << A[i][n - 1] << " | " << b[i] << ")" << endl;
+    drawPoint = model.RK4(system, reg_on);
+
+    all_points.push_back(drawPoint); // polozhili tochku v local hranilishe
+    allDrawData->allDrawPoints[i] = drawPoint; // v c#
+
+    fout1 << drawPoint.fi << " " << drawPoint.dfi_dt << " " << drawPoint.x << " " << drawPoint.dx_dt << endl;
+    fout2 << all_points[i].fi << " " << all_points[i].dfi_dt << " " << all_points[i].x << " " << all_points[i].dx_dt << endl;
   }
-
-  double pivot;
-  for (int i = 0; i < n; i++)
-  {
-    pivot = A[i][i];
-    if (pivot == 0)
-    {
-      for (int j = 0; j < n; j++)
-      {
-        if (A[j][i] != 0)
-        {
-          pivot = A[j][i];
-          vector<double> temp = A[j];
-          A[j] = A[i];
-          A[i] = temp;
-
-          double temp_double;
-          temp_double = b[j];
-          b[j] = b[i];
-          b[i] = temp_double;
-          break;
-        }
-      }
-      if (pivot == 0)
-        res[i] = 0;
-    }
-
-    for (int j = 0; j < n; j++)
-      A[i][j] /= pivot;
-    b[i] /= pivot;
-
-    for (int j = i + 1; j < n; j++)
-    {
-      pivot = A[j][i];
-      for (int k = 0; k < n; k++)
-        A[j][k] -= A[i][k] * pivot;
-      b[j] -= b[i] * pivot;
-    }
-
-    fout << endl;
-    for (int i = 0; i < dim; ++i)
-    {
-      fout << "(";
-      for (int j = 0; j < dim - 1; ++j)
-        fout << A[i][j] << " ";
-      fout << A[i][dim - 1] << " | " << b[i] << ")" << endl;
-    }
-  }
-  
-  // Obratniy hod:
-  res[n - 1] = b[n - 1];
-  for (int i = n - 2; i >= 0; --i)
-  {
-    double sum = 0;
-    for (int j = i + 1; j < n; ++j)
-      sum += A[i][j] * res[j];
-    fout << "sum = " << sum << endl;
-    res[i] = b[i] - sum;
-  }
-
-  fout << endl << "res:" << endl;
-    fout << "(";
-    for (int i = 0; i < dim - 1; ++i)
-      fout << res[i] << ", ";
-    fout << res[n - 1] << ")" << endl;
-  }
+}
