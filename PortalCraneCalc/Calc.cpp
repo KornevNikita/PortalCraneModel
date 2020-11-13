@@ -2,6 +2,7 @@
 
 #include "TDinModel.h"
 #include "Calc.h"
+#include "quality_criteria.h"
 
 #include <fstream>
 #include <complex>
@@ -21,7 +22,9 @@ vector<double> reg(dim); // regulator
 vector<complex<double>> p(dim);  // zhelaemie korni 
 
 vector<point> all_points; // massiv dlya hraneniya poluchennih tochek
-double V = 0; // napryzhenie(regulator)
+vector<double> V; // napryzhenie(regulator)
+double v;
+double delta = 1e-3;
 
 double a21, a22, a24, a41, a42, a44, b2, b4; // coefficinti matrici A & vectora b (forma Koshi)
 
@@ -115,7 +118,8 @@ void f(const std::vector<double>& _X, std::vector<double>& _k, bool system, bool
       - l * _k[1] / cos(_X[0])
       - g * tan(_X[0]);
   }
-  V = v_t;
+
+  v = v_t;
 }
 
 void SetModelParams(double _M, double _m, double _l, double _R, double _g, 
@@ -195,6 +199,19 @@ void GetAllDrawPoints(TAllDrawPoints* allDrawData, bool system, bool reg_on)
     fout1 << drawPoint.fi << " " << drawPoint.dfi_dt << " " << drawPoint.x << " " << drawPoint.dx_dt << endl;
     fout2 << all_points[i].fi << " " << all_points[i].dfi_dt << " " << all_points[i].x << " " << all_points[i].dx_dt << endl;
   }
+
+  std::ofstream fout3;
+  fout3.open("quality_criteria.txt", ios_base::trunc);
+  fout3.precision(12); // 12 znakov posle zapyatoy
+  double T, H, h1, h2, Vmax; // kriterii
+
+  calc_quality_criteria(T, H, h1, h2, Vmax);
+  fout3 << "T: " << T << endl
+    << "H: " << H << endl
+    << "h1: " << h1 << endl
+    << "h2: " << h2 << endl
+    << "Vmax: " << Vmax << endl;
+
 }
 
 void calc_coeffs(const vector<complex<double>>& p, vector<double>& g)

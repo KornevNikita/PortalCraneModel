@@ -1,3 +1,5 @@
+#include "pch.h"
+
 #include "quality_criteria.h"
 #include "TDinModel.h"
 
@@ -22,7 +24,8 @@ void calc_quality_criteria(double& T, double& H, double& h1, double& h2,double& 
 
 void calc_T_criterion(double& T)
 {
-  if (all_points.back.x > delta) // t.e. sistema tak i ne voshla v delta-okrestnost
+  point* back = &all_points.back();
+  if (back->x > delta) // t.e. sistema tak i ne voshla v delta-okrestnost
     T = t_stop;
   else
   {
@@ -83,5 +86,5 @@ void calc_h2_criterion(double& h2)
 
 void calc_Vmax_criterion(double& Vmax)
 {
-  Vmax = std::max_element(V.begin, V.end);
+  Vmax = *std::max_element(V.begin(), V.end());
 }

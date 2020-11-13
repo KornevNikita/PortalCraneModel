@@ -4,6 +4,8 @@
 
 extern int drawStCount;
 extern double dt;
+extern vector<double> V;
+extern double v;
 
 point TDinModel::RK4(bool system, bool reg_on)
 {
@@ -29,6 +31,8 @@ point TDinModel::RK4(bool system, bool reg_on)
   }
 
   X[4] += dt * drawStCount;
+
+  V.push_back(v);
 
   return point{ X[0], X[1], X[2], X[3], X[4] };
 }
