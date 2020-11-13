@@ -56,17 +56,17 @@ namespace Contour_line
         }
         public void set(int _ind)
         {
-            this.index = _ind;
+            index = _ind;
         } //Выбрать функцию;
 
         public void set_func(double m1, double m2, double c1, double c2, double[] w1, double[] w2)
         {
-            this.M1 = m1;
-            this.M2 = m2;
-            this.C1 = c1;
-            this.C2 = c2;
-            this.W1 = w1;
-            this.W2 = w2;
+            M1 = m1;
+            M2 = m2;
+            C1 = c1;
+            C2 = c2;
+            W1 = w1;
+            W2 = w2;
 
         } //Задать функцию;
     }
