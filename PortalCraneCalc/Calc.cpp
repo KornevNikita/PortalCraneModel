@@ -119,7 +119,7 @@ void f(const std::vector<double>& _X, std::vector<double>& _k, bool system, bool
       - g * tan(_X[0]);
   }
 
-  v = v_t;
+  v = abs(v_t);
 }
 
 void SetModelParams(double _M, double _m, double _l, double _R, double _g, 
