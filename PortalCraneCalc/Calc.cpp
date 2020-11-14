@@ -14,15 +14,16 @@ using namespace std;
 #include <math.h>
 
 size_t dim = 4; // razmernost' sistemi
-double M, m, l, R, g, h_fi, h_x, Beta, gamma, E; // parametri sistemi
-double fi, dfi_dt, x, dx_dt; // nachalnie usloviya
-double dt, t_start, t_stop; // parametri rasscheta
+double M, m, l, R, g, h_fi, h_x, Beta, gamma, E, // parametri sistemi
+  fi, dfi_dt, x, dx_dt, // nachalnie usloviya
+  dt, t_start, t_stop; // parametri rasscheta
 int drawStCount; // chislo tochek, kotorie budut otrisovani
 bool inDinamic; // risovat v dinamike (poka ne realizovano)
 vector<double> reg(dim); // regulator
 vector<complex<double>> p(dim);  // zhelaemie korni 
 
 vector<point> all_points; // massiv dlya hraneniya poluchennih tochek
+vector<criteria> all_criteria; // massiv dlya hraneniya poluchennih kriteriev
 vector<double> V; // napryzhenie(regulator)
 double v;
 double delta = 1e-3;
@@ -468,19 +469,13 @@ void init_matrix_A()
     b4 = gamma / (M * R);
 }
 
-void Calc_criteria()
+void Calc_criteria(criteria& c)
 {
-  std::ofstream fout3;
-  fout3.open("quality_criteria.txt", ios_base::trunc);
-  fout3.precision(12); // 12 znakov posle zapyatoy
-  double T, H, h1, h2, Vmax; // kriterii
+  std::ofstream fout("quality_criteria.txt", ios_base::trunc);
+  fout.precision(12); // 12 znakov posle zapyatoy
 
-  calc_quality_criteria(T, H, h1, h2, Vmax);
-  fout3 << "T: " << T << endl
-    << "H: " << H << endl
-    << "h1: " << h1 << endl
-    << "h2: " << h2 << endl
-    << "Vmax: " << Vmax << endl;
+  calc_quality_criteria(c);
+  fout << c;
 }
 
 void GetAllDrawPoints(TAllDrawPoints* allDrawData, bool system, bool reg_on)
@@ -493,11 +488,10 @@ void GetAllDrawPoints(TAllDrawPoints* allDrawData, bool system, bool reg_on)
   allDrawData->allDrawPoints[0] = drawPoint;
   all_points.push_back(drawPoint);
 
-  std::ofstream fout1, fout2;
-  fout1.open("values.txt", ios_base::trunc);
-  fout1 << drawPoint.fi << " " << drawPoint.dfi_dt << " " << drawPoint.x << " " << drawPoint.dx_dt << endl;
-  fout2.open("values_in_local_vault.txt", ios_base::trunc);
-  fout2 << all_points[0].fi << " " << all_points[0].dfi_dt << " " << all_points[0].x << " " << all_points[0].dx_dt << endl;
+  std::ofstream fout1("values.txt", ios_base::trunc),
+    fout2("values_in_local_vault.txt", ios_base::trunc);
+  fout1 << drawPoint;
+  fout2 << all_points[0];
 
   for (unsigned i = 1; i < allDrawData->drawCount; i++)
   {
@@ -506,7 +500,35 @@ void GetAllDrawPoints(TAllDrawPoints* allDrawData, bool system, bool reg_on)
     all_points.push_back(drawPoint); // polozhili tochku v local hranilishe
     allDrawData->allDrawPoints[i] = drawPoint; // v c#
 
-    fout1 << drawPoint.fi << " " << drawPoint.dfi_dt << " " << drawPoint.x << " " << drawPoint.dx_dt << endl;
-    fout2 << all_points[i].fi << " " << all_points[i].dfi_dt << " " << all_points[i].x << " " << all_points[i].dx_dt << endl;
+    fout1 << drawPoint;
+    fout2 << all_points[i];
   }
+}
+
+void Calc_criteria_eque_lines(bool system)
+{
+  point drawPoint(fi, dfi_dt, x, dx_dt, t_start);
+  TDinModel model(4, drawPoint);
+
+  all_points.clear();
+
+  all_points.push_back(drawPoint);
+
+  std::ofstream fout("trajectories.txt", ios_base::trunc);
+  fout << all_points[0];
+
+  int count = static_cast<int>((t_stop - t_start) / (drawStCount * dt));
+
+  for (int i = 1; i < count; i++)
+  {
+    drawPoint = model.RK4(system, true);
+
+    all_points.push_back(drawPoint); // polozhili tochku v local hranilishe
+
+    fout << all_points[i];
+  }
+
+  criteria c;
+  Calc_criteria(c);
+  all_criteria.push_back(c);
 }

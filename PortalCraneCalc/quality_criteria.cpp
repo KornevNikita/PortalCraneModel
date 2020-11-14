@@ -1,25 +1,22 @@
 #include "pch.h"
-
 #include "quality_criteria.h"
-#include "TDinModel.h"
-
-#include <vector>
-#include <algorithm>
 
 extern vector<point> all_points;
 extern vector<double> V;
 extern double delta; // delta okresntost 0
 extern double t_stop;
 
-void calc_quality_criteria(double& T, double& H, double& h1, double& h2,double& Vmax)
+void calc_quality_criteria(criteria& c)
 {
-  calc_T_criterion(T);
+  calc_T_criterion(c.T);
 
-  calc_H_criterion(H);
+  calc_H_criterion(c.H);
 
-  calc_h1_criterion(h1);
+  calc_h1_criterion(c.h1);
 
-  calc_h2_criterion(h2);
+  calc_h2_criterion(c.h2);
+
+  calc_Vmax_criterion(c.Vmax);
 }
 
 void calc_T_criterion(double& T)
@@ -29,7 +26,7 @@ void calc_T_criterion(double& T)
     T = t_stop;
   else
   {
-    int i = all_points.size() - 2;
+    size_t i = all_points.size() - 2;
     while (all_points[i].x <= delta && i > 0)
       i--;
 
@@ -53,7 +50,7 @@ void calc_h1_criterion(double& h1)
   double max_loc_min = 0;
   double first, second, third; // berem 3 tochki, e. srednyaya < 1 & 3 => loc min
 
-  for (int i = 0; i < all_points.size() - 2; ++i)
+  for (size_t i = 0; i < all_points.size() - 2; ++i)
   {
     first = all_points[i].x;
     second = all_points[i + 1].x;

@@ -1,12 +1,10 @@
 ﻿using System;
-using PortalCraneModel;
 
 namespace Contour_line
 {
   class CFunction
   {
     private int index = 5;
-    private double[] GlobalCoords = new double[2]; //Координаты глобального минимума
     private double C1 = 0;
     private double C2 = 0;
     private double M1 = 0;
@@ -42,10 +40,14 @@ namespace Contour_line
           }
         case 8:
           {
-            PortalCraneModel.PortalCraneModel.SetModelLambdas(_x[0], _x[1], _x[0], -1.0 * _x[1],
-                _x[0], _x[1], _x[0], -1.0 * _x[1]);
+            PortalCraneModel.PortalCraneModel.SetParam(); // параметры модели
+            PortalCraneModel.PortalCraneModel.SetCalcParam(); // параметры расчета
+            PortalCraneModel.PortalCraneModel.SetInitVal(); // начальное состояние системы
+            PortalCraneModel.PortalCraneModel.SetModelLambdas(_x[0], _x[1], _x[0], -1 * _x[1],
+              _x[0], _x[1], _x[0], -1 * _x[1]);
 
-            PortalCraneModel.PortalCraneModel.GetAllDrawPointsCount();
+            PortalCraneModel.PortalCraneModel.Calc_criteria_eque_lines(PortalCraneModel.PortalCraneModel.cBox_non_linear.Checked);
+            //PortalCraneModel.PortalCraneModel.Calc_criteria();
             // далее нужно посчитать критерии
 
             return 0;
