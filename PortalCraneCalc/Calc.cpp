@@ -28,6 +28,8 @@ vector<double> V; // napryzhenie(regulator)
 double v;
 double delta = 1e-3;
 
+size_t criteria_count = 0; // schetchik kriteriev
+
 double a21, a22, a24, a41, a42, a44, b2, b4; // coefficienti matrici A & vectora b (forma Koshi)
 
 void f(const std::vector<double>& _X, std::vector<double>& _k, bool system, bool reg_on)
@@ -144,12 +146,12 @@ int GetAllDrawPointsCount()
   return static_cast<int>((t_stop - t_start) / (drawStCount * dt));
 }
 
-void InitAllPointsArray(TAllDrawPoints* allDrawData)
+void InitAllPointsArray(TAllDrawPoints<point>* allDrawData)
 {
   allDrawData->AllocMem(allDrawData->drawCount);
 }
 
-void DeleteAllPointsArray(TAllDrawPoints* allDrawData)
+void DeleteAllPointsArray(TAllDrawPoints<point>* allDrawData)
 {
   allDrawData->FreeMem();
 }
@@ -471,14 +473,14 @@ void init_matrix_A()
 
 void Calc_criteria(criteria& c)
 {
-  std::ofstream fout("quality_criteria.txt", ios_base::trunc);
+  std::ofstream fout("quality_criteria.txt", ios_base::app);
   fout.precision(12); // 12 znakov posle zapyatoy
 
   calc_quality_criteria(c);
   fout << c;
 }
 
-void GetAllDrawPoints(TAllDrawPoints* allDrawData, bool system, bool reg_on)
+void GetAllDrawPoints(TAllDrawPoints<point>* allDrawData, bool system, bool reg_on)
 {
   point drawPoint(fi, dfi_dt, x, dx_dt, t_start);
   TDinModel model(4, drawPoint);
@@ -505,7 +507,7 @@ void GetAllDrawPoints(TAllDrawPoints* allDrawData, bool system, bool reg_on)
   }
 }
 
-void Calc_criteria_eque_lines(bool system)
+void Calc_criteria_eque_lines(TAllDrawPoints<criteria>* ptrCriteriaPoints, bool system)
 {
   point drawPoint(fi, dfi_dt, x, dx_dt, t_start);
   TDinModel model(4, drawPoint);
@@ -530,5 +532,6 @@ void Calc_criteria_eque_lines(bool system)
 
   criteria c;
   Calc_criteria(c);
+  ptrCriteriaPoints->allDrawPoints[criteria_count] = c;
   all_criteria.push_back(c);
 }

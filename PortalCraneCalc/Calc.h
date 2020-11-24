@@ -40,8 +40,9 @@ struct criteria
   }
 };
 
+template <typename T>
 struct TAllDrawPoints {
-  point* allDrawPoints;
+  T* allDrawPoints;
 
   unsigned drawCount;
 
@@ -87,17 +88,17 @@ extern "C" __declspec(dllexport)
 int GetAllDrawPointsCount();
 
 extern "C" __declspec(dllexport)
-void InitAllPointsArray(TAllDrawPoints* allDrawData);
+void InitAllPointsArray(TAllDrawPoints<point>* allDrawData);
 
 extern "C" __declspec(dllexport)
-void DeleteAllPointsArray(TAllDrawPoints* allDrawData);
+void DeleteAllPointsArray(TAllDrawPoints<point>* allDrawData);
 
 extern "C" __declspec(dllexport)
-void GetAllDrawPoints(TAllDrawPoints* ptrAllDrawPoints,
+void GetAllDrawPoints(TAllDrawPoints<point>* ptrAllDrawPoints,
   bool system, bool reg_on);
 
 extern "C" __declspec(dllexport)
-void Calc_criteria_eque_lines(bool system);
+void Calc_criteria_eque_lines(TAllDrawPoints<criteria>* ptrCriteriaPoints, bool system);
 
 extern "C" __declspec(dllexport)
 void Calc_regulator();
