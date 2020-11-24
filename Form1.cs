@@ -182,7 +182,7 @@ namespace PortalCraneModel
     public static extern void Calc_criteria();
 
     [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
-    public static extern void Calc_criteria_eque_lines(bool system);
+    public static extern void Calc_criteria_eque_lines(IntPtr ptrAllDrawPoints, bool system);
 
     public PortalCraneModel()
     {
@@ -1871,8 +1871,10 @@ namespace PortalCraneModel
               //Нижняя сторона
               x0 = pDat[(N + 1) * i + j].x;
               x1 = pDat[(N + 1) * (i + 1) + j].x;
+
               y0 = pDat[(N + 1) * i + j].y;
               Q0 = pDat[(N + 1) * i + j].Q;
+
               Q1 = pDat[(N + 1) * (i + 1) + j].Q;
               if ((Q0 - Qu) * (Qu - Q1) >= 0 && (Q1 != Q0))
               {

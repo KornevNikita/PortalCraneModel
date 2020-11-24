@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Runtime.InteropServices;
+using PortalCraneModel;
 
 namespace Contour_line
 {
   class CFunction
   {
+    public int curInd = 0;
     private int index = 5;
     private double C1 = 0;
     private double C2 = 0;
@@ -46,10 +49,10 @@ namespace Contour_line
             PortalCraneModel.PortalCraneModel.SetModelLambdas(_x[0], _x[1], _x[0], -1 * _x[1],
               _x[0], _x[1], _x[0], -1 * _x[1]);
 
-            PortalCraneModel.PortalCraneModel.Calc_criteria_eque_lines(PortalCraneModel.PortalCraneModel.cBox_non_linear.Checked);
-            //PortalCraneModel.PortalCraneModel.Calc_criteria();
-            // далее нужно посчитать критерии
-
+            IntPtr res;
+            PortalCraneModel.PortalCraneModel.Calc_criteria_eque_lines(
+              PortalCraneModel.PortalCraneModel.ptrCriteria,
+              PortalCraneModel.PortalCraneModel.cBox_non_linear.Checked);
             return 0;
           }
 

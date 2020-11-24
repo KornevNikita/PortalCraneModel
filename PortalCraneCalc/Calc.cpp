@@ -531,7 +531,9 @@ void Calc_criteria_eque_lines(TAllDrawPoints<criteria>* ptrCriteriaPoints, bool 
   }
 
   criteria c;
+
   Calc_criteria(c);
-  ptrCriteriaPoints->allDrawPoints[criteria_count] = c;
+
+  ptrCriteriaPoints->allDrawPoints[criteria_count++] = c;
   all_criteria.push_back(c);
 }
