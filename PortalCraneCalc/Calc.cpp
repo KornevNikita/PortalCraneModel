@@ -23,7 +23,7 @@ vector<double> reg(dim); // regulator
 vector<complex<double>> p(dim);  // zhelaemie korni 
 
 vector<point> all_points; // massiv dlya hraneniya poluchennih tochek
-vector<criteria> all_criteria; // massiv dlya hraneniya poluchennih kriteriev
+//vector<criteria> all_criteria; // massiv dlya hraneniya poluchennih kriteriev
 vector<double> V; // napryzhenie(regulator)
 double v;
 double delta = 1e-3;
@@ -477,7 +477,10 @@ void Calc_criteria(criteria& c)
   fout.precision(12); // 12 znakov posle zapyatoy
 
   calc_quality_criteria(c);
+  fout << criteria_count << ") ";
+  fout << p[0] << " " << p[1] << " " << p[2] << " " << " " << p[3] << endl;
   fout << c;
+  fout << endl;
 }
 
 void GetAllDrawPoints(TAllDrawPoints<point>* allDrawData, bool system, bool reg_on)
@@ -505,6 +508,11 @@ void GetAllDrawPoints(TAllDrawPoints<point>* allDrawData, bool system, bool reg_
     fout1 << drawPoint;
     fout2 << all_points[i];
   }
+
+  criteria c;
+  Calc_criteria(c);
+  fout1 << "Kriterii:" << endl;
+  fout1 << c;
 }
 
 void Calc_criteria_eque_lines(TAllDrawPoints<criteria>* ptrCriteriaPoints, bool system)
@@ -513,7 +521,6 @@ void Calc_criteria_eque_lines(TAllDrawPoints<criteria>* ptrCriteriaPoints, bool 
   TDinModel model(4, drawPoint);
 
   all_points.clear();
-
   all_points.push_back(drawPoint);
 
   std::ofstream fout("trajectories.txt", ios_base::trunc);
@@ -535,5 +542,5 @@ void Calc_criteria_eque_lines(TAllDrawPoints<criteria>* ptrCriteriaPoints, bool 
   Calc_criteria(c);
 
   ptrCriteriaPoints->allDrawPoints[criteria_count++] = c;
-  all_criteria.push_back(c);
+  //all_criteria.push_back(c);
 }

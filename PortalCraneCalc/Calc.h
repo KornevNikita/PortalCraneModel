@@ -4,6 +4,8 @@
 #include <fstream>
 using namespace std;
 
+/* ============================== Structures: ==============================  */
+
 struct point 
 {
   double fi, dfi_dt, x, dx_dt, t;
@@ -43,7 +45,6 @@ struct criteria
 template <typename T>
 struct TAllDrawPoints {
   T* allDrawPoints;
-
   unsigned drawCount;
 
   void AllocMem(unsigned _drawCount)
@@ -54,9 +55,13 @@ struct TAllDrawPoints {
 
   void FreeMem() {
     delete allDrawPoints;
-    allDrawPoints = 0;
+    drawCount = 0;
   }
 };
+
+/* =========================== End of structures ============================ */
+
+/* =========================== Internal functions: ========================== */
 
 void f(const std::vector<double>& _X, std::vector<double>& _k,
   bool system, bool reg_on);
@@ -67,7 +72,9 @@ void init_matrix_A();
 
 void Calc_criteria(criteria& c);
 
-/* ============================= Export functions: ============================== */
+/* ======================== End of nternal functions: ======================= */
+
+/* =========================== Export functions: ============================ */
 
 extern "C" __declspec(dllexport)
 void SetModelParams(double _M, double _m, double _l, double _R, double _g,
@@ -103,3 +110,5 @@ void Calc_criteria_eque_lines(TAllDrawPoints<criteria>* ptrCriteriaPoints,
 
 extern "C" __declspec(dllexport)
 void Calc_regulator();
+
+/* ======================== End of export functions ========================= */

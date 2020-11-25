@@ -64,10 +64,10 @@ namespace PortalCraneModel
     private Label label3;
     private Label label2;
     private Label label1;
-
-    private static TextBox textBox_drawStCount, textBox_t_stop,
-      textBox_t_start, textBox_step;
-
+    private static TextBox textBox_drawStCount;
+    private static TextBox textBox_t_stop;
+    private static TextBox textBox_t_start;
+    private static TextBox textBox_step;
     private GroupBox groupBox1;
     private Button Button_setParam;
     private Label label_gamma;
@@ -81,21 +81,29 @@ namespace PortalCraneModel
     private Label label_l;
     private Label label_mmal;
     private Label label_M;
-
-    private static TextBox textBox_h_fi, textBox_g, textBox_B, textBox_R, textBox_gamma,
-    textBox_l, textBox_h_x, textBox_mmal ,textBox_M, textBox_E;
-
+    private static TextBox textBox_h_fi;
+    private static TextBox textBox_g;
+    private static TextBox textBox_B;
+    private static TextBox textBox_R;
+    private static TextBox textBox_gamma;
+    private static TextBox textBox_l;
+    private static TextBox textBox_h_x;
+    private static TextBox textBox_mmal;
+    private static TextBox textBox_M;
+    private static TextBox textBox_E;
     private GroupBox roots_gbox;
     private Button button2;
     private Button btn_clear;
     private Label label11;
     private Label label10;
-
-    private static TextBox tbox_lambda1_im, tbox_lambda1_re,
-      tbox_lambda3_im, tbox_lambda3_re,
-      tbox_lambda2_im, tbox_lambda2_re,
-      tbox_lambda4_im, tbox_lambda4_re;
-
+    private static TextBox tbox_lambda1_im;
+    private static TextBox tbox_lambda1_re;
+    private static TextBox tbox_lambda3_im;
+    private static TextBox tbox_lambda3_re;
+    private static TextBox tbox_lambda2_im;
+    private static TextBox tbox_lambda2_re;
+    private static TextBox tbox_lambda4_im;
+    private static TextBox tbox_lambda4_re;
     private Button Button_runCalc;
 
     private Label label9;
@@ -107,7 +115,8 @@ namespace PortalCraneModel
     private Chart chart4;
     private Chart chart3;
     private Chart chart1;
-    public static CheckBox cBox_non_linear, cBox_Reg_on;
+    public static CheckBox cBox_non_linear;
+    public static CheckBox cBox_Reg_on;
     private DataGridView dataGridView1;
     private GroupBox groupBox2;
     private Button Button_setInitVal;
@@ -115,8 +124,10 @@ namespace PortalCraneModel
     private Label labeldfi_dt;
     private Label labelx;
     private Label labeldx_dt;
-    private static TextBox textBox_fi, textBox_dx_dt,
-      textBox_x, textBox_dfi_dt;
+    private static TextBox textBox_fi;
+    private static TextBox textBox_dx_dt;
+    private static TextBox textBox_x;
+    private static TextBox textBox_dfi_dt;
     private TabPage tabPage2;
     private PictureBox pBox_T_criterion;
     public TextBox xmin_t;
@@ -190,7 +201,6 @@ namespace PortalCraneModel
       allPoints = new PortalCraneModel.TAllDrawPoints();
       chart1.ChartAreas[0].AxisX.RoundAxisValues();
       chart1.ChartAreas[0].AxisY.RoundAxisValues();
-      //chart1.ChartAreas[0].AxisX.MajorGrid.Enabled = false;
       chart1.ChartAreas[0].AxisY.MajorGrid.Enabled = false;
 
       chart1.ChartAreas[0].AxisY.TextOrientation = TextOrientation.Horizontal;
@@ -199,7 +209,6 @@ namespace PortalCraneModel
 
       chart2.ChartAreas[0].AxisX.RoundAxisValues();
       chart2.ChartAreas[0].AxisY.RoundAxisValues();
-      //chart2.ChartAreas[0].AxisX.MajorGrid.Enabled = false;
       chart2.ChartAreas[0].AxisY.MajorGrid.Enabled = false;
 
       chart2.ChartAreas[0].AxisY.TextOrientation = TextOrientation.Horizontal;
@@ -209,7 +218,6 @@ namespace PortalCraneModel
       chart3.ChartAreas[0].AxisX.RoundAxisValues();
       chart3.ChartAreas[0].AxisY.RoundAxisValues();
       chart3.ChartAreas[0].AxisX.MajorGrid.Enabled = false;
-      //chart3.ChartAreas[0].AxisY.MajorGrid.Enabled = false;
 
       chart3.ChartAreas[0].AxisY.TextOrientation = TextOrientation.Horizontal;
       chart3.ChartAreas[0].AxisX.Title = "t";
@@ -218,11 +226,18 @@ namespace PortalCraneModel
       chart4.ChartAreas[0].AxisX.RoundAxisValues();
       chart4.ChartAreas[0].AxisY.RoundAxisValues();
       chart4.ChartAreas[0].AxisX.MajorGrid.Enabled = false;
-      //chart4.ChartAreas[0].AxisY.MajorGrid.Enabled = false;
 
       chart4.ChartAreas[0].AxisY.TextOrientation = TextOrientation.Horizontal;
       chart4.ChartAreas[0].AxisX.Title = "t";
       chart4.ChartAreas[0].AxisY.Title = "x - x*";
+
+      dataGridView1.ColumnCount = 6;
+      dataGridView1.Columns[0].HeaderText = "n";
+      dataGridView1.Columns[1].HeaderText = "t";
+      dataGridView1.Columns[2].HeaderText = "fi";
+      dataGridView1.Columns[3].HeaderText = "fi_dt";
+      dataGridView1.Columns[4].HeaderText = "x";
+      dataGridView1.Columns[5].HeaderText = "x_dt";
     }
 
     private void Button_setParam_Click(object sender, EventArgs e)
@@ -322,14 +337,6 @@ namespace PortalCraneModel
 
     private void PrintGrid()
     {
-      dataGridView1.ColumnCount = 6;
-      dataGridView1.Columns[0].HeaderText = "n";
-      dataGridView1.Columns[1].HeaderText = "t";
-      dataGridView1.Columns[2].HeaderText = "fi";
-      dataGridView1.Columns[3].HeaderText = "fi_dt";
-      dataGridView1.Columns[4].HeaderText = "x";
-      dataGridView1.Columns[5].HeaderText = "x_dt";
-
       int count = 0;
       for (int i = 0; i < DrawPoints.Length; i += 5)
       {
@@ -417,6 +424,7 @@ namespace PortalCraneModel
       chart3 = new System.Windows.Forms.DataVisualization.Charting.Chart();
       chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
       groupBox3 = new System.Windows.Forms.GroupBox();
+      drawing_on = new System.Windows.Forms.CheckBox();
       textBox_run_time = new System.Windows.Forms.Label();
       label16 = new System.Windows.Forms.Label();
       Button_setCalcParam = new System.Windows.Forms.Button();
@@ -494,6 +502,7 @@ namespace PortalCraneModel
       label_mu2 = new System.Windows.Forms.Label();
       label_M1 = new System.Windows.Forms.Label();
       button1 = new System.Windows.Forms.Button();
+      ymax_t = new System.Windows.Forms.TextBox();
       ymin_t = new System.Windows.Forms.TextBox();
       label_N = new System.Windows.Forms.Label();
       label_sigma = new System.Windows.Forms.Label();
@@ -507,8 +516,6 @@ namespace PortalCraneModel
       pBox_H_criterion = new System.Windows.Forms.PictureBox();
       pBox_T_criterion = new System.Windows.Forms.PictureBox();
       func_num_text = new System.Windows.Forms.TextBox();
-      ymax_t = new System.Windows.Forms.TextBox();
-      drawing_on = new System.Windows.Forms.CheckBox();
       tabControl1.SuspendLayout();
       tabPage1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(chart2)).BeginInit();
@@ -656,6 +663,18 @@ namespace PortalCraneModel
       groupBox3.TabIndex = 50;
       groupBox3.TabStop = false;
       groupBox3.Text = "Параметры расчета";
+      // 
+      // drawing_on
+      // 
+      drawing_on.AutoSize = true;
+      drawing_on.Checked = true;
+      drawing_on.CheckState = System.Windows.Forms.CheckState.Checked;
+      drawing_on.Location = new System.Drawing.Point(5, 104);
+      drawing_on.Name = "drawing_on";
+      drawing_on.Size = new System.Drawing.Size(81, 17);
+      drawing_on.TabIndex = 47;
+      drawing_on.Text = "Отрисовка";
+      drawing_on.UseVisualStyleBackColor = true;
       // 
       // textBox_run_time
       // 
@@ -1366,7 +1385,6 @@ namespace PortalCraneModel
       tabPage2.Controls.Add(pBox_H_criterion);
       tabPage2.Controls.Add(pBox_T_criterion);
       tabPage2.Controls.Add(func_num_text);
-      tabPage2.Controls.Add(ymax_t);
       tabPage2.Location = new System.Drawing.Point(4, 22);
       tabPage2.Name = "tabPage2";
       tabPage2.Padding = new System.Windows.Forms.Padding(3);
@@ -1400,6 +1418,7 @@ namespace PortalCraneModel
       groupBox4.Controls.Add(label_mu2);
       groupBox4.Controls.Add(label_M1);
       groupBox4.Controls.Add(button1);
+      groupBox4.Controls.Add(ymax_t);
       groupBox4.Controls.Add(ymin_t);
       groupBox4.Controls.Add(label_N);
       groupBox4.Controls.Add(label_sigma);
@@ -1430,7 +1449,7 @@ namespace PortalCraneModel
       xmin_t.Name = "xmin_t";
       xmin_t.Size = new System.Drawing.Size(75, 20);
       xmin_t.TabIndex = 8;
-      xmin_t.Text = "6";
+      xmin_t.Text = "-6";
       xmin_t.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // label_M3
@@ -1449,7 +1468,7 @@ namespace PortalCraneModel
       xmax_t.Name = "xmax_t";
       xmax_t.Size = new System.Drawing.Size(75, 20);
       xmax_t.TabIndex = 6;
-      xmax_t.Text = "0,1";
+      xmax_t.Text = "-0,1";
       xmax_t.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // label_M2
@@ -1492,6 +1511,15 @@ namespace PortalCraneModel
       button1.UseVisualStyleBackColor = true;
       button1.Click += new System.EventHandler(button1_Click);
       // 
+      // ymax_t
+      // 
+      ymax_t.Location = new System.Drawing.Point(67, 96);
+      ymax_t.Name = "ymax_t";
+      ymax_t.Size = new System.Drawing.Size(75, 20);
+      ymax_t.TabIndex = 5;
+      ymax_t.Text = "5";
+      ymax_t.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      // 
       // ymin_t
       // 
       ymin_t.Location = new System.Drawing.Point(67, 70);
@@ -1527,7 +1555,7 @@ namespace PortalCraneModel
       DL_N.Name = "DL_N";
       DL_N.Size = new System.Drawing.Size(75, 20);
       DL_N.TabIndex = 3;
-      DL_N.Text = "50";
+      DL_N.Text = "10";
       DL_N.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // DL_M2
@@ -1609,29 +1637,8 @@ namespace PortalCraneModel
       func_num_text.Name = "func_num_text";
       func_num_text.Size = new System.Drawing.Size(100, 20);
       func_num_text.TabIndex = 9;
-      func_num_text.Text = "2";
+      func_num_text.Text = "8";
       func_num_text.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      // 
-      // ymax_t
-      // 
-      ymax_t.Location = new System.Drawing.Point(498, 205);
-      ymax_t.Name = "ymax_t";
-      ymax_t.Size = new System.Drawing.Size(75, 20);
-      ymax_t.TabIndex = 5;
-      ymax_t.Text = "10";
-      ymax_t.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      // 
-      // drawing_on
-      // 
-      drawing_on.AutoSize = true;
-      drawing_on.Checked = true;
-      drawing_on.CheckState = System.Windows.Forms.CheckState.Checked;
-      drawing_on.Location = new System.Drawing.Point(5, 104);
-      drawing_on.Name = "drawing_on";
-      drawing_on.Size = new System.Drawing.Size(81, 17);
-      drawing_on.TabIndex = 47;
-      drawing_on.Text = "Отрисовка";
-      drawing_on.UseVisualStyleBackColor = true;
       // 
       // PortalCraneModel
       // 
@@ -1756,7 +1763,7 @@ namespace PortalCraneModel
 
     class eque_lines
     {
-      Node[] pDat;
+      public static Node[] pDat;
       double[] pQ;
       int N; // число разбиений сетки
       int M; // общее число уровней
@@ -1829,9 +1836,9 @@ namespace PortalCraneModel
               x_p[0] = pDat[(N + 1) * i + j].x = _a0 + hx * i;
               x_p[1] = pDat[(N + 1) * i + j].y = _a1 + hy * j;
               // значение функции в узле
-              pt[0] = x_p[0];
-              pt[1] = x_p[1];
-              QQ = pDat[(N + 1) * i + j].Q = F.GetValue(pt);
+              pt[0] = x_p[0]; // X coord
+              pt[1] = x_p[1]; // Y coord
+              QQ = pDat[(N + 1) * i + j].Q = F.GetValue(pt); // schitaem znachenie v (x,y)
 
               //		printf("QQ = %f\n",QQ);
               // поиск минимального и максимального значения на сетке
@@ -1967,18 +1974,24 @@ namespace PortalCraneModel
     eque_lines Draw_Line = new eque_lines();
     private void button1_Click(object sender, EventArgs e)
     {
+      // zdes' neobhodimo prochitat' vvedennie dannie & peredat' d v DLL dlya rascheta
+      // parametri calculatora liniy:
       int _N = System.Convert.ToInt32(DL_N.Text);
       int _M1 = System.Convert.ToInt32(DL_M1.Text);
       int _M2 = System.Convert.ToInt32(DL_M2.Text);
       int _M3 = System.Convert.ToInt32(DL_M3.Text);
       Draw_Line.CreateDat(_N, _M1, _M2, _M3);
-      XMin = -1 * System.Convert.ToDouble(xmin_t.Text);
-      XMax = -1 * System.Convert.ToDouble(xmax_t.Text);
+      XMin = System.Convert.ToDouble(xmin_t.Text);
+      XMax = System.Convert.ToDouble(xmax_t.Text);
       YMin = System.Convert.ToDouble(ymin_t.Text);
       YMax = System.Convert.ToDouble(ymax_t.Text);
 
+      SetParam(); // параметры модели
+      SetCalcParam(); // параметры расчета
+      SetInitVal(); // начальное состояние системы
+
       // определяем количество точек, которые будут отрисованы
-      criteria.drawCount = _N * _N;
+      criteria.drawCount = (_N + 1) * (_N + 1);
 
       // создаем управляемое хранилище
       DrawCriteria = new double[criteria.drawCount * 5];
@@ -1995,11 +2008,19 @@ namespace PortalCraneModel
       // выделяем память под внутренний неуправляемый массив в неупр структуре
       PortalCraneModel.InitAllPointsArray(ptrCriteria);
 
-      is_calc_criteria = true;
+      is_calc_criteria = true; // t.e. risovat trajektorii ne nujno
 
       Draw_Line.SetDat(XMin, XMax, YMin, YMax, false, System.Convert.ToInt32(func_num_text.Text));
 
       is_calc_criteria = false;
+
+      criteria = (PortalCraneModel.TAllDrawPoints)Marshal.PtrToStructure(ptrCriteria, typeof(PortalCraneModel.TAllDrawPoints));
+      Marshal.Copy(criteria.allDrawPoints, DrawCriteria, 0, criteria.drawCount * 5);
+      PortalCraneModel.DeleteAllPointsArray(ptrCriteria);
+      Marshal.FreeHGlobal(ptrCriteria);
+
+      //for (int i = 0; i < (_N + 1) * (_N + 1); ++i)
+      //  eque_lines.pDat[i].Q = DrawCriteria[i * 5];
 
       pBox_T_criterion.Invalidate();
     }
