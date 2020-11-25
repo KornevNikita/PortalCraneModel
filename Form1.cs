@@ -130,15 +130,15 @@ namespace PortalCraneModel
     private static TextBox textBox_dfi_dt;
     private TabPage tabPage2;
     private PictureBox pBox_T_criterion;
-    public TextBox xmin_t;
-    public TextBox ymin_t;
-    public TextBox xmax_t;
-    public TextBox ymax_t;
-    public TextBox DL_M3;
-    public TextBox DL_N;
-    public TextBox DL_M1;
-    public TextBox DL_M2;
-    private TextBox func_num_text;
+    public static TextBox xmin_t;
+    public static TextBox ymin_t;
+    public static TextBox xmax_t;
+    public static TextBox ymax_t;
+    public static TextBox DL_M3;
+    public static TextBox DL_N;
+    public static TextBox DL_M1;
+    public static TextBox DL_M2;
+    private static TextBox func_num_text;
     private Button button1;
     private Button button3;
     private PictureBox pBox_h2_criterion;
@@ -1593,6 +1593,7 @@ namespace PortalCraneModel
       pBox_Vmax_criterion.Size = new System.Drawing.Size(350, 350);
       pBox_Vmax_criterion.TabIndex = 15;
       pBox_Vmax_criterion.TabStop = false;
+      pBox_Vmax_criterion.Paint += new System.Windows.Forms.PaintEventHandler(pic_Paint_T);
       // 
       // pBox_h2_criterion
       // 
@@ -1602,6 +1603,7 @@ namespace PortalCraneModel
       pBox_h2_criterion.Size = new System.Drawing.Size(350, 350);
       pBox_h2_criterion.TabIndex = 14;
       pBox_h2_criterion.TabStop = false;
+      pBox_h2_criterion.Paint += new System.Windows.Forms.PaintEventHandler(pic_Paint_T);
       // 
       // pBox_h1_criterion
       // 
@@ -1611,6 +1613,7 @@ namespace PortalCraneModel
       pBox_h1_criterion.Size = new System.Drawing.Size(350, 350);
       pBox_h1_criterion.TabIndex = 13;
       pBox_h1_criterion.TabStop = false;
+      pBox_h1_criterion.Paint += new System.Windows.Forms.PaintEventHandler(pic_Paint_T);
       // 
       // pBox_H_criterion
       // 
@@ -1620,6 +1623,7 @@ namespace PortalCraneModel
       pBox_H_criterion.Size = new System.Drawing.Size(350, 350);
       pBox_H_criterion.TabIndex = 12;
       pBox_H_criterion.TabStop = false;
+      pBox_H_criterion.Paint += new System.Windows.Forms.PaintEventHandler(pic_Paint_H);
       // 
       // pBox_T_criterion
       // 
@@ -1629,7 +1633,7 @@ namespace PortalCraneModel
       pBox_T_criterion.Size = new System.Drawing.Size(350, 350);
       pBox_T_criterion.TabIndex = 0;
       pBox_T_criterion.TabStop = false;
-      pBox_T_criterion.Paint += new System.Windows.Forms.PaintEventHandler(pic_Paint);
+      pBox_T_criterion.Paint += new System.Windows.Forms.PaintEventHandler(pic_Paint_T);
       // 
       // func_num_text
       // 
@@ -1764,7 +1768,7 @@ namespace PortalCraneModel
     class eque_lines
     {
       public static Node[] pDat;
-      double[] pQ;
+      public static double[] pQ;
       int N; // число разбиений сетки
       int M; // общее число уровней
       int M1; // число основных узлов
@@ -1839,30 +1843,31 @@ namespace PortalCraneModel
               pt[0] = x_p[0]; // X coord
               pt[1] = x_p[1]; // Y coord
               QQ = pDat[(N + 1) * i + j].Q = F.GetValue(pt); // schitaem znachenie v (x,y)
-
-              //		printf("QQ = %f\n",QQ);
-              // поиск минимального и максимального значения на сетке
-              if ((i == 0) && (j == 0) || (Qmin > QQ))
-                Qmin = QQ;
-              if ((i == 0) && (j == 0) || (Qmax < QQ))
-                Qmax = QQ;
             }
-          double hQ1 = (Qmax - Qmin) / M1; // шаг функции по уровням
-          int ku = 0; // позиция в сетке уровней   
-          for (i = 0; i < M1; i++) // вычисление значений функции на основных уровнях 
-            pQ[ku++] = Qmax - hQ1 * i;
+          //    //		printf("QQ = %f\n",QQ);
+          //    // поиск минимального и максимального значения на сетке
+          //    if ((i == 0) && (j == 0) || (Qmin > QQ))
+          //      Qmin = QQ;
+          //    if ((i == 0) && (j == 0) || (Qmax < QQ))
+          //      Qmax = QQ;
+          //  }
+          //double hQ1 = (Qmax - Qmin) / M1; // шаг функции по уровням
+          //int ku = 0; // позиция в сетке уровней   
+          //for (i = 0; i < M1; i++) // вычисление значений функции на основных уровнях 
+          //  pQ[ku++] = Qmax - hQ1 * i;
 
-          double hQ2 = hQ1 / (M2 + 1); // шаг функции по подуровням
-          for (i = 1; i <= M2; i++) // вычисление значений функции на подуровнях
-            pQ[ku++] = pQ[M1 - 1] - hQ2 * i;
+          //double hQ2 = hQ1 / (M2 + 1); // шаг функции по подуровням
+          //for (i = 1; i <= M2; i++) // вычисление значений функции на подуровнях
+          //  pQ[ku++] = pQ[M1 - 1] - hQ2 * i;
 
-          for (i = 1; i <= M3; i++) // вычисление значений функции на "под-подуровнях"
-            pQ[ku++] = pQ[M1 + M2 - 1] - (hQ2 / (M3 + 1)) * i;
+          //for (i = 1; i <= M3; i++) // вычисление значений функции на "под-подуровнях"
+          //  pQ[ku++] = pQ[M1 + M2 - 1] - (hQ2 / (M3 + 1)) * i;
         }
       }
 
       public void SendLines(Graphics g, PictureBox pic)
       {
+        // pbox: 0 - T, 1 - H, 2 - h1, 3 - h2, 4 - Vmax
         int i, j, u, s;
         for (i = 0; i < N; i++)
           for (j = 0; j < N; j++)
@@ -2019,17 +2024,84 @@ namespace PortalCraneModel
       PortalCraneModel.DeleteAllPointsArray(ptrCriteria);
       Marshal.FreeHGlobal(ptrCriteria);
 
-      //for (int i = 0; i < (_N + 1) * (_N + 1); ++i)
-      //  eque_lines.pDat[i].Q = DrawCriteria[i * 5];
+      // T
+      for (int i = 0; i < (_N + 1) * (_N + 1); ++i)
+        eque_lines.pDat[i].Q = DrawCriteria[i * 5];
+
+      double Qmin, Qmax, QQ;
+      Qmin = 1.7976931348623158e+308;
+      Qmax = 2.2250738585072014e-308;
+
+      for (int i = 0; i <= _N; i++)
+        for (int j = 0; j <= _N; j++)
+        {
+          QQ = eque_lines.pDat[(_N + 1) * i + j].Q;
+          if ((i == 0) && (j == 0) || (Qmin > QQ))
+
+            Qmin = eque_lines.pDat[(_N + 1) * i + j].Q;
+          if ((i == 0) && (j == 0) || (Qmax < QQ))
+            Qmax = QQ;
+        }
+
+      double hQ1 = (Qmax - Qmin) / _M1; // шаг функции по уровням
+      int ku = 0; // позиция в сетке уровней   
+      for (int i = 0; i < _M1; i++) // вычисление значений функции на основных уровнях 
+        eque_lines.pQ[ku++] = Qmax - hQ1 * i;
+
+      double hQ2 = hQ1 / (_M2 + 1); // шаг функции по подуровням
+      for (int i = 1; i <= _M2; i++) // вычисление значений функции на подуровнях
+        eque_lines.pQ[ku++] = eque_lines.pQ[_M1 - 1] - hQ2 * i;
+
+      for (int i = 1; i <= _M3; i++) // вычисление значений функции на "под-подуровнях"
+        eque_lines.pQ[ku++] = eque_lines.pQ[_M1 + _M2 - 1] - (hQ2 / (_M3 + 1)) * i;
 
       pBox_T_criterion.Invalidate();
+
+      // H
+      for (int i = 0; i < (_N + 1) * (_N + 1); ++i)
+        eque_lines.pDat[i].Q = DrawCriteria[i * 5 + 1];
+
+      Qmin = 1.7976931348623158e+308;
+      Qmax = 2.2250738585072014e-308;
+
+      for (int i = 0; i <= _N; i++)
+        for (int j = 0; j <= _N; j++)
+        {
+          QQ = eque_lines.pDat[(_N + 1) * i + j].Q;
+          if ((i == 0) && (j == 0) || (Qmin > QQ))
+
+            Qmin = eque_lines.pDat[(_N + 1) * i + j].Q;
+          if ((i == 0) && (j == 0) || (Qmax < QQ))
+            Qmax = QQ;
+        }
+
+      hQ1 = (Qmax - Qmin) / _M1; // шаг функции по уровням
+      ku = 0; // позиция в сетке уровней   
+      for (int i = 0; i < _M1; i++) // вычисление значений функции на основных уровнях 
+        eque_lines.pQ[ku++] = Qmax - hQ1 * i;
+
+      hQ2 = hQ1 / (_M2 + 1); // шаг функции по подуровням
+      for (int i = 1; i <= _M2; i++) // вычисление значений функции на подуровнях
+        eque_lines.pQ[ku++] = eque_lines.pQ[_M1 - 1] - hQ2 * i;
+
+      for (int i = 1; i <= _M3; i++) // вычисление значений функции на "под-подуровнях"
+        eque_lines.pQ[ku++] = eque_lines.pQ[_M1 + _M2 - 1] - (hQ2 / (_M3 + 1)) * i;
+
+      pBox_H_criterion.Invalidate();
     }
 
-    private void pic_Paint(object sender, PaintEventArgs e)
+    private void pic_Paint_T(object sender, PaintEventArgs e)
     {
       e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.Default;
       Draw_Line.SendLines(e.Graphics, pBox_T_criterion);
     }
+
+    private void pic_Paint_H(object sender, PaintEventArgs e)
+    {
+      e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.Default;
+      Draw_Line.SendLines(e.Graphics, pBox_H_criterion);
+    }
+
   }
 }
 
