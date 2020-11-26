@@ -10,7 +10,7 @@ namespace PortalCraneModel
     {
       Application.EnableVisualStyles();
       Application.SetCompatibleTextRenderingDefault(false);
-      Application.Run((Form) new PortalCraneModel());
+      Application.Run((Form)new PortalCraneModel());
     }
   }
 }

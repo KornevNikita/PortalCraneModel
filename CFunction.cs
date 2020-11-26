@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Runtime.InteropServices;
-using PortalCraneModel;
-using System.IO;
 
 namespace Contour_line
 {
@@ -22,11 +19,11 @@ namespace Contour_line
       {
         case 2: //(4 - 2.1*y1^2 + y1^4/3)*y1^2 + y1*y2 + (4*y2^2 - 4)*y2^2
           return ((4 - 2.1 * _x[0] * _x[0] + Math.Pow(_x[0], 4) / 3) * _x[0] * _x[0] + _x[0] * _x[1] + (4 * _x[1] * _x[1] - 4) * _x[1] * _x[1]);
-       
+
         case 8:
           {
             PortalCraneModel.PortalCraneModel.SetModelLambdas(
-              _x[0], _x[1], 
+              _x[0], _x[1],
               _x[0], -1 * _x[1],
               _x[0], _x[1],
               _x[0], -1 * _x[1]);
