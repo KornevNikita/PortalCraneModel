@@ -1,3 +1,5 @@
+#include "pch.h"
+
 #include "Equal_Level_LineCalc.h"
 
 void SetBorders(double _XMin, double _XMax, double _YMin, double _YMax)
@@ -19,21 +21,22 @@ void CreateDat(int _N, int _M1, int _M2, int _M3)
   M3 = _M3;
   M = M1 + M2 + M3 - 1;
 
-  if ((pDat = new Node[(N + 1) * (N + 1)]) == nullptr)
+  if ((pDat = new Node<criteria>[(N + 1) * (N + 1)]) == nullptr)
     return;
   else
-    if ((pQ = new double[M + 1]) == nullptr)
+    if ((pQ = new criteria[M + 1]) == nullptr)
       return;
 }
 
-void SetDat(int F_Num)
+void SetDat(int F_Num, bool system)
 {
   {
     Function F;
 
     if (pDat != nullptr && pQ != nullptr)
     {
-      double Qmin, Qmax, QQ;
+      double Qmin, Qmax;
+      criteria QQ;
       double hx = (XMax - XMin) / N; // вычисление шага по x
       double hy = (YMax - YMin) / N; // вычисление шага по y
       std::vector<double> x(2);
@@ -51,7 +54,7 @@ void SetDat(int F_Num)
           x[0] = pDat[(N + 1) * i + j].x = XMin + hx * i;
           x[1] = pDat[(N + 1) * i + j].y = YMin + hy * j;
 
-          QQ = pDat[(N + 1) * i + j].Q = F.Get_value(x); // schitaem znachenie v (x,y)
+          QQ = pDat[(N + 1) * i + j].Q = F.Get_value(x, system); // schitaem znachenie v (x,y)
         }
     }
   }

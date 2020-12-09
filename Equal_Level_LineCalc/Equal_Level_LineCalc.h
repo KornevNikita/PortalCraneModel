@@ -1,21 +1,21 @@
 #pragma once
 
 #include <vector>
-#include <string>
+
 #include "Function.h"
+#include "Calc.h"
 
-std::string dll = "PortalCraneCalc.dll";
-
+template <typename T>
 struct Node
 {
   double x, y;  // coordinates
-  double Q;     // function value
+  T Q;     // function value
 };
 
 double XMin, XMax, YMin, YMax; // calculation area
 
-Node* pDat;
-double* pQ;
+Node<criteria>* pDat;
+criteria* pQ;
 int N; // число разбиений сетки
 int M; // общее число уровней
 int M1; // число основных узлов
@@ -29,4 +29,4 @@ extern "C" __declspec(dllexport)
 void CreateDat(int _N, int _M1, int _M2, int _M3);
 
 extern "C" __declspec(dllexport)
-void SetDat(double _a0, double _b0, double _a1, double _b1, int F_Num);
+void SetDat(int F_Num, bool system);
