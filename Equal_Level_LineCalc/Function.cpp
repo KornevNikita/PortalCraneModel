@@ -13,6 +13,7 @@ double Function::Get_value(std::vector<double>& _x)
   {
     case 1:
     {
+
       /*PortalCraneModel.PortalCraneModel.SetModelLambdas(
         _x[0], _x[1],
         _x[0], -1 * _x[1],
