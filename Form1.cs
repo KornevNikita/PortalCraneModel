@@ -1981,15 +1981,15 @@ namespace PortalCraneModel
     {
       // zdes' neobhodimo prochitat' vvedennie dannie & peredat' d v DLL dlya rascheta
       // parametri calculatora liniy:
-      int _N = int.Parse(DL_N.Text);
-      int _M1 = int.Parse(DL_M1.Text);
-      int _M2 = int.Parse(DL_M2.Text);
-      int _M3 = int.Parse(DL_M3.Text);
+      int _N = System.Convert.ToInt32(DL_N.Text);
+      int _M1 = System.Convert.ToInt32(DL_M1.Text);
+      int _M2 = System.Convert.ToInt32(DL_M2.Text);
+      int _M3 = System.Convert.ToInt32(DL_M3.Text);
       
-      XMin = double.Parse(xmin_t.Text);
-      XMax = double.Parse(xmax_t.Text);
-      YMin = double.Parse(ymin_t.Text);
-      YMax = double.Parse(ymax_t.Text); // set borders
+      XMin = System.Convert.ToDouble(xmin_t.Text);
+      XMax = System.Convert.ToDouble(xmax_t.Text);
+      YMin = System.Convert.ToDouble(ymin_t.Text);
+      YMax = System.Convert.ToDouble(ymax_t.Text);
 
       SetParam(); // параметры модели
       SetCalcParam(); // параметры расчета

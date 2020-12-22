@@ -1,4 +1,4 @@
-#include "Function.h"
+#include "Functions.h"
 
 void Function::Set_func_index(int _func_index)
 {

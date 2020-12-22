@@ -24,7 +24,7 @@
     <ClInclude Include="Equal_Level_LineCalc.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="Function.h">
+    <ClInclude Include="Functions.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
@@ -38,11 +38,8 @@
     <ClCompile Include="Equal_Level_LineCalc.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Function.cpp">
+    <ClCompile Include="Functions.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>
