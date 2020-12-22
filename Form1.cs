@@ -31,8 +31,7 @@ namespace PortalCraneModel
     public int buildCount = 0, dinPointsCount;
     public static int drawStCount;
 
-    const string PortalCraneCalc_dll = "PortalCraneCalc.dll";
-    const string Equal_Level_LineCalc_dll = "Equal_Level_LineCalc.dll";
+    const string dll = "PortalCraneCalc.dll";
 
     public static double[] DrawPoints, DrawCriteria;
 
@@ -158,68 +157,43 @@ namespace PortalCraneModel
     private CheckBox drawing_on;
     private IContainer components;
 
-
-
-    // ================= PortalCraneCalc.dll import functions: =================
-
-    [DllImport(PortalCraneCalc_dll, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
     public static extern void SetModelParams(double _M, double _m, double _l, double _R, double _g,
         double _h_fi, double _h_x, double _B, double _gamma, double _E);
 
-    [DllImport(PortalCraneCalc_dll, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
     public static extern void SetModelLambdas(double _p1_re, double _p1_im, double _p2_re, double _p2_im,
         double _p3_re, double _p3_im, double _p4_re, double _p4_im);
 
-    [DllImport(PortalCraneCalc_dll, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
     public static extern void Calc_regulator();
 
-    [DllImport(PortalCraneCalc_dll, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
     public static extern void SetCalcParams(double _dt, double _t_start, double _t_stop, int _drawStCount);
 
-    [DllImport(PortalCraneCalc_dll, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
     public static extern void SetInitParams(double _fi, double _dfi_dt, double _x, double _dx_dt);
 
-    [DllImport(PortalCraneCalc_dll, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
     public static extern void SetScaleParams(double _xMax, double _yMax);
 
-    [DllImport(PortalCraneCalc_dll, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
     public static extern int GetAllDrawPointsCount();
 
-    [DllImport(PortalCraneCalc_dll, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
     public static extern void InitAllPointsArray(IntPtr allDrawData);
 
-    [DllImport(PortalCraneCalc_dll, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
     public static extern void DeleteAllPointsArray(IntPtr allDrawData);
 
-    [DllImport(PortalCraneCalc_dll, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
     public static extern void GetAllDrawPoints(IntPtr ptrAllDrawPoints, bool system, bool reg);
 
-    [DllImport(PortalCraneCalc_dll, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
     public static extern void Calc_criteria();
 
-    [DllImport(PortalCraneCalc_dll, CallingConvention = CallingConvention.Cdecl)]
+    [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
     public static extern void Calc_criteria_eque_lines(IntPtr ptrAllDrawPoints, bool system);
-
-    // ============== End of PortalCraneCalc.dll import functions ==============
-
-
-
-
-    // ============== Equal_Level_LineCalc.dll import functions: ===============
-
-    [DllImport(Equal_Level_LineCalc_dll, CallingConvention = CallingConvention.Cdecl)]
-    public static extern void SetBorders(double _XMin, double _XMax, double _YMin, double _YMax);
-
-    [DllImport(Equal_Level_LineCalc_dll, CallingConvention = CallingConvention.Cdecl)]
-    public static extern void CreateDat(int _N, int _M1, int _M2, int _M3);
-
-    [DllImport(Equal_Level_LineCalc_dll, CallingConvention = CallingConvention.Cdecl)]
-    public static extern void SetDat(int F_Num, bool system);
-
-    // =========== End of Equal_Level_LineCalc.dll import functions ============
-
-
-
 
     public PortalCraneModel()
     {
@@ -1535,7 +1509,7 @@ namespace PortalCraneModel
       button1.TabIndex = 10;
       button1.Text = "Рассчитать";
       button1.UseVisualStyleBackColor = true;
-      button1.Click += new System.EventHandler(Run_eq_lvl_lines_calc);
+      button1.Click += new System.EventHandler(button1_Click);
       // 
       // ymax_t
       // 
@@ -1781,8 +1755,8 @@ namespace PortalCraneModel
 
     //===============================================================================================================================================================
 
-    //static public double[] pt;
-    //static double XMin, XMax, YMin, YMax;
+    static public double[] pt;
+    static double XMin, XMax, YMin, YMax;
 
     struct Node
     {
@@ -1814,21 +1788,21 @@ namespace PortalCraneModel
         pQ = null;
       }
 
-      //public void CreateDat(int _N, int _M1, int _M2, int _M3)
-      //{
-      //  N = _N;
-      //  M1 = _M1;
-      //  M2 = _M2;
-      //  M3 = _M3;
-      //  M = M1 + M2 + M3 - 1;
+      public void CreateDat(int _N, int _M1, int _M2, int _M3)
+      {
+        N = _N;
+        M1 = _M1;
+        M2 = _M2;
+        M3 = _M3;
+        M = M1 + M2 + M3 - 1;
 
-      //  //	DelDat();
-      //  if ((pDat = new Node[(N + 1) * (N + 1)]) == null)
-      //    return;
-      //  else
-      //      if ((pQ = new double[M + 1]) == null)
-      //    return;
-      //}
+        //	DelDat();
+        if ((pDat = new Node[(N + 1) * (N + 1)]) == null)
+          return;
+        else
+            if ((pQ = new double[M + 1]) == null)
+          return;
+      }
       public void CreateDat1(double _m1, double _m2, double _c1, double _c2, double[] _w1, double[] _w2)
       {
         m1 = _m1;
@@ -2003,40 +1977,51 @@ namespace PortalCraneModel
     }
 
     eque_lines Draw_Line = new eque_lines();
-    private void Run_eq_lvl_lines_calc(object sender, EventArgs e)
+    private void button1_Click(object sender, EventArgs e)
     {
-      int _N = int.Parse(DL_N.Text),            
-        _M1 = int.Parse(DL_M1.Text),
-        _M2 = int.Parse(DL_M2.Text),
-        _M3 = int.Parse(DL_M3.Text);
-      CreateDat(_N, _M1, _M2, _M3);             // parametri rasscheta
+      // zdes' neobhodimo prochitat' vvedennie dannie & peredat' d v DLL dlya rascheta
+      // parametri calculatora liniy:
+      int _N = int.Parse(DL_N.Text);
+      int _M1 = int.Parse(DL_M1.Text);
+      int _M2 = int.Parse(DL_M2.Text);
+      int _M3 = int.Parse(DL_M3.Text);
+      
+      XMin = double.Parse(xmin_t.Text);
+      XMax = double.Parse(xmax_t.Text);
+      YMin = double.Parse(ymin_t.Text);
+      YMax = double.Parse(ymax_t.Text); // set borders
 
-      double XMin = double.Parse(xmin_t.Text),  
-        XMax = double.Parse(xmax_t.Text),
-        YMin = double.Parse(ymin_t.Text),
-        YMax = double.Parse(ymax_t.Text); 
-      SetBorders(XMin, XMax, YMin, YMax);       // oblast' rasscheta
+      SetParam(); // параметры модели
+      SetCalcParam(); // параметры расчета
+      SetInitVal(); // начальное состояние системы
 
-      SetParam();      // параметры модели
-      SetCalcParam();  // параметры расчета
-      SetInitVal();    // начальное состояние системы
+      Draw_Line.CreateDat(_N, _M1, _M2, _M3);
 
+      // определяем количество точек, которые будут отрисованы
+      criteria.drawCount = (_N + 1) * (_N + 1);
 
-      SetDat(int.Parse(func_num_text.Text), cBox_non_linear.Checked);
+      // создаем управляемое хранилище
+      DrawCriteria = new double[criteria.drawCount * 5];
 
+      // определяем размер управляемой структуры
+      int sizeStruct = Marshal.SizeOf(typeof(PortalCraneModel.TAllDrawPoints));
 
-      criteria.drawCount = (_N + 1) * (_N + 1);                                 // определяем количество точек, которые будут отрисованы
-      DrawCriteria = new double[criteria.drawCount * 5];                        // создаем управляемое хранилище
-      int sizeStruct = Marshal.SizeOf(typeof(PortalCraneModel.TAllDrawPoints)); // определяем размер управляемой структуры
-      ptrCriteria = Marshal.AllocHGlobal(sizeStruct);                           // выделяем память под неуправляемую структуру
-      Marshal.StructureToPtr(criteria, ptrCriteria, false);                     // копируем данные из неуправляемой в управляемую
-      PortalCraneModel.InitAllPointsArray(ptrCriteria);                         // выделяем память под внутренний 
-                                                                                // неуправляемый массив в неупр структуре
-      is_calc_criteria = true;  // t.e. risovat trajektorii ne nujno
+      // выделяем память под неуправляемую структуру
+      ptrCriteria = Marshal.AllocHGlobal(sizeStruct);
 
-      criteria = (PortalCraneModel.TAllDrawPoints)Marshal.PtrToStructure(ptrCriteria,
-        typeof(PortalCraneModel.TAllDrawPoints));
+      // копируем данные из неуправляемой в управляемую
+      Marshal.StructureToPtr(criteria, ptrCriteria, false);
 
+      // выделяем память под внутренний неуправляемый массив в неупр структуре
+      PortalCraneModel.InitAllPointsArray(ptrCriteria);
+
+      is_calc_criteria = true; // t.e. risovat trajektorii ne nujno
+
+      Draw_Line.SetDat(XMin, XMax, YMin, YMax, false, System.Convert.ToInt32(func_num_text.Text));
+
+      is_calc_criteria = false;
+
+      criteria = (PortalCraneModel.TAllDrawPoints)Marshal.PtrToStructure(ptrCriteria, typeof(PortalCraneModel.TAllDrawPoints));
       Marshal.Copy(criteria.allDrawPoints, DrawCriteria, 0, criteria.drawCount * 5);
       PortalCraneModel.DeleteAllPointsArray(ptrCriteria);
       Marshal.FreeHGlobal(ptrCriteria);

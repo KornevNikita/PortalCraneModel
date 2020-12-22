@@ -1,5 +1,4 @@
 #pragma once
-
 #include <vector>
 #include <complex>
 #include <fstream>
@@ -106,13 +105,10 @@ void GetAllDrawPoints(TAllDrawPoints<point>* ptrAllDrawPoints,
   bool system, bool reg_on);
 
 extern "C" __declspec(dllexport)
-criteria Calc_criteria_eque_lines(bool system);
+void Calc_criteria_eque_lines(TAllDrawPoints<criteria>* ptrCriteriaPoints,
+  bool system);
 
 extern "C" __declspec(dllexport)
 void Calc_regulator();
 
 /* ======================== End of export functions ========================= */
-
-/* =========================== Import functions: ============================ */
-
-
