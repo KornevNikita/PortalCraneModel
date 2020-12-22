@@ -4,7 +4,14 @@ namespace Contour_line
 {
   class CFunction
   {
+    public int curInd = 0;
     private int index = 5;
+    private double C1 = 0;
+    private double C2 = 0;
+    private double M1 = 0;
+    private double M2 = 0;
+    private double[] W1 = new double[2];
+    private double[] W2 = new double[2];
 
     public double GetValue(double[] _x)
     {
@@ -37,5 +44,16 @@ namespace Contour_line
     {
       index = _ind;
     } //Выбрать функцию;
+
+    public void set_func(double m1, double m2, double c1, double c2, double[] w1, double[] w2)
+    {
+      M1 = m1;
+      M2 = m2;
+      C1 = c1;
+      C2 = c2;
+      W1 = w1;
+      W2 = w2;
+
+    } //Задать функцию;
   }
 }

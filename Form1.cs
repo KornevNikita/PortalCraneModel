@@ -1829,8 +1829,8 @@ namespace PortalCraneModel
           pt = new double[2];
           Qmin = 1.7976931348623158e+308;
           Qmax = 2.2250738585072014e-308;
-          //if (F_Num == 7)
-          //  F.set_func(m1, m2, c1, c2, w1, w2);
+          if (F_Num == 7)
+            F.set_func(m1, m2, c1, c2, w1, w2);
           F.set(F_Num);
           for (i = 0; i <= N; i++)
             for (j = 0; j <= N; j++)
@@ -1985,7 +1985,7 @@ namespace PortalCraneModel
       int _M1 = System.Convert.ToInt32(DL_M1.Text);
       int _M2 = System.Convert.ToInt32(DL_M2.Text);
       int _M3 = System.Convert.ToInt32(DL_M3.Text);
-      
+      Draw_Line.CreateDat(_N, _M1, _M2, _M3);
       XMin = System.Convert.ToDouble(xmin_t.Text);
       XMax = System.Convert.ToDouble(xmax_t.Text);
       YMin = System.Convert.ToDouble(ymin_t.Text);
@@ -1994,8 +1994,6 @@ namespace PortalCraneModel
       SetParam(); // параметры модели
       SetCalcParam(); // параметры расчета
       SetInitVal(); // начальное состояние системы
-
-      Draw_Line.CreateDat(_N, _M1, _M2, _M3);
 
       // определяем количество точек, которые будут отрисованы
       criteria.drawCount = (_N + 1) * (_N + 1);
