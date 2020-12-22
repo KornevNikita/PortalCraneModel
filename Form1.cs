@@ -130,15 +130,15 @@ namespace PortalCraneModel
     private static TextBox textBox_dfi_dt;
     private TabPage tabPage2;
     private PictureBox pBox_T_criterion;
-    public static TextBox xmin_t;
-    public static TextBox ymin_t;
-    public static TextBox xmax_t;
-    public static TextBox ymax_t;
-    public static TextBox DL_M3;
-    public static TextBox DL_N;
-    public static TextBox DL_M1;
-    public static TextBox DL_M2;
-    private static TextBox func_num_text;
+    public TextBox xmin_t;
+    public TextBox ymin_t;
+    public TextBox xmax_t;
+    public TextBox ymax_t;
+    public TextBox DL_M3;
+    public TextBox DL_N;
+    public TextBox DL_M1;
+    public TextBox DL_M2;
+    private TextBox func_num_text;
     private Button button1;
     private Button button3;
     private PictureBox pBox_h2_criterion;
@@ -1593,7 +1593,7 @@ namespace PortalCraneModel
       pBox_Vmax_criterion.Size = new System.Drawing.Size(350, 350);
       pBox_Vmax_criterion.TabIndex = 15;
       pBox_Vmax_criterion.TabStop = false;
-      pBox_Vmax_criterion.Paint += new System.Windows.Forms.PaintEventHandler(pic_Paint_T);
+      pBox_Vmax_criterion.Paint += new System.Windows.Forms.PaintEventHandler(pic_Paint_Vmax);
       // 
       // pBox_h2_criterion
       // 
@@ -1603,7 +1603,7 @@ namespace PortalCraneModel
       pBox_h2_criterion.Size = new System.Drawing.Size(350, 350);
       pBox_h2_criterion.TabIndex = 14;
       pBox_h2_criterion.TabStop = false;
-      pBox_h2_criterion.Paint += new System.Windows.Forms.PaintEventHandler(pic_Paint_T);
+      pBox_h2_criterion.Paint += new System.Windows.Forms.PaintEventHandler(pic_Paint_h2);
       // 
       // pBox_h1_criterion
       // 
@@ -1613,7 +1613,7 @@ namespace PortalCraneModel
       pBox_h1_criterion.Size = new System.Drawing.Size(350, 350);
       pBox_h1_criterion.TabIndex = 13;
       pBox_h1_criterion.TabStop = false;
-      pBox_h1_criterion.Paint += new System.Windows.Forms.PaintEventHandler(pic_Paint_T);
+      pBox_h1_criterion.Paint += new System.Windows.Forms.PaintEventHandler(pic_Paint_h1);
       // 
       // pBox_H_criterion
       // 
@@ -2196,6 +2196,24 @@ namespace PortalCraneModel
     {
       e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.Default;
       Draw_Line.SendLines(e.Graphics, pBox_H_criterion);
+    }
+
+    private void pic_Paint_h1(object sender, PaintEventArgs e)
+    {
+      e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.Default;
+      Draw_Line.SendLines(e.Graphics, pBox_h1_criterion);
+    }
+
+    private void pic_Paint_h2(object sender, PaintEventArgs e)
+    {
+      e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.Default;
+      Draw_Line.SendLines(e.Graphics, pBox_h2_criterion);
+    }
+
+    private void pic_Paint_Vmax(object sender, PaintEventArgs e)
+    {
+      e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.Default;
+      Draw_Line.SendLines(e.Graphics, pBox_Vmax_criterion);
     }
 
   }
