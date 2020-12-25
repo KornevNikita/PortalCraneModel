@@ -32,7 +32,7 @@ namespace PortalCraneModel
     public static int drawStCount;
 
     const string dll = "PortalCraneCalc.dll";
-    const string dll2 = "Equal_Level_LineCalc_dll";
+    const string dll2 = "Equal_Level_LineCalc.dll";
 
     public static double[] DrawPoints, DrawCriteria;
 
@@ -2010,13 +2010,18 @@ namespace PortalCraneModel
       int _M1 = System.Convert.ToInt32(DL_M1.Text);
       int _M2 = System.Convert.ToInt32(DL_M2.Text);
       int _M3 = System.Convert.ToInt32(DL_M3.Text);
+
       Draw_Line.CreateDat(_N, _M1, _M2, _M3);
+      CreateDat(_N, _M1, _M2, _M3);
+
       XMin = System.Convert.ToDouble(xmin_t.Text);
       XMax = System.Convert.ToDouble(xmax_t.Text);
       //YMin = System.Convert.ToDouble(ymin_t.Text);
-      YMin = XMin;
+      YMin = System.Convert.ToDouble(ymin_t.Text) * XMin;
       //YMax = System.Convert.ToDouble(ymax_t.Text);
-      YMax = -1 * XMin;
+      YMax = -1 * YMin;
+
+      SetBorders(XMin, XMax, YMin, YMax);
 
       SetParam(); // параметры модели
       SetCalcParam(); // параметры расчета

@@ -61,6 +61,8 @@ struct TAllDrawPoints {
 
 /* =========================== End of structures ============================ */
 
+
+
 /* =========================== Internal functions: ========================== */
 
 void f(const std::vector<double>& _X, std::vector<double>& _k,
@@ -73,6 +75,8 @@ void init_matrix_A();
 void Calc_criteria(criteria& c);
 
 /* ======================== End of nternal functions: ======================= */
+
+
 
 /* =========================== Export functions: ============================ */
 
@@ -107,6 +111,9 @@ void GetAllDrawPoints(TAllDrawPoints<point>* ptrAllDrawPoints,
 extern "C" __declspec(dllexport)
 void Calc_criteria_eque_lines(TAllDrawPoints<criteria>* ptrCriteriaPoints,
   bool system);
+
+extern "C" __declspec(dllexport)
+void Calc_criteria_eque_lines(bool system);
 
 extern "C" __declspec(dllexport)
 void Calc_regulator();

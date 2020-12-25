@@ -544,3 +544,34 @@ void Calc_criteria_eque_lines(TAllDrawPoints<criteria>* ptrCriteriaPoints, bool 
   ptrCriteriaPoints->allDrawPoints[criteria_count++] = c;
   //all_criteria.push_back(c);
 }
+
+criteria Calc_criteria_eque_lines(bool system)
+{
+  point drawPoint(fi, dfi_dt, x, dx_dt, t_start);
+  TDinModel model(4, drawPoint);
+
+  all_points.clear();
+  all_points.push_back(drawPoint);
+
+  std::ofstream fout("trajectories.txt", ios_base::trunc);
+  fout << all_points[0];
+
+  int count = static_cast<int>((t_stop - t_start) / (drawStCount * dt));
+
+  for (int i = 1; i < count; i++)
+  {
+    drawPoint = model.RK4(system, true);
+
+    all_points.push_back(drawPoint); // polozhili tochku v local hranilishe
+
+    fout << all_points[i];
+  }
+
+  criteria c;
+
+  Calc_criteria(c);
+
+  //ptrCriteriaPoints->allDrawPoints[criteria_count++] = c;
+  //all_criteria.push_back(c);
+  return c;
+}

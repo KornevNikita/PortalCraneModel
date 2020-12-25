@@ -22,10 +22,10 @@ criteria Function::Get_value(std::vector<double>& _x, bool system)
 
       Calc_regulator();
 
-      //return Calc_criteria_eque_lines(system);
-      // zaplatka
-      criteria aaa;
-      return aaa;
+      return Calc_criteria_eque_lines1(system);
+      //// zaplatka
+      //criteria aaa;
+      //return aaa;
     }
 
     //case 2: 
