@@ -37,6 +37,13 @@ namespace Contour_line
             return 0;
           }
 
+        case 10:
+          {
+            return Math.Exp(_x[1] * _x[1] - _x[0]) +
+              5 * Math.Pow(_x[0] - _x[1] * _x[1], 2) +
+              Math.Pow(_x[1] - 1, 2);
+          }
+
         default: return 0; // тут мы вернем 0;
       }
     }
