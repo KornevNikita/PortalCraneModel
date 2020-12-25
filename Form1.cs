@@ -1988,8 +1988,10 @@ namespace PortalCraneModel
       Draw_Line.CreateDat(_N, _M1, _M2, _M3);
       XMin = System.Convert.ToDouble(xmin_t.Text);
       XMax = System.Convert.ToDouble(xmax_t.Text);
-      YMin = System.Convert.ToDouble(ymin_t.Text);
-      YMax = System.Convert.ToDouble(ymax_t.Text);
+      //YMin = System.Convert.ToDouble(ymin_t.Text);
+      YMin = XMin;
+      //YMax = System.Convert.ToDouble(ymax_t.Text);
+      YMax = -1 * XMin;
 
       SetParam(); // параметры модели
       SetCalcParam(); // параметры расчета
