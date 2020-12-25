@@ -13,8 +13,8 @@ namespace PortalCraneModel
   {
     public struct TAllDrawPoints
     {
-      public IntPtr allDrawPoints; // массив точек
-      public int drawCount; // число точек
+      public IntPtr allDrawPoints; // array of points
+      public int drawCount; // number of points
     }
 
     public struct TStatePoint
@@ -32,6 +32,7 @@ namespace PortalCraneModel
     public static int drawStCount;
 
     const string dll = "PortalCraneCalc.dll";
+    const string dll2 = "Equal_Level_LineCalc_dll";
 
     public static double[] DrawPoints, DrawCriteria;
 
@@ -157,6 +158,10 @@ namespace PortalCraneModel
     private CheckBox drawing_on;
     private IContainer components;
 
+
+
+    // ================ PortalCraneCalc.dll import functions: ==================
+
     [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
     public static extern void SetModelParams(double _M, double _m, double _l, double _R, double _g,
         double _h_fi, double _h_x, double _B, double _gamma, double _E);
@@ -194,6 +199,26 @@ namespace PortalCraneModel
 
     [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
     public static extern void Calc_criteria_eque_lines(IntPtr ptrAllDrawPoints, bool system);
+
+    // ============= End of PortalCraneCalc.dll import functions ===============
+
+
+
+    // ============== Equal_Level_LineCalc.dll import functions: ===============
+
+    [DllImport(dll2, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void SetBorders(double _XMin, double _XMax,
+      double _YMin, double _YMax);
+
+    [DllImport(dll2, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void CreateDat(int _N, int _M1, int _M2, int _M3);
+
+    [DllImport(dll2, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void SetDat(int F_Num, bool system);
+
+    // =========== End of Equal_Level_LineCalc.dll import functions ============
+
+
 
     public PortalCraneModel()
     {
