@@ -4,6 +4,7 @@ VisualStudioVersion = 16.0.29728.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PortalCraneModel", "PortalCraneModel.csproj", "{DAC878BC-4CC1-47B4-987B-1B4E22A6507A}"
 	ProjectSection(ProjectDependencies) = postProject
+		{2A7AF9CA-1BF0-408A-8137-83925FF35CB9} = {2A7AF9CA-1BF0-408A-8137-83925FF35CB9}
 		{165AC5CF-7BA5-4BFC-83D8-388E046E186C} = {165AC5CF-7BA5-4BFC-83D8-388E046E186C}
 	EndProjectSection
 EndProject

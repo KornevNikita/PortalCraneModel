@@ -2048,6 +2048,7 @@ namespace PortalCraneModel
       is_calc_criteria = true; // t.e. risovat trajektorii ne nujno
 
       Draw_Line.SetDat(XMin, XMax, YMin, YMax, false, System.Convert.ToInt32(func_num_text.Text));
+      SetDat(System.Convert.ToInt32(func_num_text.Text), cBox_non_linear.Checked);
 
       is_calc_criteria = false;
 

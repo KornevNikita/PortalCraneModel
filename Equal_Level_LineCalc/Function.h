@@ -14,3 +14,5 @@ public:
 
   criteria Get_value(std::vector<double>& _x, bool system);
 };
+
+criteria Get_value(std::vector<double>& _x, bool system);

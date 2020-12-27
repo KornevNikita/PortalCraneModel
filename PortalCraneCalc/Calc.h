@@ -113,7 +113,7 @@ void Calc_criteria_eque_lines(TAllDrawPoints<criteria>* ptrCriteriaPoints,
   bool system);
 
 extern "C" __declspec(dllexport)
-void Calc_criteria_eque_lines(bool system);
+void Calc_criteria_eque_lines1(criteria& c, bool system);
 
 extern "C" __declspec(dllexport)
 void Calc_regulator();

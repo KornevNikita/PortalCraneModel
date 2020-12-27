@@ -545,7 +545,7 @@ void Calc_criteria_eque_lines(TAllDrawPoints<criteria>* ptrCriteriaPoints, bool 
   //all_criteria.push_back(c);
 }
 
-criteria Calc_criteria_eque_lines(bool system)
+void Calc_criteria_eque_lines1(criteria& c, bool system)
 {
   point drawPoint(fi, dfi_dt, x, dx_dt, t_start);
   TDinModel model(4, drawPoint);
@@ -567,11 +567,12 @@ criteria Calc_criteria_eque_lines(bool system)
     fout << all_points[i];
   }
 
-  criteria c;
+  //criteria c;
 
   Calc_criteria(c);
 
+
   //ptrCriteriaPoints->allDrawPoints[criteria_count++] = c;
   //all_criteria.push_back(c);
-  return c;
+  return;
 }
