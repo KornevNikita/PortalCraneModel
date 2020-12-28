@@ -33,3 +33,12 @@ void SetDat(int F_Num, bool system);
 
 extern "C" __declspec(dllexport)
 void SetSubLevels(int shift);
+
+extern "C" __declspec(dllexport)
+void InitAllCriteriaArray(TAllDrawPoints<criteria>* allDrawData);
+
+extern "C" __declspec(dllexport)
+void DeleteAllCriteriaArray(TAllDrawPoints<criteria>* allDrawData);
+
+extern "C" __declspec(dllexport)
+void GetPDat_and_pQ(TAllDrawPoints<criteria>* ptrCriteriaPoints);
