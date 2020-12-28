@@ -17,6 +17,15 @@ namespace PortalCraneModel
       public int drawCount; // number of points
     }
 
+    public struct TStatePoint
+    {
+      public double fi;
+      public double dfi_dt;
+      public double x;
+      public double dx_dt;
+      public double t;
+    }
+
     Random rand = new Random();
 
     public int buildCount = 0, dinPointsCount;
@@ -27,9 +36,12 @@ namespace PortalCraneModel
 
     public static double[] DrawPoints, DrawCriteria;
 
-    public static IntPtr ptrTAllDrawPoints, ptrCriteria;
 
-    public static PortalCraneModel.TAllDrawPoints allPoints, allCriteria;
+    public static IntPtr ptrTAllDrawPoints, PtrNextPoint, ptrCriteria;
+
+    public static PortalCraneModel.TAllDrawPoints allPoints, criteria;
+
+    public PortalCraneModel.TStatePoint CurrentPoint;
 
     public static double M, m, l, R, g,
       h_fi, h_x, B, gamma, E, // parametri modeli
@@ -207,15 +219,6 @@ namespace PortalCraneModel
     [DllImport(dll2, CallingConvention = CallingConvention.Cdecl)]
     public static extern void SetSubLevels(int shift);
 
-    [DllImport(dll2, CallingConvention = CallingConvention.Cdecl)]
-    public static extern void InitAllCriteriaArray(IntPtr allDrawData);
-
-    [DllImport(dll2, CallingConvention = CallingConvention.Cdecl)]
-    public static extern void DeleteAllCriteriaArray(IntPtr allDrawData);
-
-    [DllImport(dll2, CallingConvention = CallingConvention.Cdecl)]
-    public static extern void GetPDat_and_pQ(IntPtr ptrAllDrawPoints);
-
     // =========== End of Equal_Level_LineCalc.dll import functions ============
 
 
@@ -311,33 +314,16 @@ namespace PortalCraneModel
 
       // определяем количество точек, которые будут отрисованы
       allPoints.drawCount = GetAllDrawPointsCount();
-
       // создаем управляемое хранилище
       DrawPoints = new double[allPoints.drawCount * 5];
 
-      // определяем размер управляемой структуры
-      int sizeStruct = Marshal.SizeOf(typeof(PortalCraneModel.TAllDrawPoints));
-
-      // выделяем память под неуправляемую структуру
-      ptrTAllDrawPoints = Marshal.AllocHGlobal(sizeStruct);
-
-      // копируем данные из неуправляемой в управляемую
-      Marshal.StructureToPtr(allPoints, ptrTAllDrawPoints, false);
-
-      // выделяем память под внутренний неуправляемый массив в неупр структуре
-      PortalCraneModel.InitAllPointsArray(ptrTAllDrawPoints);
-
-      PortalCraneModel.GetAllDrawPoints(ptrTAllDrawPoints,
-        cBox_non_linear.Checked,
-        cBox_Reg_on.Checked);
-
-      allPoints = (PortalCraneModel.TAllDrawPoints)Marshal.PtrToStructure(
-        ptrTAllDrawPoints,
-        typeof(PortalCraneModel.TAllDrawPoints));
-
-      Marshal.Copy(allPoints.allDrawPoints, DrawPoints,
-        0, allPoints.drawCount * 5);
-
+      int sizeStruct = Marshal.SizeOf(typeof(PortalCraneModel.TAllDrawPoints)); // определяем размер управляемой структуры
+      ptrTAllDrawPoints = Marshal.AllocHGlobal(sizeStruct); // выделяем память под неуправляемую структуру
+      Marshal.StructureToPtr(allPoints, ptrTAllDrawPoints, false); // копируем данные из неуправляемой в управляемую
+      PortalCraneModel.InitAllPointsArray(ptrTAllDrawPoints); // выделяем память под внутренний неуправляемый массив в неупр структуре
+      PortalCraneModel.GetAllDrawPoints(ptrTAllDrawPoints, cBox_non_linear.Checked, cBox_Reg_on.Checked);
+      allPoints = (PortalCraneModel.TAllDrawPoints)Marshal.PtrToStructure(ptrTAllDrawPoints, typeof(PortalCraneModel.TAllDrawPoints));
+      Marshal.Copy(allPoints.allDrawPoints, DrawPoints, 0, allPoints.drawCount * 5);
       PortalCraneModel.DeleteAllPointsArray(ptrTAllDrawPoints);
       Marshal.FreeHGlobal(ptrTAllDrawPoints);
     }
@@ -2027,8 +2013,6 @@ namespace PortalCraneModel
       int _M1 = System.Convert.ToInt32(DL_M1.Text);
       int _M2 = System.Convert.ToInt32(DL_M2.Text);
       int _M3 = System.Convert.ToInt32(DL_M3.Text);
-      int M = _M1 + _M2 + _M3;
-
 
       Draw_Line.CreateDat(_N, _M1, _M2, _M3);
       CreateDat(_N, _M1, _M2, _M3);
@@ -2047,10 +2031,10 @@ namespace PortalCraneModel
       SetInitVal(); // начальное состояние системы
 
       // определяем количество точек, которые будут отрисованы
-      allCriteria.drawCount = (_N + 1) * (_N + 1) + M;
+      criteria.drawCount = (_N + 1) * (_N + 1);
 
       // создаем управляемое хранилище
-      DrawCriteria = new double[allCriteria.drawCount * 5];
+      DrawCriteria = new double[criteria.drawCount * 5];
 
       // определяем размер управляемой структуры
       int sizeStruct = Marshal.SizeOf(typeof(PortalCraneModel.TAllDrawPoints));
@@ -2059,74 +2043,55 @@ namespace PortalCraneModel
       ptrCriteria = Marshal.AllocHGlobal(sizeStruct);
 
       // копируем данные из неуправляемой в управляемую
-      Marshal.StructureToPtr(allCriteria, ptrCriteria, false);
+      Marshal.StructureToPtr(criteria, ptrCriteria, false);
 
       // выделяем память под внутренний неуправляемый массив в неупр структуре
-      PortalCraneModel.InitAllCriteriaArray(ptrCriteria);
+      PortalCraneModel.InitAllPointsArray(ptrCriteria);
 
       is_calc_criteria = true; // t.e. risovat trajektorii ne nujno
 
       Draw_Line.SetDat(XMin, XMax, YMin, YMax, false, System.Convert.ToInt32(func_num_text.Text));
       SetDat(System.Convert.ToInt32(func_num_text.Text), cBox_non_linear.Checked);
-      GetPDat_and_pQ(ptrCriteria);
 
       is_calc_criteria = false;
 
-      allCriteria = (PortalCraneModel.TAllDrawPoints)Marshal.PtrToStructure(ptrCriteria, typeof(PortalCraneModel.TAllDrawPoints));
-      Marshal.Copy(allCriteria.allDrawPoints, DrawCriteria, 0, allCriteria.drawCount * 5);
-      PortalCraneModel.DeleteAllCriteriaArray(ptrCriteria);
+      criteria = (PortalCraneModel.TAllDrawPoints)Marshal.PtrToStructure(ptrCriteria, typeof(PortalCraneModel.TAllDrawPoints));
+      Marshal.Copy(criteria.allDrawPoints, DrawCriteria, 0, criteria.drawCount * 5);
+      PortalCraneModel.DeleteAllPointsArray(ptrCriteria);
       Marshal.FreeHGlobal(ptrCriteria);
 
-      double hx = (XMax - XMin) / _N; 
-      double hy = (YMax - YMin) / _N;
-
-      //T
-      //for (int i = 0; i < (_N + 1) * (_N + 1); ++i)
-      //  eque_lines.pDat[i].Q = DrawCriteria[i * 5];
+      // T
+      for (int i = 0; i < (_N + 1) * (_N + 1); ++i)
+        eque_lines.pDat[i].Q = DrawCriteria[i * 5];
 
       double Qmin, Qmax, QQ;
       Qmin = 1.7976931348623158e+308;
       Qmax = 2.2250738585072014e-308;
 
-      //for (int i = 0; i <= _N; i++)
-      //  for (int j = 0; j <= _N; j++)
-      //  {
-      //    QQ = eque_lines.pDat[(_N + 1) * i + j].Q;
-      //    if ((i == 0) && (j == 0) || (Qmin > QQ))
-      //      Qmin = eque_lines.pDat[(_N + 1) * i + j].Q;
-      //    if ((i == 0) && (j == 0) || (Qmax < QQ))
-      //      Qmax = QQ;
-      //  }
+      for (int i = 0; i <= _N; i++)
+        for (int j = 0; j <= _N; j++)
+        {
+          QQ = eque_lines.pDat[(_N + 1) * i + j].Q;
+          if ((i == 0) && (j == 0) || (Qmin > QQ))
+            Qmin = eque_lines.pDat[(_N + 1) * i + j].Q;
+          if ((i == 0) && (j == 0) || (Qmax < QQ))
+            Qmax = QQ;
+        }
 
       double hQ1 = (Qmax - Qmin) / _M1; // шаг функции по уровням
       int ku = 0; // позиция в сетке уровней   
-      //for (int i = 0; i < _M1; i++) // вычисление значений функции на основных уровнях 
-      //  eque_lines.pQ[ku++] = Qmax - hQ1 * i;
+      for (int i = 0; i < _M1; i++) // вычисление значений функции на основных уровнях 
+        eque_lines.pQ[ku++] = Qmax - hQ1 * i;
 
       double hQ2 = hQ1 / (_M2 + 1); // шаг функции по подуровням
-      //for (int i = 1; i <= _M2; i++) // вычисление значений функции на подуровнях
-      //  eque_lines.pQ[ku++] = eque_lines.pQ[_M1 - 1] - hQ2 * i;
+      for (int i = 1; i <= _M2; i++) // вычисление значений функции на подуровнях
+        eque_lines.pQ[ku++] = eque_lines.pQ[_M1 - 1] - hQ2 * i;
 
-      //for (int i = 1; i <= _M3; i++) // вычисление значений функции на "под-подуровнях"
-      //  eque_lines.pQ[ku++] = eque_lines.pQ[_M1 + _M2 - 1] - (hQ2 / (_M3 + 1)) * i;
+      for (int i = 1; i <= _M3; i++) // вычисление значений функции на "под-подуровнях"
+        eque_lines.pQ[ku++] = eque_lines.pQ[_M1 + _M2 - 1] - (hQ2 / (_M3 + 1)) * i;
 
-      //pBox_T_criterion.Refresh();
-      SetSubLevels(0);
-      // T
-      for (int i = 0; i <= _N; ++i)
-      {
-        for (int j = 0; j <= _N; ++j)
-        {
-          eque_lines.pDat[i * _N + j].x = XMin + hx * i;
-          eque_lines.pDat[i * _N + j].y = YMin + hy * j;
-          eque_lines.pDat[i * _N + j].Q = DrawCriteria[(i * _N + j) * 5];
-        }
-      }
-      for (int i = 0; i < M; i++)
-      {
-        eque_lines.pQ[i] = DrawCriteria[(_N + 1) * (_N + 1) * 5 + i * 5];
-      }
       pBox_T_criterion.Refresh();
+      SetSubLevels(0);
 
       // H
       for (int i = 0; i < (_N + 1) * (_N + 1); ++i)

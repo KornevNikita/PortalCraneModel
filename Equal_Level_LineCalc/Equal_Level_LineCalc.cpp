@@ -88,6 +88,10 @@ void SetDat(int F_Num, bool system)
 
 void SetSubLevels(int shift)
 {
+
+  //for (int i = 0; i < (N + 1) * (N + 1); ++i)
+  //  pDat[i].Q = DrawCriteria[i * 5];
+
   double Qmin, Qmax, QQ;
   Qmin = 1.7976931348623158e+308;
   Qmax = 2.2250738585072014e-308;
@@ -131,6 +135,11 @@ void SetSubLevels(int shift)
   {
     pQ[ku + shift] = Qmax - hQ1 * i;
     ku += 5;
+    if (shift == 4)
+    {
+      fout << "hQ1 = " << hQ1 << endl;
+      fout << "aa = " << Qmax - hQ1 * i << endl;
+    }
   }
 
   double hQ2 = hQ1 / (M2 + 1); // шаг функции по подуровням
@@ -145,28 +154,13 @@ void SetSubLevels(int shift)
     pQ[ku + shift] = pQ[M1 + M2 - 1 - (4 - shift)] - (hQ2 / (M3 + 1)) * i;
     ku += 5;
   }
-}
 
-void InitAllCriteriaArray(TAllDrawPoints<criteria>* allDrawData)
-{
-  allDrawData->AllocMem(allDrawData->drawCount);
-}
-
-void DeleteAllCriteriaArray(TAllDrawPoints<criteria>* allDrawData)
-{
-  allDrawData->FreeMem();
-}
-
-void GetPDat_and_pQ(TAllDrawPoints<criteria>* allDrawData)
-{
-  for (int i = 0; i < (N + 1) * (N + 1); ++i)
-    allDrawData->allDrawPoints[i] = pDat[i].Q;
-
-  int count = 0;
-  for (int i = 0; i < M * 5; i += 5)
+  if (shift == 4)
   {
-    criteria temp(pQ[i], pQ[i + 1], pQ[i + 2], pQ[i + 3], pQ[i + 4]);
-    allDrawData->allDrawPoints[(N + 1) * (N + 1) + count] = temp;
-    count++;
+    /*std::ofstream fout("eq-lvl-log.txt", ios::app);
+    fout.precision(12);*/
+
+    for (int i = 0; i < ku; ++i)
+      fout << "ku = " << i << ") " << pQ[i] << endl;
   }
 }

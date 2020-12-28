@@ -74,7 +74,7 @@ void init_matrix_A();
 
 void Calc_criteria(criteria& c);
 
-/* ======================== End of internal functions: ======================= */
+/* ======================== End of nternal functions: ======================= */
 
 
 
