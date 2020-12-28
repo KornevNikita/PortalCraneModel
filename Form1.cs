@@ -216,6 +216,9 @@ namespace PortalCraneModel
     [DllImport(dll2, CallingConvention = CallingConvention.Cdecl)]
     public static extern void SetDat(int F_Num, bool system);
 
+    [DllImport(dll2, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void SetSubLevels(int shift);
+
     // =========== End of Equal_Level_LineCalc.dll import functions ============
 
 
@@ -2070,7 +2073,6 @@ namespace PortalCraneModel
         {
           QQ = eque_lines.pDat[(_N + 1) * i + j].Q;
           if ((i == 0) && (j == 0) || (Qmin > QQ))
-
             Qmin = eque_lines.pDat[(_N + 1) * i + j].Q;
           if ((i == 0) && (j == 0) || (Qmax < QQ))
             Qmax = QQ;
@@ -2089,6 +2091,7 @@ namespace PortalCraneModel
         eque_lines.pQ[ku++] = eque_lines.pQ[_M1 + _M2 - 1] - (hQ2 / (_M3 + 1)) * i;
 
       pBox_T_criterion.Refresh();
+      SetSubLevels(0);
 
       // H
       for (int i = 0; i < (_N + 1) * (_N + 1); ++i)
@@ -2121,6 +2124,7 @@ namespace PortalCraneModel
         eque_lines.pQ[ku++] = eque_lines.pQ[_M1 + _M2 - 1] - (hQ2 / (_M3 + 1)) * i;
 
       pBox_H_criterion.Refresh();
+      SetSubLevels(1);
 
       // h1
       for (int i = 0; i < (_N + 1) * (_N + 1); ++i)
@@ -2153,6 +2157,7 @@ namespace PortalCraneModel
         eque_lines.pQ[ku++] = eque_lines.pQ[_M1 + _M2 - 1] - (hQ2 / (_M3 + 1)) * i;
 
       pBox_h1_criterion.Refresh();
+      SetSubLevels(2);
 
       //h2
       for (int i = 0; i < (_N + 1) * (_N + 1); ++i)
@@ -2185,6 +2190,7 @@ namespace PortalCraneModel
         eque_lines.pQ[ku++] = eque_lines.pQ[_M1 + _M2 - 1] - (hQ2 / (_M3 + 1)) * i;
 
       pBox_h2_criterion.Refresh();
+      SetSubLevels(3);
 
       // Vmax
       for (int i = 0; i < (_N + 1) * (_N + 1); ++i)
@@ -2217,6 +2223,7 @@ namespace PortalCraneModel
         eque_lines.pQ[ku++] = eque_lines.pQ[_M1 + _M2 - 1] - (hQ2 / (_M3 + 1)) * i;
 
       pBox_Vmax_criterion.Refresh();
+      SetSubLevels(4);
     }
 
     private void pic_Paint_T(object sender, PaintEventArgs e)

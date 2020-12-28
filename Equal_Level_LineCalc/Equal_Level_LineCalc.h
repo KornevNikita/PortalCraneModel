@@ -15,7 +15,7 @@ struct Node
 double XMin, XMax, YMin, YMax; // calculation area
 
 Node<criteria>* pDat;
-criteria* pQ;
+double* pQ;
 int N; // число разбиений сетки
 int M; // общее число уровней
 int M1; // число основных узлов
@@ -30,3 +30,6 @@ void CreateDat(int _N, int _M1, int _M2, int _M3);
 
 extern "C" __declspec(dllexport)
 void SetDat(int F_Num, bool system);
+
+extern "C" __declspec(dllexport)
+void SetSubLevels(int shift);
