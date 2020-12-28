@@ -70,16 +70,17 @@ void SetDat(int F_Num, bool system)
           x[0] = pDat[(N + 1) * i + j].x = XMin + hx * i;
           x[1] = pDat[(N + 1) * i + j].y = YMin + hy * j;
 
-          fout << criteria_count << ") ";
-          fout << x[0] << " " << x[1] << " " << p[2] << " " << " " << p[3] << endl;
-          fout << c;
-          fout << endl;
-          fout << criteria_count << ") ";
-
           QQ = pDat[(N + 1) * i + j].Q = F.Get_value(x, system); // schitaem znachenie v (x,y)
-          criteria_count++;
-
+          
+          fout << criteria_count << ") ";
+          fout << "(" << x[0] << ", " << x[1] << ") " <<
+            "(" << x[0] << ", " << -1. * x[1] << ") " <<
+            "(" << x[0] << ", " << x[1] << ") " <<
+            "(" << x[0] << ", " << -1. * x[1] << ") " << endl;
           fout << QQ;
+          fout << endl;
+
+          criteria_count++;
         }
     }
   }
@@ -96,7 +97,6 @@ void SetSubLevels(int shift)
   Qmax = 2.2250738585072014e-308;
 
   std::ofstream fout("eq-lvl-log.txt", ios::app);
-  fout << "shift = " << shift << endl;
   fout.precision(12);
 
   for (int i = 0; i <= N; i++)

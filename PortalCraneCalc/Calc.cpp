@@ -540,6 +540,7 @@ void Calc_criteria_eque_lines(TAllDrawPoints<criteria>* ptrCriteriaPoints, bool 
   criteria c;
 
   Calc_criteria(c);
+  V.clear();
 
   ptrCriteriaPoints->allDrawPoints[criteria_count++] = c;
   //all_criteria.push_back(c);
@@ -569,8 +570,8 @@ void Calc_criteria_eque_lines1(criteria& c, bool system)
 
   //criteria c;
 
-  Calc_criteria(c);
-
+  calc_quality_criteria(c);
+  V.clear();
 
   //ptrCriteriaPoints->allDrawPoints[criteria_count++] = c;
   //all_criteria.push_back(c);
