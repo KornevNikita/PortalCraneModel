@@ -96,9 +96,6 @@ void SetSubLevels(int shift)
   Qmin = 1.7976931348623158e+308;
   Qmax = 2.2250738585072014e-308;
 
-  std::ofstream fout("eq-lvl-log.txt", ios::app);
-  fout.precision(12);
-
   for (int i = 0; i <= N; i++)
     for (int j = 0; j <= N; j++)
     {
@@ -125,21 +122,12 @@ void SetSubLevels(int shift)
       if ((i == 0) && (j == 0) || (QQ > Qmax)) { Qmax = QQ; }
     }
 
-  //fout << "Qmax = " << Qmax << endl;
-  //fout << "Qmin = " << Qmin << endl;
-
-
   double hQ1 = (Qmax - Qmin) / M1; // шаг функции по уровням
   int ku = 0; // позиция в сетке уровней   
   for (int i = 0; i < M1; i++) // вычисление значений функции на основных уровнях 
   {
     pQ[ku + shift] = Qmax - hQ1 * i;
     ku += 5;
-    if (shift == 4)
-    {
-      fout << "hQ1 = " << hQ1 << endl;
-      fout << "aa = " << Qmax - hQ1 * i << endl;
-    }
   }
 
   double hQ2 = hQ1 / (M2 + 1); // шаг функции по подуровням
@@ -153,14 +141,5 @@ void SetSubLevels(int shift)
   {
     pQ[ku + shift] = pQ[M1 + M2 - 1 - (4 - shift)] - (hQ2 / (M3 + 1)) * i;
     ku += 5;
-  }
-
-  if (shift == 4)
-  {
-    /*std::ofstream fout("eq-lvl-log.txt", ios::app);
-    fout.precision(12);*/
-
-    for (int i = 0; i < ku; ++i)
-      fout << "ku = " << i << ") " << pQ[i] << endl;
   }
 }
