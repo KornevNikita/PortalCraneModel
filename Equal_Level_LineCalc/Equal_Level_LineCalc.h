@@ -33,3 +33,6 @@ void SetDat(int F_Num, bool system);
 
 extern "C" __declspec(dllexport)
 void SetSubLevels(int shift);
+
+extern "C" __declspec(dllexport)
+void Get_pDat_and_pQ(TAllDrawPoints<criteria>* ptr);

@@ -28,9 +28,9 @@ namespace PortalCraneModel
     public static double[] DrawPoints, DrawCriteria;
 
 
-    public static IntPtr ptrTAllDrawPoints, ptrCriteria_pDat;
+    public static IntPtr ptrTAllDrawPoints, ptrCriteria;
 
-    public static PortalCraneModel.TAllDrawPoints allPoints, criteria_pDat;
+    public static PortalCraneModel.TAllDrawPoints allPoints, criteria;
 
     public static double M, m, l, R, g,
       h_fi, h_x, B, gamma, E, // parametri modeli
@@ -207,6 +207,9 @@ namespace PortalCraneModel
 
     [DllImport(dll2, CallingConvention = CallingConvention.Cdecl)]
     public static extern void SetSubLevels(int shift);
+
+    [DllImport(dll2, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void Get_pDat_and_pQ(IntPtr ptr);
 
     // =========== End of Equal_Level_LineCalc.dll import functions ============
 
@@ -1837,15 +1840,16 @@ namespace PortalCraneModel
           return;
         else
         {
-          double Qmin, Qmax, QQ;
+          //double Qmin, Qmax, QQ;
+          double QQ;
           int i, j; // номер узла
           double hx = (_b0 - _a0) / N; // вычисление шага по x
           double hy = (_b1 - _a1) / N; // вычисление шага по y
           double[] x_p = new double[2];
           // обход сетки
           pt = new double[2];
-          Qmin = 1.7976931348623158e+308;
-          Qmax = 2.2250738585072014e-308;
+          //Qmin = 1.7976931348623158e+308;
+          //Qmax = 2.2250738585072014e-308;
           if (F_Num == 7)
             F.set_func(m1, m2, c1, c2, w1, w2);
           F.set(F_Num);
@@ -1998,13 +2002,14 @@ namespace PortalCraneModel
     {
       // zdes' neobhodimo prochitat' vvedennie dannie & peredat' d v DLL dlya rascheta
       // parametri calculatora liniy:
-      int _N = System.Convert.ToInt32(DL_N.Text);
+      int N = System.Convert.ToInt32(DL_N.Text);
       int _M1 = System.Convert.ToInt32(DL_M1.Text);
       int _M2 = System.Convert.ToInt32(DL_M2.Text);
       int _M3 = System.Convert.ToInt32(DL_M3.Text);
+      int M = _M1 + _M2 + _M3;
 
-      Draw_Line.CreateDat(_N, _M1, _M2, _M3);
-      CreateDat(_N, _M1, _M2, _M3);
+      Draw_Line.CreateDat(N, _M1, _M2, _M3);
+      CreateDat(N, _M1, _M2, _M3);
 
       XMin = System.Convert.ToDouble(xmin_t.Text);
       XMax = System.Convert.ToDouble(xmax_t.Text);
@@ -2020,199 +2025,262 @@ namespace PortalCraneModel
       SetInitVal(); // начальное состояние системы
 
       // определяем количество точек, которые будут отрисованы
-      criteria_pDat.drawCount = (_N + 1) * (_N + 1);
+      criteria.drawCount = (N + 1) * (N + 1) + M;
 
       // создаем управляемое хранилище
-      DrawCriteria = new double[criteria_pDat.drawCount * 5];
+      DrawCriteria = new double[criteria.drawCount * 5];
 
       // определяем размер управляемой структуры
       int sizeStruct = Marshal.SizeOf(typeof(PortalCraneModel.TAllDrawPoints));
 
       // выделяем память под неуправляемую структуру
-      ptrCriteria_pDat = Marshal.AllocHGlobal(sizeStruct);
+      ptrCriteria = Marshal.AllocHGlobal(sizeStruct);
 
       // копируем данные из неуправляемой в управляемую
-      Marshal.StructureToPtr(criteria_pDat, ptrCriteria_pDat, false);
+      Marshal.StructureToPtr(criteria, ptrCriteria, false);
 
       // выделяем память под внутренний неуправляемый массив в неупр структуре
-      PortalCraneModel.InitAllPointsArray(ptrCriteria_pDat);
+      PortalCraneModel.InitAllPointsArray(ptrCriteria);
 
       is_calc_criteria = true; // t.e. risovat trajektorii ne nujno
 
       Draw_Line.SetDat(XMin, XMax, YMin, YMax, false, System.Convert.ToInt32(func_num_text.Text));
       SetDat(System.Convert.ToInt32(func_num_text.Text), cBox_non_linear.Checked);
+      SetSubLevels(0);
+      SetSubLevels(1);
+      SetSubLevels(2);
+      SetSubLevels(3);
+      SetSubLevels(4);
+      Get_pDat_and_pQ(ptrCriteria);
 
       is_calc_criteria = false;
 
-      criteria_pDat = (PortalCraneModel.TAllDrawPoints)Marshal.PtrToStructure(ptrCriteria_pDat, typeof(PortalCraneModel.TAllDrawPoints));
-      Marshal.Copy(criteria_pDat.allDrawPoints, DrawCriteria, 0, criteria_pDat.drawCount * 5);
-      PortalCraneModel.DeleteAllPointsArray(ptrCriteria_pDat);
-      Marshal.FreeHGlobal(ptrCriteria_pDat);
+      criteria = (PortalCraneModel.TAllDrawPoints)Marshal.PtrToStructure(ptrCriteria, typeof(PortalCraneModel.TAllDrawPoints));
+      Marshal.Copy(criteria.allDrawPoints, DrawCriteria, 0, criteria.drawCount * 5);
+      PortalCraneModel.DeleteAllPointsArray(ptrCriteria);
+      Marshal.FreeHGlobal(ptrCriteria);
 
+      double hx = (XMax - XMin) / N; // вычисление шага по x
+      double hy = (YMax - YMin) / N; // вычисление шага по y
+
+      // neobhodimo razlojit' DrawCriteria na pDat & pQ
       // T
-      for (int i = 0; i < (_N + 1) * (_N + 1); ++i)
-        eque_lines.pDat[i].Q = DrawCriteria[i * 5];
+      for (int i = 0; i <= N; ++i)
+      {
+        for (int j = 0; j <= N; ++j)
+        {
+          eque_lines.pDat[(N + 1) * i + j].Q = DrawCriteria[(i * (N + 1) + j) * 5];
+          eque_lines.pDat[(N + 1) * i + j].x = XMin + hx * i;
+          eque_lines.pDat[(N + 1) * i + j].y = YMin + hy * j;
+        }
+      }
+      for (int i = 0; i < M; ++i)
+        eque_lines.pQ[i] = DrawCriteria[((N + 1) * (N + 1) + i) * 5];
+
+      //// T
+      //for (int i = 0; i < (N + 1) * (N + 1); ++i)
+      //  eque_lines.pDat[i].Q = DrawCriteria[i * 5];
 
       double Qmin, Qmax, QQ;
       Qmin = 1.7976931348623158e+308;
       Qmax = 2.2250738585072014e-308;
 
-      for (int i = 0; i <= _N; i++)
-        for (int j = 0; j <= _N; j++)
-        {
-          QQ = eque_lines.pDat[(_N + 1) * i + j].Q;
-          if ((i == 0) && (j == 0) || (Qmin > QQ))
-            Qmin = eque_lines.pDat[(_N + 1) * i + j].Q;
-          if ((i == 0) && (j == 0) || (Qmax < QQ))
-            Qmax = QQ;
-        }
+      //for (int i = 0; i <= N; i++)
+      //  for (int j = 0; j <= N; j++)
+      //  {
+      //    QQ = eque_lines.pDat[(N + 1) * i + j].Q;
+      //    if ((i == 0) && (j == 0) || (Qmin > QQ))
+      //      Qmin = eque_lines.pDat[(N + 1) * i + j].Q;
+      //    if ((i == 0) && (j == 0) || (Qmax < QQ))
+      //      Qmax = QQ;
+      //  }
 
       double hQ1 = (Qmax - Qmin) / _M1; // шаг функции по уровням
       int ku = 0; // позиция в сетке уровней   
-      for (int i = 0; i < _M1; i++) // вычисление значений функции на основных уровнях 
-        eque_lines.pQ[ku++] = Qmax - hQ1 * i;
+      //for (int i = 0; i < _M1; i++) // вычисление значений функции на основных уровнях 
+      //  eque_lines.pQ[ku++] = Qmax - hQ1 * i;
 
       double hQ2 = hQ1 / (_M2 + 1); // шаг функции по подуровням
-      for (int i = 1; i <= _M2; i++) // вычисление значений функции на подуровнях
-        eque_lines.pQ[ku++] = eque_lines.pQ[_M1 - 1] - hQ2 * i;
+      //for (int i = 1; i <= _M2; i++) // вычисление значений функции на подуровнях
+      //  eque_lines.pQ[ku++] = eque_lines.pQ[_M1 - 1] - hQ2 * i;
 
-      for (int i = 1; i <= _M3; i++) // вычисление значений функции на "под-подуровнях"
-        eque_lines.pQ[ku++] = eque_lines.pQ[_M1 + _M2 - 1] - (hQ2 / (_M3 + 1)) * i;
+      //for (int i = 1; i <= _M3; i++) // вычисление значений функции на "под-подуровнях"
+      //  eque_lines.pQ[ku++] = eque_lines.pQ[_M1 + _M2 - 1] - (hQ2 / (_M3 + 1)) * i;
 
       pBox_T_criterion.Refresh();
-      SetSubLevels(0);
+      //SetSubLevels(0);
 
       // H
-      for (int i = 0; i < (_N + 1) * (_N + 1); ++i)
-        eque_lines.pDat[i].Q = DrawCriteria[i * 5 + 1];
+      //for (int i = 0; i < (N + 1) * (N + 1); ++i)
+      //  eque_lines.pDat[i].Q = DrawCriteria[i * 5 + 1];
 
-      Qmin = 1.7976931348623158e+308;
-      Qmax = 2.2250738585072014e-308;
+      //Qmin = 1.7976931348623158e+308;
+      //Qmax = 2.2250738585072014e-308;
 
-      for (int i = 0; i <= _N; i++)
-        for (int j = 0; j <= _N; j++)
+      //for (int i = 0; i <= N; i++)
+      //  for (int j = 0; j <= N; j++)
+      //  {
+      //    QQ = eque_lines.pDat[(N + 1) * i + j].Q;
+      //    if ((i == 0) && (j == 0) || (Qmin > QQ))
+
+      //      Qmin = eque_lines.pDat[(N + 1) * i + j].Q;
+      //    if ((i == 0) && (j == 0) || (Qmax < QQ))
+      //      Qmax = QQ;
+      //  }
+
+      for (int i = 0; i <= N; ++i)
+      {
+        for (int j = 0; j <= N; ++j)
         {
-          QQ = eque_lines.pDat[(_N + 1) * i + j].Q;
-          if ((i == 0) && (j == 0) || (Qmin > QQ))
-
-            Qmin = eque_lines.pDat[(_N + 1) * i + j].Q;
-          if ((i == 0) && (j == 0) || (Qmax < QQ))
-            Qmax = QQ;
+          eque_lines.pDat[(N + 1) * i + j].Q = DrawCriteria[(i * (N + 1) + j) * 5 + 1];
         }
+      }
+      for (int i = 0; i < M; ++i)
+        eque_lines.pQ[i] = DrawCriteria[((N + 1) * (N + 1) + i) * 5 + 1];
 
-      hQ1 = (Qmax - Qmin) / _M1; // шаг функции по уровням
-      ku = 0; // позиция в сетке уровней   
-      for (int i = 0; i < _M1; i++) // вычисление значений функции на основных уровнях 
-        eque_lines.pQ[ku++] = Qmax - hQ1 * i;
+      //hQ1 = (Qmax - Qmin) / _M1; // шаг функции по уровням
+      //ku = 0; // позиция в сетке уровней   
+      //for (int i = 0; i < _M1; i++) // вычисление значений функции на основных уровнях 
+      //  eque_lines.pQ[ku++] = Qmax - hQ1 * i;
 
-      hQ2 = hQ1 / (_M2 + 1); // шаг функции по подуровням
-      for (int i = 1; i <= _M2; i++) // вычисление значений функции на подуровнях
-        eque_lines.pQ[ku++] = eque_lines.pQ[_M1 - 1] - hQ2 * i;
+      //hQ2 = hQ1 / (_M2 + 1); // шаг функции по подуровням
+      //for (int i = 1; i <= _M2; i++) // вычисление значений функции на подуровнях
+      //  eque_lines.pQ[ku++] = eque_lines.pQ[_M1 - 1] - hQ2 * i;
 
-      for (int i = 1; i <= _M3; i++) // вычисление значений функции на "под-подуровнях"
-        eque_lines.pQ[ku++] = eque_lines.pQ[_M1 + _M2 - 1] - (hQ2 / (_M3 + 1)) * i;
+      //for (int i = 1; i <= _M3; i++) // вычисление значений функции на "под-подуровнях"
+      //  eque_lines.pQ[ku++] = eque_lines.pQ[_M1 + _M2 - 1] - (hQ2 / (_M3 + 1)) * i;
 
       pBox_H_criterion.Refresh();
-      SetSubLevels(1);
+      //SetSubLevels(1);
 
       // h1
-      for (int i = 0; i < (_N + 1) * (_N + 1); ++i)
-        eque_lines.pDat[i].Q = DrawCriteria[i * 5 + 2];
+      //for (int i = 0; i < (N + 1) * (N + 1); ++i)
+      //  eque_lines.pDat[i].Q = DrawCriteria[i * 5 + 2];
 
-      Qmin = 1.7976931348623158e+308;
-      Qmax = 2.2250738585072014e-308;
+      //Qmin = 1.7976931348623158e+308;
+      //Qmax = 2.2250738585072014e-308;
 
-      for (int i = 0; i <= _N; i++)
-        for (int j = 0; j <= _N; j++)
+      //for (int i = 0; i <= N; i++)
+      //  for (int j = 0; j <= N; j++)
+      //  {
+      //    QQ = eque_lines.pDat[(N + 1) * i + j].Q;
+      //    if ((i == 0) && (j == 0) || (Qmin > QQ))
+
+      //      Qmin = eque_lines.pDat[(N + 1) * i + j].Q;
+      //    if ((i == 0) && (j == 0) || (Qmax < QQ))
+      //      Qmax = QQ;
+      //  }
+
+      //hQ1 = (Qmax - Qmin) / _M1; // шаг функции по уровням
+      //ku = 0; // позиция в сетке уровней   
+      //for (int i = 0; i < _M1; i++) // вычисление значений функции на основных уровнях 
+      //  eque_lines.pQ[ku++] = Qmax - hQ1 * i;
+
+      //hQ2 = hQ1 / (_M2 + 1); // шаг функции по подуровням
+      //for (int i = 1; i <= _M2; i++) // вычисление значений функции на подуровнях
+      //  eque_lines.pQ[ku++] = eque_lines.pQ[_M1 - 1] - hQ2 * i;
+
+      //for (int i = 1; i <= _M3; i++) // вычисление значений функции на "под-подуровнях"
+      //  eque_lines.pQ[ku++] = eque_lines.pQ[_M1 + _M2 - 1] - (hQ2 / (_M3 + 1)) * i;
+
+      for (int i = 0; i <= N; ++i)
+      {
+        for (int j = 0; j <= N; ++j)
         {
-          QQ = eque_lines.pDat[(_N + 1) * i + j].Q;
-          if ((i == 0) && (j == 0) || (Qmin > QQ))
-
-            Qmin = eque_lines.pDat[(_N + 1) * i + j].Q;
-          if ((i == 0) && (j == 0) || (Qmax < QQ))
-            Qmax = QQ;
+          eque_lines.pDat[(N + 1) * i + j].Q = DrawCriteria[(i * (N + 1) + j) * 5 + 2];
         }
-
-      hQ1 = (Qmax - Qmin) / _M1; // шаг функции по уровням
-      ku = 0; // позиция в сетке уровней   
-      for (int i = 0; i < _M1; i++) // вычисление значений функции на основных уровнях 
-        eque_lines.pQ[ku++] = Qmax - hQ1 * i;
-
-      hQ2 = hQ1 / (_M2 + 1); // шаг функции по подуровням
-      for (int i = 1; i <= _M2; i++) // вычисление значений функции на подуровнях
-        eque_lines.pQ[ku++] = eque_lines.pQ[_M1 - 1] - hQ2 * i;
-
-      for (int i = 1; i <= _M3; i++) // вычисление значений функции на "под-подуровнях"
-        eque_lines.pQ[ku++] = eque_lines.pQ[_M1 + _M2 - 1] - (hQ2 / (_M3 + 1)) * i;
+      }
+      for (int i = 0; i < M; ++i)
+        eque_lines.pQ[i] = DrawCriteria[((N + 1) * (N + 1) + i) * 5 + 2];
 
       pBox_h1_criterion.Refresh();
-      SetSubLevels(2);
+      //SetSubLevels(2);
 
       //h2
-      for (int i = 0; i < (_N + 1) * (_N + 1); ++i)
-        eque_lines.pDat[i].Q = DrawCriteria[i * 5 + 3];
+      //for (int i = 0; i < (N + 1) * (N + 1); ++i)
+      //  eque_lines.pDat[i].Q = DrawCriteria[i * 5 + 3];
 
-      Qmin = 1.7976931348623158e+308;
-      Qmax = 2.2250738585072014e-308;
+      //Qmin = 1.7976931348623158e+308;
+      //Qmax = 2.2250738585072014e-308;
 
-      for (int i = 0; i <= _N; i++)
-        for (int j = 0; j <= _N; j++)
+      //for (int i = 0; i <= N; i++)
+      //  for (int j = 0; j <= N; j++)
+      //  {
+      //    QQ = eque_lines.pDat[(N + 1) * i + j].Q;
+      //    if ((i == 0) && (j == 0) || (Qmin > QQ))
+
+      //      Qmin = eque_lines.pDat[(N + 1) * i + j].Q;
+      //    if ((i == 0) && (j == 0) || (Qmax < QQ))
+      //      Qmax = QQ;
+      //  }
+
+      //hQ1 = (Qmax - Qmin) / _M1; // шаг функции по уровням
+      //ku = 0; // позиция в сетке уровней   
+      //for (int i = 0; i < _M1; i++) // вычисление значений функции на основных уровнях 
+      //  eque_lines.pQ[ku++] = Qmax - hQ1 * i;
+
+      //hQ2 = hQ1 / (_M2 + 1); // шаг функции по подуровням
+      //for (int i = 1; i <= _M2; i++) // вычисление значений функции на подуровнях
+      //  eque_lines.pQ[ku++] = eque_lines.pQ[_M1 - 1] - hQ2 * i;
+
+      //for (int i = 1; i <= _M3; i++) // вычисление значений функции на "под-подуровнях"
+      //  eque_lines.pQ[ku++] = eque_lines.pQ[_M1 + _M2 - 1] - (hQ2 / (_M3 + 1)) * i;
+
+      for (int i = 0; i <= N; ++i)
+      {
+        for (int j = 0; j <= N; ++j)
         {
-          QQ = eque_lines.pDat[(_N + 1) * i + j].Q;
-          if ((i == 0) && (j == 0) || (Qmin > QQ))
-
-            Qmin = eque_lines.pDat[(_N + 1) * i + j].Q;
-          if ((i == 0) && (j == 0) || (Qmax < QQ))
-            Qmax = QQ;
+          eque_lines.pDat[(N + 1) * i + j].Q = DrawCriteria[(i * (N + 1) + j) * 5 + 3];
         }
-
-      hQ1 = (Qmax - Qmin) / _M1; // шаг функции по уровням
-      ku = 0; // позиция в сетке уровней   
-      for (int i = 0; i < _M1; i++) // вычисление значений функции на основных уровнях 
-        eque_lines.pQ[ku++] = Qmax - hQ1 * i;
-
-      hQ2 = hQ1 / (_M2 + 1); // шаг функции по подуровням
-      for (int i = 1; i <= _M2; i++) // вычисление значений функции на подуровнях
-        eque_lines.pQ[ku++] = eque_lines.pQ[_M1 - 1] - hQ2 * i;
-
-      for (int i = 1; i <= _M3; i++) // вычисление значений функции на "под-подуровнях"
-        eque_lines.pQ[ku++] = eque_lines.pQ[_M1 + _M2 - 1] - (hQ2 / (_M3 + 1)) * i;
+      }
+      for (int i = 0; i < M; ++i)
+        eque_lines.pQ[i] = DrawCriteria[((N + 1) * (N + 1) + i) * 5 + 3];
 
       pBox_h2_criterion.Refresh();
-      SetSubLevels(3);
+      //SetSubLevels(3);
 
       // Vmax
-      for (int i = 0; i < (_N + 1) * (_N + 1); ++i)
-        eque_lines.pDat[i].Q = DrawCriteria[i * 5 + 4];
+      //for (int i = 0; i < (N + 1) * (N + 1); ++i)
+      //  eque_lines.pDat[i].Q = DrawCriteria[i * 5 + 4];
 
-      Qmin = 1.7976931348623158e+308;
-      Qmax = 2.2250738585072014e-308;
+      //Qmin = 1.7976931348623158e+308;
+      //Qmax = 2.2250738585072014e-308;
 
-      for (int i = 0; i <= _N; i++)
-        for (int j = 0; j <= _N; j++)
+      //for (int i = 0; i <= N; i++)
+      //  for (int j = 0; j <= N; j++)
+      //  {
+      //    QQ = eque_lines.pDat[(N + 1) * i + j].Q;
+      //    if ((i == 0) && (j == 0) || (Qmin > QQ))
+
+      //      Qmin = eque_lines.pDat[(N + 1) * i + j].Q;
+      //    if ((i == 0) && (j == 0) || (Qmax < QQ))
+      //      Qmax = QQ;
+      //  }
+
+      //hQ1 = (Qmax - Qmin) / _M1; // шаг функции по уровням
+      //ku = 0; // позиция в сетке уровней   
+      //for (int i = 0; i < _M1; i++) // вычисление значений функции на основных уровнях 
+      //  eque_lines.pQ[ku++] = Qmax - hQ1 * i;
+
+      //hQ2 = hQ1 / (_M2 + 1); // шаг функции по подуровням
+      //for (int i = 1; i <= _M2; i++) // вычисление значений функции на подуровнях
+      //  eque_lines.pQ[ku++] = eque_lines.pQ[_M1 - 1] - hQ2 * i;
+
+      //for (int i = 1; i <= _M3; i++) // вычисление значений функции на "под-подуровнях"
+      //  eque_lines.pQ[ku++] = eque_lines.pQ[_M1 + _M2 - 1] - (hQ2 / (_M3 + 1)) * i;
+
+      for (int i = 0; i <= N; ++i)
+      {
+        for (int j = 0; j <= N; ++j)
         {
-          QQ = eque_lines.pDat[(_N + 1) * i + j].Q;
-          if ((i == 0) && (j == 0) || (Qmin > QQ))
-
-            Qmin = eque_lines.pDat[(_N + 1) * i + j].Q;
-          if ((i == 0) && (j == 0) || (Qmax < QQ))
-            Qmax = QQ;
+          eque_lines.pDat[(N + 1) * i + j].Q = DrawCriteria[(i * (N + 1) + j) * 5 + 4];
         }
-
-      hQ1 = (Qmax - Qmin) / _M1; // шаг функции по уровням
-      ku = 0; // позиция в сетке уровней   
-      for (int i = 0; i < _M1; i++) // вычисление значений функции на основных уровнях 
-        eque_lines.pQ[ku++] = Qmax - hQ1 * i;
-
-      hQ2 = hQ1 / (_M2 + 1); // шаг функции по подуровням
-      for (int i = 1; i <= _M2; i++) // вычисление значений функции на подуровнях
-        eque_lines.pQ[ku++] = eque_lines.pQ[_M1 - 1] - hQ2 * i;
-
-      for (int i = 1; i <= _M3; i++) // вычисление значений функции на "под-подуровнях"
-        eque_lines.pQ[ku++] = eque_lines.pQ[_M1 + _M2 - 1] - (hQ2 / (_M3 + 1)) * i;
+      }
+      for (int i = 0; i < M; ++i)
+        eque_lines.pQ[i] = DrawCriteria[((N + 1) * (N + 1) + i) * 5 + 4];
 
       pBox_Vmax_criterion.Refresh();
-      SetSubLevels(4);
+      //SetSubLevels(4);
     }
 
     private void pic_Paint_T(object sender, PaintEventArgs e)

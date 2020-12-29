@@ -31,7 +31,7 @@ namespace Contour_line
             PortalCraneModel.PortalCraneModel.Calc_regulator();
 
             PortalCraneModel.PortalCraneModel.Calc_criteria_eque_lines(
-              PortalCraneModel.PortalCraneModel.ptrCriteria_pDat,
+              PortalCraneModel.PortalCraneModel.ptrCriteria,
               PortalCraneModel.PortalCraneModel.cBox_non_linear.Checked);
 
             return 0;

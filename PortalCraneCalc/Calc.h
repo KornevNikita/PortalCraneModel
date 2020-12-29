@@ -49,7 +49,7 @@ struct TAllDrawPoints {
 
   void AllocMem(unsigned _drawCount)
   {
-    allDrawPoints = new point[_drawCount];
+    allDrawPoints = new T[_drawCount];
     drawCount = _drawCount;
   }
 

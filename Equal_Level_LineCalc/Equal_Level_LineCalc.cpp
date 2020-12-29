@@ -27,7 +27,7 @@ void CreateDat(int _N, int _M1, int _M2, int _M3)
   M1 = _M1;
   M2 = _M2;
   M3 = _M3;
-  M = M1 + M2 + M3 - 1;
+  M = M1 + M2 + M3;
   
   std::ofstream fout("eq-lvl-log.txt", ios::app);
   fout << "Data created" << endl;
@@ -96,6 +96,8 @@ void SetSubLevels(int shift)
   Qmin = 1.7976931348623158e+308;
   Qmax = 2.2250738585072014e-308;
 
+  std::ofstream fout("eq-lvl-log.txt", ios::app);
+  fout.precision(12);
   for (int i = 0; i <= N; i++)
     for (int j = 0; j <= N; j++)
     {
@@ -122,12 +124,20 @@ void SetSubLevels(int shift)
       if ((i == 0) && (j == 0) || (QQ > Qmax)) { Qmax = QQ; }
     }
 
+  if (shift == 2)
+  {
+    fout << "Qmin = " << Qmin << endl;
+    fout << "Qmax = " << Qmax << endl;
+  }
+
   double hQ1 = (Qmax - Qmin) / M1; // шаг функции по уровням
   int ku = 0; // позиция в сетке уровней   
   for (int i = 0; i < M1; i++) // вычисление значений функции на основных уровнях 
   {
     pQ[ku + shift] = Qmax - hQ1 * i;
     ku += 5;
+    if (shift == 2)
+      fout << "i = " << i << pQ[ku + shift] << endl;
   }
 
   double hQ2 = hQ1 / (M2 + 1); // шаг функции по подуровням
@@ -141,5 +151,27 @@ void SetSubLevels(int shift)
   {
     pQ[ku + shift] = pQ[M1 + M2 - 1 - (4 - shift)] - (hQ2 / (M3 + 1)) * i;
     ku += 5;
+  }
+
+  if (shift == 4)
+  {
+    fout << "kriteriy = " << shift << endl;
+    for (int i = 0; i < M * 5; ++i)
+      fout << i << " " << pQ[i] << endl;
+  }
+}
+
+void Get_pDat_and_pQ(TAllDrawPoints<criteria>* ptr)
+{
+  // put pDat
+  for (int i = 0; i < (N + 1) * (N + 1); i++)
+    ptr->allDrawPoints[i] = pDat[i].Q;
+
+  //put pQ
+  size_t count = 0;
+  for (int i = 0; i < M; ++i)
+  {
+    criteria temp(pQ[i * 5], pQ[i * 5 + 1], pQ[i * 5 + 2], pQ[i * 5 + 3], pQ[i * 5 + 4]);
+    ptr->allDrawPoints[(N + 1) * (N + 1) + count++] = temp;
   }
 }

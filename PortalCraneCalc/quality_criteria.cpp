@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "quality_criteria.h"
 
+#include <fstream>
+
 extern vector<point> all_points;
 extern vector<double> V;
 extern double delta; // delta okresntost 0
@@ -50,6 +52,8 @@ void calc_h1_criterion(double& h1)
   double max_loc_min = 0;
   double first, second, third; // berem 3 tochki, e. srednyaya < 1 & 3 => loc min
 
+  fstream fout("h1_criterion.txt", ios::app);
+
   for (size_t i = 0; i < all_points.size() - 2; ++i)
   {
     first = all_points[i].x;
@@ -58,6 +62,9 @@ void calc_h1_criterion(double& h1)
 
     if (second > 0 && second < first && second < third && second > max_loc_min)
       max_loc_min = second;
+
+    if (second < first && second < third)
+      fout << second << endl;
   }
 
   h1 = max_loc_min;
