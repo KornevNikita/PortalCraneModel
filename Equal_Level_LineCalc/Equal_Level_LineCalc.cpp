@@ -88,13 +88,8 @@ void SetDat(int F_Num, bool system)
 
 void SetSubLevels(int shift)
 {
-
-  //for (int i = 0; i < (N + 1) * (N + 1); ++i)
-  //  pDat[i].Q = DrawCriteria[i * 5];
-
-  double Qmin, Qmax, QQ;
-  Qmin = 1.7976931348623158e+308;
-  Qmax = 2.2250738585072014e-308;
+  double Qmin = 1.7976931348623158e+308,
+    Qmax = 2.2250738585072014e-308, QQ;
 
   std::ofstream fout("eq-lvl-log.txt", ios::app);
   fout.precision(12);
@@ -124,20 +119,12 @@ void SetSubLevels(int shift)
       if ((i == 0) && (j == 0) || (QQ > Qmax)) { Qmax = QQ; }
     }
 
-  if (shift == 2)
-  {
-    fout << "Qmin = " << Qmin << endl;
-    fout << "Qmax = " << Qmax << endl;
-  }
-
   double hQ1 = (Qmax - Qmin) / M1; // шаг функции по уровням
   int ku = 0; // позиция в сетке уровней   
   for (int i = 0; i < M1; i++) // вычисление значений функции на основных уровнях 
   {
     pQ[ku + shift] = Qmax - hQ1 * i;
     ku += 5;
-    if (shift == 2)
-      fout << "i = " << i << pQ[ku + shift] << endl;
   }
 
   double hQ2 = hQ1 / (M2 + 1); // шаг функции по подуровням
@@ -151,13 +138,6 @@ void SetSubLevels(int shift)
   {
     pQ[ku + shift] = pQ[M1 + M2 - 1 - (4 - shift)] - (hQ2 / (M3 + 1)) * i;
     ku += 5;
-  }
-
-  if (shift == 4)
-  {
-    fout << "kriteriy = " << shift << endl;
-    for (int i = 0; i < M * 5; ++i)
-      fout << i << " " << pQ[i] << endl;
   }
 }
 

@@ -577,3 +577,17 @@ void Calc_criteria_eque_lines1(criteria& c, bool system)
   //all_criteria.push_back(c);
   return;
 }
+
+void SetFirstPairOfRoots(double _p_re, double _p_im)
+{
+  complex<double> p1(_p_re, _p_im), p2(_p_re, -1. * _p_im);
+
+  p[0] = p1, p[1] = p2;
+}
+
+void SetSecondPairOfRoots(double _p_re, double _p_im)
+{
+  complex<double> p1(_p_re, _p_im), p2(_p_re, -1. * _p_im);
+
+  p[2] = p1, p[3] = p2;
+}

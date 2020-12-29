@@ -123,12 +123,11 @@ namespace PortalCraneModel
     public TextBox xmin_t;
     public TextBox ymin_t;
     public TextBox xmax_t;
-    public TextBox ymax_t;
     public TextBox DL_M3;
     public TextBox DL_N;
     public TextBox DL_M1;
     public TextBox DL_M2;
-    private TextBox func_num_text;
+    private static TextBox func_num_text;
     private Button button1;
     private Button button3;
     private PictureBox pBox_h2_criterion;
@@ -145,6 +144,13 @@ namespace PortalCraneModel
     private Label label_N;
     private Label label_sigma;
     private CheckBox drawing_on;
+    private Label eq_lines_time;
+    private Label label6;
+    private Label label12;
+    private static TextBox tBox_fix_Re;
+    private static TextBox tBox_fix_Im;
+    private Label label13;
+    private Label label14;
     private IContainer components;
 
 
@@ -188,6 +194,12 @@ namespace PortalCraneModel
 
     [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
     public static extern void Calc_criteria_eque_lines(IntPtr ptrAllDrawPoints, bool system);
+
+    [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void SetFirstPairOfRoots(double _p1_re, double _p1_im);
+
+    [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void SetSecondPairOfRoots(double _p1_re, double _p1_im);
 
     // ============= End of PortalCraneCalc.dll import functions ===============
 
@@ -512,8 +524,15 @@ namespace PortalCraneModel
       textBox_x = new System.Windows.Forms.TextBox();
       textBox_dfi_dt = new System.Windows.Forms.TextBox();
       tabPage2 = new System.Windows.Forms.TabPage();
+      eq_lines_time = new System.Windows.Forms.Label();
       label5 = new System.Windows.Forms.Label();
       groupBox4 = new System.Windows.Forms.GroupBox();
+      label12 = new System.Windows.Forms.Label();
+      label13 = new System.Windows.Forms.Label();
+      tBox_fix_Im = new System.Windows.Forms.TextBox();
+      tBox_fix_Re = new System.Windows.Forms.TextBox();
+      label6 = new System.Windows.Forms.Label();
+      label14 = new System.Windows.Forms.Label();
       label_mu1 = new System.Windows.Forms.Label();
       xmin_t = new System.Windows.Forms.TextBox();
       label_M3 = new System.Windows.Forms.Label();
@@ -522,7 +541,7 @@ namespace PortalCraneModel
       label_mu2 = new System.Windows.Forms.Label();
       label_M1 = new System.Windows.Forms.Label();
       button1 = new System.Windows.Forms.Button();
-      ymax_t = new System.Windows.Forms.TextBox();
+      func_num_text = new System.Windows.Forms.TextBox();
       ymin_t = new System.Windows.Forms.TextBox();
       label_N = new System.Windows.Forms.Label();
       label_sigma = new System.Windows.Forms.Label();
@@ -535,7 +554,6 @@ namespace PortalCraneModel
       pBox_h1_criterion = new System.Windows.Forms.PictureBox();
       pBox_H_criterion = new System.Windows.Forms.PictureBox();
       pBox_T_criterion = new System.Windows.Forms.PictureBox();
-      func_num_text = new System.Windows.Forms.TextBox();
       tabControl1.SuspendLayout();
       tabPage1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(chart2)).BeginInit();
@@ -1397,6 +1415,7 @@ namespace PortalCraneModel
       // 
       // tabPage2
       // 
+      tabPage2.Controls.Add(eq_lines_time);
       tabPage2.Controls.Add(label5);
       tabPage2.Controls.Add(groupBox4);
       tabPage2.Controls.Add(pBox_Vmax_criterion);
@@ -1404,7 +1423,6 @@ namespace PortalCraneModel
       tabPage2.Controls.Add(pBox_h1_criterion);
       tabPage2.Controls.Add(pBox_H_criterion);
       tabPage2.Controls.Add(pBox_T_criterion);
-      tabPage2.Controls.Add(func_num_text);
       tabPage2.Location = new System.Drawing.Point(4, 22);
       tabPage2.Name = "tabPage2";
       tabPage2.Padding = new System.Windows.Forms.Padding(3);
@@ -1413,6 +1431,16 @@ namespace PortalCraneModel
       tabPage2.Text = "Линии равного уровня";
       tabPage2.UseVisualStyleBackColor = true;
       // 
+      // eq_lines_time
+      // 
+      eq_lines_time.AutoSize = true;
+      eq_lines_time.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      eq_lines_time.Location = new System.Drawing.Point(294, 74);
+      eq_lines_time.Name = "eq_lines_time";
+      eq_lines_time.Size = new System.Drawing.Size(135, 16);
+      eq_lines_time.TabIndex = 25;
+      eq_lines_time.Text = "Время выполнения:";
+      // 
       // label5
       // 
       label5.AutoSize = true;
@@ -1420,7 +1448,7 @@ namespace PortalCraneModel
       label5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
       label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       label5.ForeColor = System.Drawing.SystemColors.ControlText;
-      label5.Location = new System.Drawing.Point(280, 6);
+      label5.Location = new System.Drawing.Point(294, 6);
       label5.Name = "label5";
       label5.Size = new System.Drawing.Size(290, 62);
       label5.TabIndex = 24;
@@ -1430,6 +1458,12 @@ namespace PortalCraneModel
       // groupBox4
       // 
       groupBox4.BackColor = System.Drawing.SystemColors.Control;
+      groupBox4.Controls.Add(label12);
+      groupBox4.Controls.Add(label13);
+      groupBox4.Controls.Add(tBox_fix_Im);
+      groupBox4.Controls.Add(tBox_fix_Re);
+      groupBox4.Controls.Add(label6);
+      groupBox4.Controls.Add(label14);
       groupBox4.Controls.Add(label_mu1);
       groupBox4.Controls.Add(xmin_t);
       groupBox4.Controls.Add(label_M3);
@@ -1438,7 +1472,7 @@ namespace PortalCraneModel
       groupBox4.Controls.Add(label_mu2);
       groupBox4.Controls.Add(label_M1);
       groupBox4.Controls.Add(button1);
-      groupBox4.Controls.Add(ymax_t);
+      groupBox4.Controls.Add(func_num_text);
       groupBox4.Controls.Add(ymin_t);
       groupBox4.Controls.Add(label_N);
       groupBox4.Controls.Add(label_sigma);
@@ -1448,10 +1482,68 @@ namespace PortalCraneModel
       groupBox4.Controls.Add(DL_M3);
       groupBox4.Location = new System.Drawing.Point(6, 6);
       groupBox4.Name = "groupBox4";
-      groupBox4.Size = new System.Drawing.Size(268, 153);
+      groupBox4.Size = new System.Drawing.Size(282, 202);
       groupBox4.TabIndex = 23;
       groupBox4.TabStop = false;
       groupBox4.Text = "Параметры отрисовки:";
+      // 
+      // label12
+      // 
+      label12.AutoSize = true;
+      label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      label12.Location = new System.Drawing.Point(2, 126);
+      label12.Name = "label12";
+      label12.Size = new System.Drawing.Size(147, 32);
+      label12.TabIndex = 28;
+      label12.Text = "Фиксированная пара\r\nкорней:";
+      // 
+      // label13
+      // 
+      label13.AutoSize = true;
+      label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      label13.Location = new System.Drawing.Point(207, 119);
+      label13.Name = "label13";
+      label13.Size = new System.Drawing.Size(25, 16);
+      label13.TabIndex = 40;
+      label13.Text = "Im:";
+      // 
+      // tBox_fix_Im
+      // 
+      tBox_fix_Im.Location = new System.Drawing.Point(201, 138);
+      tBox_fix_Im.Name = "tBox_fix_Im";
+      tBox_fix_Im.Size = new System.Drawing.Size(40, 20);
+      tBox_fix_Im.TabIndex = 26;
+      tBox_fix_Im.Text = "5,7";
+      tBox_fix_Im.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      // 
+      // tBox_fix_Re
+      // 
+      tBox_fix_Re.Location = new System.Drawing.Point(155, 138);
+      tBox_fix_Re.Name = "tBox_fix_Re";
+      tBox_fix_Re.Size = new System.Drawing.Size(40, 20);
+      tBox_fix_Re.TabIndex = 27;
+      tBox_fix_Re.Text = "-3,6";
+      tBox_fix_Re.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      // 
+      // label6
+      // 
+      label6.AutoSize = true;
+      label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      label6.Location = new System.Drawing.Point(6, 94);
+      label6.Name = "label6";
+      label6.Size = new System.Drawing.Size(62, 20);
+      label6.TabIndex = 23;
+      label6.Text = "func_n:";
+      // 
+      // label14
+      // 
+      label14.AutoSize = true;
+      label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+      label14.Location = new System.Drawing.Point(161, 119);
+      label14.Name = "label14";
+      label14.Size = new System.Drawing.Size(29, 16);
+      label14.TabIndex = 39;
+      label14.Text = "Re:";
       // 
       // label_mu1
       // 
@@ -1465,7 +1557,7 @@ namespace PortalCraneModel
       // 
       // xmin_t
       // 
-      xmin_t.Location = new System.Drawing.Point(67, 18);
+      xmin_t.Location = new System.Drawing.Point(74, 18);
       xmin_t.Name = "xmin_t";
       xmin_t.Size = new System.Drawing.Size(75, 20);
       xmin_t.TabIndex = 8;
@@ -1476,7 +1568,7 @@ namespace PortalCraneModel
       // 
       label_M3.AutoSize = true;
       label_M3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      label_M3.Location = new System.Drawing.Point(148, 94);
+      label_M3.Location = new System.Drawing.Point(155, 94);
       label_M3.Name = "label_M3";
       label_M3.Size = new System.Drawing.Size(35, 20);
       label_M3.TabIndex = 22;
@@ -1484,7 +1576,7 @@ namespace PortalCraneModel
       // 
       // xmax_t
       // 
-      xmax_t.Location = new System.Drawing.Point(67, 44);
+      xmax_t.Location = new System.Drawing.Point(74, 44);
       xmax_t.Name = "xmax_t";
       xmax_t.Size = new System.Drawing.Size(75, 20);
       xmax_t.TabIndex = 6;
@@ -1495,7 +1587,7 @@ namespace PortalCraneModel
       // 
       label_M2.AutoSize = true;
       label_M2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      label_M2.Location = new System.Drawing.Point(148, 68);
+      label_M2.Location = new System.Drawing.Point(155, 68);
       label_M2.Name = "label_M2";
       label_M2.Size = new System.Drawing.Size(35, 20);
       label_M2.TabIndex = 21;
@@ -1515,7 +1607,7 @@ namespace PortalCraneModel
       // 
       label_M1.AutoSize = true;
       label_M1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      label_M1.Location = new System.Drawing.Point(148, 42);
+      label_M1.Location = new System.Drawing.Point(155, 42);
       label_M1.Name = "label_M1";
       label_M1.Size = new System.Drawing.Size(35, 20);
       label_M1.TabIndex = 20;
@@ -1523,7 +1615,7 @@ namespace PortalCraneModel
       // 
       // button1
       // 
-      button1.Location = new System.Drawing.Point(2, 122);
+      button1.Location = new System.Drawing.Point(9, 164);
       button1.Name = "button1";
       button1.Size = new System.Drawing.Size(262, 25);
       button1.TabIndex = 10;
@@ -1531,18 +1623,18 @@ namespace PortalCraneModel
       button1.UseVisualStyleBackColor = true;
       button1.Click += new System.EventHandler(button1_Click);
       // 
-      // ymax_t
+      // func_num_text
       // 
-      ymax_t.Location = new System.Drawing.Point(67, 96);
-      ymax_t.Name = "ymax_t";
-      ymax_t.Size = new System.Drawing.Size(75, 20);
-      ymax_t.TabIndex = 5;
-      ymax_t.Text = "5";
-      ymax_t.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      func_num_text.Location = new System.Drawing.Point(74, 96);
+      func_num_text.Name = "func_num_text";
+      func_num_text.Size = new System.Drawing.Size(75, 20);
+      func_num_text.TabIndex = 9;
+      func_num_text.Text = "8";
+      func_num_text.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // ymin_t
       // 
-      ymin_t.Location = new System.Drawing.Point(67, 70);
+      ymin_t.Location = new System.Drawing.Point(74, 70);
       ymin_t.Name = "ymin_t";
       ymin_t.Size = new System.Drawing.Size(75, 20);
       ymin_t.TabIndex = 7;
@@ -1553,7 +1645,7 @@ namespace PortalCraneModel
       // 
       label_N.AutoSize = true;
       label_N.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-      label_N.Location = new System.Drawing.Point(159, 16);
+      label_N.Location = new System.Drawing.Point(166, 16);
       label_N.Name = "label_N";
       label_N.Size = new System.Drawing.Size(24, 20);
       label_N.TabIndex = 19;
@@ -1571,7 +1663,7 @@ namespace PortalCraneModel
       // 
       // DL_N
       // 
-      DL_N.Location = new System.Drawing.Point(189, 18);
+      DL_N.Location = new System.Drawing.Point(196, 18);
       DL_N.Name = "DL_N";
       DL_N.Size = new System.Drawing.Size(75, 20);
       DL_N.TabIndex = 3;
@@ -1580,7 +1672,7 @@ namespace PortalCraneModel
       // 
       // DL_M2
       // 
-      DL_M2.Location = new System.Drawing.Point(189, 70);
+      DL_M2.Location = new System.Drawing.Point(196, 70);
       DL_M2.Name = "DL_M2";
       DL_M2.Size = new System.Drawing.Size(75, 20);
       DL_M2.TabIndex = 1;
@@ -1589,7 +1681,7 @@ namespace PortalCraneModel
       // 
       // DL_M1
       // 
-      DL_M1.Location = new System.Drawing.Point(189, 44);
+      DL_M1.Location = new System.Drawing.Point(196, 44);
       DL_M1.Name = "DL_M1";
       DL_M1.Size = new System.Drawing.Size(75, 20);
       DL_M1.TabIndex = 2;
@@ -1598,7 +1690,7 @@ namespace PortalCraneModel
       // 
       // DL_M3
       // 
-      DL_M3.Location = new System.Drawing.Point(189, 96);
+      DL_M3.Location = new System.Drawing.Point(196, 96);
       DL_M3.Name = "DL_M3";
       DL_M3.Size = new System.Drawing.Size(75, 20);
       DL_M3.TabIndex = 4;
@@ -1654,15 +1746,6 @@ namespace PortalCraneModel
       pBox_T_criterion.TabIndex = 0;
       pBox_T_criterion.TabStop = false;
       pBox_T_criterion.Paint += new System.Windows.Forms.PaintEventHandler(pic_Paint_T);
-      // 
-      // func_num_text
-      // 
-      func_num_text.Location = new System.Drawing.Point(392, 205);
-      func_num_text.Name = "func_num_text";
-      func_num_text.Size = new System.Drawing.Size(100, 20);
-      func_num_text.TabIndex = 9;
-      func_num_text.Text = "8";
-      func_num_text.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
       // 
       // PortalCraneModel
       // 
@@ -2000,13 +2083,15 @@ namespace PortalCraneModel
     eque_lines Draw_Line = new eque_lines();
     private void button1_Click(object sender, EventArgs e)
     {
-      // zdes' neobhodimo prochitat' vvedennie dannie & peredat' d v DLL dlya rascheta
-      // parametri calculatora liniy:
       int N = System.Convert.ToInt32(DL_N.Text);
       int _M1 = System.Convert.ToInt32(DL_M1.Text);
       int _M2 = System.Convert.ToInt32(DL_M2.Text);
       int _M3 = System.Convert.ToInt32(DL_M3.Text);
       int M = _M1 + _M2 + _M3;
+
+      double fix_Re = double.Parse(tBox_fix_Re.Text);
+      double fix_Im = double.Parse(tBox_fix_Im.Text);
+      SetFirstPairOfRoots(fix_Re, fix_Im);
 
       Draw_Line.CreateDat(N, _M1, _M2, _M3);
       CreateDat(N, _M1, _M2, _M3);
@@ -2023,6 +2108,9 @@ namespace PortalCraneModel
       SetParam(); // параметры модели
       SetCalcParam(); // параметры расчета
       SetInitVal(); // начальное состояние системы
+
+      Stopwatch stopwatch = new Stopwatch();
+      stopwatch.Start();
 
       // определяем количество точек, которые будут отрисованы
       criteria.drawCount = (N + 1) * (N + 1) + M;
@@ -2044,7 +2132,7 @@ namespace PortalCraneModel
 
       is_calc_criteria = true; // t.e. risovat trajektorii ne nujno
 
-      Draw_Line.SetDat(XMin, XMax, YMin, YMax, false, System.Convert.ToInt32(func_num_text.Text));
+      //Draw_Line.SetDat(XMin, XMax, YMin, YMax, false, System.Convert.ToInt32(func_num_text.Text));
       SetDat(System.Convert.ToInt32(func_num_text.Text), cBox_non_linear.Checked);
       SetSubLevels(0);
       SetSubLevels(1);
@@ -2281,6 +2369,11 @@ namespace PortalCraneModel
 
       pBox_Vmax_criterion.Refresh();
       //SetSubLevels(4);
+
+      stopwatch.Stop();
+
+      eq_lines_time.Text = "Время выполнения: " + stopwatch.Elapsed.TotalSeconds.ToString();
+      eq_lines_time.BackColor = Color.LightGreen;
     }
 
     private void pic_Paint_T(object sender, PaintEventArgs e)

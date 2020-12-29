@@ -118,4 +118,10 @@ void Calc_criteria_eque_lines1(criteria& c, bool system);
 extern "C" __declspec(dllexport)
 void Calc_regulator();
 
+extern "C" __declspec(dllexport)
+void SetFirstPairOfRoots(double _p_re, double _p_im);
+
+extern "C" __declspec(dllexport)
+void SetSecondPairOfRoots(double _p_re, double _p_im);
+
 /* ======================== End of export functions ========================= */

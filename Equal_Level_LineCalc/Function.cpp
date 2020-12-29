@@ -14,10 +14,11 @@ criteria Function::Get_value(std::vector<double>& _x, bool system)
   switch (func_index)
   {
     case 8:
-      SetModelLambdas(_x[0], _x[1],
+      /*SetModelLambdas(_x[0], _x[1],
                       _x[0], -1 * _x[1],
                       _x[0], _x[1],
-                      _x[0], -1 * _x[1]);
+                      _x[0], -1 * _x[1]);*/
+      SetSecondPairOfRoots(_x[0], _x[1]);
 
       Calc_regulator();
 
