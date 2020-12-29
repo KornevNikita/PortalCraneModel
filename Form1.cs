@@ -17,15 +17,6 @@ namespace PortalCraneModel
       public int drawCount; // number of points
     }
 
-    public struct TStatePoint
-    {
-      public double fi;
-      public double dfi_dt;
-      public double x;
-      public double dx_dt;
-      public double t;
-    }
-
     Random rand = new Random();
 
     public int buildCount = 0, dinPointsCount;
@@ -37,11 +28,9 @@ namespace PortalCraneModel
     public static double[] DrawPoints, DrawCriteria;
 
 
-    public static IntPtr ptrTAllDrawPoints, PtrNextPoint, ptrCriteria;
+    public static IntPtr ptrTAllDrawPoints, ptrCriteria_pDat;
 
-    public static PortalCraneModel.TAllDrawPoints allPoints, criteria;
-
-    public PortalCraneModel.TStatePoint CurrentPoint;
+    public static PortalCraneModel.TAllDrawPoints allPoints, criteria_pDat;
 
     public static double M, m, l, R, g,
       h_fi, h_x, B, gamma, E, // parametri modeli
@@ -2020,7 +2009,7 @@ namespace PortalCraneModel
       XMin = System.Convert.ToDouble(xmin_t.Text);
       XMax = System.Convert.ToDouble(xmax_t.Text);
       //YMin = System.Convert.ToDouble(ymin_t.Text);
-      YMin = System.Convert.ToDouble(ymin_t.Text) * XMin;
+      YMin = System.Convert.ToDouble(ymin_t.Text) * (XMax - XMin) / 2;
       //YMax = System.Convert.ToDouble(ymax_t.Text);
       YMax = -1 * YMin;
 
@@ -2031,22 +2020,22 @@ namespace PortalCraneModel
       SetInitVal(); // начальное состояние системы
 
       // определяем количество точек, которые будут отрисованы
-      criteria.drawCount = (_N + 1) * (_N + 1);
+      criteria_pDat.drawCount = (_N + 1) * (_N + 1);
 
       // создаем управляемое хранилище
-      DrawCriteria = new double[criteria.drawCount * 5];
+      DrawCriteria = new double[criteria_pDat.drawCount * 5];
 
       // определяем размер управляемой структуры
       int sizeStruct = Marshal.SizeOf(typeof(PortalCraneModel.TAllDrawPoints));
 
       // выделяем память под неуправляемую структуру
-      ptrCriteria = Marshal.AllocHGlobal(sizeStruct);
+      ptrCriteria_pDat = Marshal.AllocHGlobal(sizeStruct);
 
       // копируем данные из неуправляемой в управляемую
-      Marshal.StructureToPtr(criteria, ptrCriteria, false);
+      Marshal.StructureToPtr(criteria_pDat, ptrCriteria_pDat, false);
 
       // выделяем память под внутренний неуправляемый массив в неупр структуре
-      PortalCraneModel.InitAllPointsArray(ptrCriteria);
+      PortalCraneModel.InitAllPointsArray(ptrCriteria_pDat);
 
       is_calc_criteria = true; // t.e. risovat trajektorii ne nujno
 
@@ -2055,10 +2044,10 @@ namespace PortalCraneModel
 
       is_calc_criteria = false;
 
-      criteria = (PortalCraneModel.TAllDrawPoints)Marshal.PtrToStructure(ptrCriteria, typeof(PortalCraneModel.TAllDrawPoints));
-      Marshal.Copy(criteria.allDrawPoints, DrawCriteria, 0, criteria.drawCount * 5);
-      PortalCraneModel.DeleteAllPointsArray(ptrCriteria);
-      Marshal.FreeHGlobal(ptrCriteria);
+      criteria_pDat = (PortalCraneModel.TAllDrawPoints)Marshal.PtrToStructure(ptrCriteria_pDat, typeof(PortalCraneModel.TAllDrawPoints));
+      Marshal.Copy(criteria_pDat.allDrawPoints, DrawCriteria, 0, criteria_pDat.drawCount * 5);
+      PortalCraneModel.DeleteAllPointsArray(ptrCriteria_pDat);
+      Marshal.FreeHGlobal(ptrCriteria_pDat);
 
       // T
       for (int i = 0; i < (_N + 1) * (_N + 1); ++i)
