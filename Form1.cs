@@ -2098,10 +2098,9 @@ namespace PortalCraneModel
 
       XMin = System.Convert.ToDouble(xmin_t.Text);
       XMax = System.Convert.ToDouble(xmax_t.Text);
-      //YMin = System.Convert.ToDouble(ymin_t.Text);
-      YMin = System.Convert.ToDouble(ymin_t.Text) * (XMax - XMin) / 2;
-      //YMax = System.Convert.ToDouble(ymax_t.Text);
-      YMax = -1 * YMin;
+
+      YMin = -1.0 * (XMax - XMin) / 2;
+      YMax = -1.0 * YMin;
 
       SetBorders(XMin, XMax, YMin, YMax);
 
@@ -2165,56 +2164,7 @@ namespace PortalCraneModel
       for (int i = 0; i < M; ++i)
         eque_lines.pQ[i] = DrawCriteria[((N + 1) * (N + 1) + i) * 5];
 
-      //// T
-      //for (int i = 0; i < (N + 1) * (N + 1); ++i)
-      //  eque_lines.pDat[i].Q = DrawCriteria[i * 5];
-
-      double Qmin, Qmax, QQ;
-      Qmin = 1.7976931348623158e+308;
-      Qmax = 2.2250738585072014e-308;
-
-      //for (int i = 0; i <= N; i++)
-      //  for (int j = 0; j <= N; j++)
-      //  {
-      //    QQ = eque_lines.pDat[(N + 1) * i + j].Q;
-      //    if ((i == 0) && (j == 0) || (Qmin > QQ))
-      //      Qmin = eque_lines.pDat[(N + 1) * i + j].Q;
-      //    if ((i == 0) && (j == 0) || (Qmax < QQ))
-      //      Qmax = QQ;
-      //  }
-
-      double hQ1 = (Qmax - Qmin) / _M1; // шаг функции по уровням
-      int ku = 0; // позиция в сетке уровней   
-      //for (int i = 0; i < _M1; i++) // вычисление значений функции на основных уровнях 
-      //  eque_lines.pQ[ku++] = Qmax - hQ1 * i;
-
-      double hQ2 = hQ1 / (_M2 + 1); // шаг функции по подуровням
-      //for (int i = 1; i <= _M2; i++) // вычисление значений функции на подуровнях
-      //  eque_lines.pQ[ku++] = eque_lines.pQ[_M1 - 1] - hQ2 * i;
-
-      //for (int i = 1; i <= _M3; i++) // вычисление значений функции на "под-подуровнях"
-      //  eque_lines.pQ[ku++] = eque_lines.pQ[_M1 + _M2 - 1] - (hQ2 / (_M3 + 1)) * i;
-
       pBox_T_criterion.Refresh();
-      //SetSubLevels(0);
-
-      // H
-      //for (int i = 0; i < (N + 1) * (N + 1); ++i)
-      //  eque_lines.pDat[i].Q = DrawCriteria[i * 5 + 1];
-
-      //Qmin = 1.7976931348623158e+308;
-      //Qmax = 2.2250738585072014e-308;
-
-      //for (int i = 0; i <= N; i++)
-      //  for (int j = 0; j <= N; j++)
-      //  {
-      //    QQ = eque_lines.pDat[(N + 1) * i + j].Q;
-      //    if ((i == 0) && (j == 0) || (Qmin > QQ))
-
-      //      Qmin = eque_lines.pDat[(N + 1) * i + j].Q;
-      //    if ((i == 0) && (j == 0) || (Qmax < QQ))
-      //      Qmax = QQ;
-      //  }
 
       for (int i = 0; i <= N; ++i)
       {
@@ -2226,50 +2176,7 @@ namespace PortalCraneModel
       for (int i = 0; i < M; ++i)
         eque_lines.pQ[i] = DrawCriteria[((N + 1) * (N + 1) + i) * 5 + 1];
 
-      //hQ1 = (Qmax - Qmin) / _M1; // шаг функции по уровням
-      //ku = 0; // позиция в сетке уровней   
-      //for (int i = 0; i < _M1; i++) // вычисление значений функции на основных уровнях 
-      //  eque_lines.pQ[ku++] = Qmax - hQ1 * i;
-
-      //hQ2 = hQ1 / (_M2 + 1); // шаг функции по подуровням
-      //for (int i = 1; i <= _M2; i++) // вычисление значений функции на подуровнях
-      //  eque_lines.pQ[ku++] = eque_lines.pQ[_M1 - 1] - hQ2 * i;
-
-      //for (int i = 1; i <= _M3; i++) // вычисление значений функции на "под-подуровнях"
-      //  eque_lines.pQ[ku++] = eque_lines.pQ[_M1 + _M2 - 1] - (hQ2 / (_M3 + 1)) * i;
-
       pBox_H_criterion.Refresh();
-      //SetSubLevels(1);
-
-      // h1
-      //for (int i = 0; i < (N + 1) * (N + 1); ++i)
-      //  eque_lines.pDat[i].Q = DrawCriteria[i * 5 + 2];
-
-      //Qmin = 1.7976931348623158e+308;
-      //Qmax = 2.2250738585072014e-308;
-
-      //for (int i = 0; i <= N; i++)
-      //  for (int j = 0; j <= N; j++)
-      //  {
-      //    QQ = eque_lines.pDat[(N + 1) * i + j].Q;
-      //    if ((i == 0) && (j == 0) || (Qmin > QQ))
-
-      //      Qmin = eque_lines.pDat[(N + 1) * i + j].Q;
-      //    if ((i == 0) && (j == 0) || (Qmax < QQ))
-      //      Qmax = QQ;
-      //  }
-
-      //hQ1 = (Qmax - Qmin) / _M1; // шаг функции по уровням
-      //ku = 0; // позиция в сетке уровней   
-      //for (int i = 0; i < _M1; i++) // вычисление значений функции на основных уровнях 
-      //  eque_lines.pQ[ku++] = Qmax - hQ1 * i;
-
-      //hQ2 = hQ1 / (_M2 + 1); // шаг функции по подуровням
-      //for (int i = 1; i <= _M2; i++) // вычисление значений функции на подуровнях
-      //  eque_lines.pQ[ku++] = eque_lines.pQ[_M1 - 1] - hQ2 * i;
-
-      //for (int i = 1; i <= _M3; i++) // вычисление значений функции на "под-подуровнях"
-      //  eque_lines.pQ[ku++] = eque_lines.pQ[_M1 + _M2 - 1] - (hQ2 / (_M3 + 1)) * i;
 
       for (int i = 0; i <= N; ++i)
       {
@@ -2282,37 +2189,6 @@ namespace PortalCraneModel
         eque_lines.pQ[i] = DrawCriteria[((N + 1) * (N + 1) + i) * 5 + 2];
 
       pBox_h1_criterion.Refresh();
-      //SetSubLevels(2);
-
-      //h2
-      //for (int i = 0; i < (N + 1) * (N + 1); ++i)
-      //  eque_lines.pDat[i].Q = DrawCriteria[i * 5 + 3];
-
-      //Qmin = 1.7976931348623158e+308;
-      //Qmax = 2.2250738585072014e-308;
-
-      //for (int i = 0; i <= N; i++)
-      //  for (int j = 0; j <= N; j++)
-      //  {
-      //    QQ = eque_lines.pDat[(N + 1) * i + j].Q;
-      //    if ((i == 0) && (j == 0) || (Qmin > QQ))
-
-      //      Qmin = eque_lines.pDat[(N + 1) * i + j].Q;
-      //    if ((i == 0) && (j == 0) || (Qmax < QQ))
-      //      Qmax = QQ;
-      //  }
-
-      //hQ1 = (Qmax - Qmin) / _M1; // шаг функции по уровням
-      //ku = 0; // позиция в сетке уровней   
-      //for (int i = 0; i < _M1; i++) // вычисление значений функции на основных уровнях 
-      //  eque_lines.pQ[ku++] = Qmax - hQ1 * i;
-
-      //hQ2 = hQ1 / (_M2 + 1); // шаг функции по подуровням
-      //for (int i = 1; i <= _M2; i++) // вычисление значений функции на подуровнях
-      //  eque_lines.pQ[ku++] = eque_lines.pQ[_M1 - 1] - hQ2 * i;
-
-      //for (int i = 1; i <= _M3; i++) // вычисление значений функции на "под-подуровнях"
-      //  eque_lines.pQ[ku++] = eque_lines.pQ[_M1 + _M2 - 1] - (hQ2 / (_M3 + 1)) * i;
 
       for (int i = 0; i <= N; ++i)
       {
@@ -2325,37 +2201,6 @@ namespace PortalCraneModel
         eque_lines.pQ[i] = DrawCriteria[((N + 1) * (N + 1) + i) * 5 + 3];
 
       pBox_h2_criterion.Refresh();
-      //SetSubLevels(3);
-
-      // Vmax
-      //for (int i = 0; i < (N + 1) * (N + 1); ++i)
-      //  eque_lines.pDat[i].Q = DrawCriteria[i * 5 + 4];
-
-      //Qmin = 1.7976931348623158e+308;
-      //Qmax = 2.2250738585072014e-308;
-
-      //for (int i = 0; i <= N; i++)
-      //  for (int j = 0; j <= N; j++)
-      //  {
-      //    QQ = eque_lines.pDat[(N + 1) * i + j].Q;
-      //    if ((i == 0) && (j == 0) || (Qmin > QQ))
-
-      //      Qmin = eque_lines.pDat[(N + 1) * i + j].Q;
-      //    if ((i == 0) && (j == 0) || (Qmax < QQ))
-      //      Qmax = QQ;
-      //  }
-
-      //hQ1 = (Qmax - Qmin) / _M1; // шаг функции по уровням
-      //ku = 0; // позиция в сетке уровней   
-      //for (int i = 0; i < _M1; i++) // вычисление значений функции на основных уровнях 
-      //  eque_lines.pQ[ku++] = Qmax - hQ1 * i;
-
-      //hQ2 = hQ1 / (_M2 + 1); // шаг функции по подуровням
-      //for (int i = 1; i <= _M2; i++) // вычисление значений функции на подуровнях
-      //  eque_lines.pQ[ku++] = eque_lines.pQ[_M1 - 1] - hQ2 * i;
-
-      //for (int i = 1; i <= _M3; i++) // вычисление значений функции на "под-подуровнях"
-      //  eque_lines.pQ[ku++] = eque_lines.pQ[_M1 + _M2 - 1] - (hQ2 / (_M3 + 1)) * i;
 
       for (int i = 0; i <= N; ++i)
       {
@@ -2368,7 +2213,6 @@ namespace PortalCraneModel
         eque_lines.pQ[i] = DrawCriteria[((N + 1) * (N + 1) + i) * 5 + 4];
 
       pBox_Vmax_criterion.Refresh();
-      //SetSubLevels(4);
 
       stopwatch.Stop();
 
@@ -2405,7 +2249,6 @@ namespace PortalCraneModel
       e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.Default;
       Draw_Line.SendLines(e.Graphics, pBox_Vmax_criterion);
     }
-
   }
 }
 
