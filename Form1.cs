@@ -2099,8 +2099,8 @@ namespace PortalCraneModel
       XMin = System.Convert.ToDouble(xmin_t.Text);
       XMax = System.Convert.ToDouble(xmax_t.Text);
 
-      YMin = -1.0 * (XMax - XMin) / 2;
-      YMax = -1.0 * YMin;
+      YMin = 0;
+      YMax = double.Parse(ymin_t.Text) * XMin; // ymin_t = sigma
 
       SetBorders(XMin, XMax, YMin, YMax);
 
@@ -2251,5 +2251,3 @@ namespace PortalCraneModel
     }
   }
 }
-
-

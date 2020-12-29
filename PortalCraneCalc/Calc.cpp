@@ -20,6 +20,7 @@ double M, m, l, R, g, h_fi, h_x, Beta, gamma, E, // parametri sistemi
 int drawStCount; // chislo tochek, kotorie budut otrisovani
 bool inDinamic; // risovat v dinamike (poka ne realizovano)
 vector<double> reg(dim); // regulator
+
 vector<complex<double>> p(dim);  // zhelaemie korni 
 
 vector<point> all_points; // massiv dlya hraneniya poluchennih tochek
@@ -543,7 +544,6 @@ void Calc_criteria_eque_lines(TAllDrawPoints<criteria>* ptrCriteriaPoints, bool 
   V.clear();
 
   ptrCriteriaPoints->allDrawPoints[criteria_count++] = c;
-  //all_criteria.push_back(c);
 }
 
 void Calc_criteria_eque_lines1(criteria& c, bool system)
@@ -568,13 +568,9 @@ void Calc_criteria_eque_lines1(criteria& c, bool system)
     fout << all_points[i];
   }
 
-  //criteria c;
-
   calc_quality_criteria(c);
   V.clear();
 
-  //ptrCriteriaPoints->allDrawPoints[criteria_count++] = c;
-  //all_criteria.push_back(c);
   return;
 }
 
