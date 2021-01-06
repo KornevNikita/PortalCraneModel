@@ -16,7 +16,9 @@ void SetBorders(double _XMin, double _XMax, double _YMin, double _YMax)
   YMax = _YMax;
 
   std::ofstream fout("eq-lvl-log.txt", ios::app);
-  fout << "Setted borders" << endl;
+  fout << "Borders:" << endl
+    << "X: [" << _XMin << "; " << _XMax << "]" << endl
+    << "Y: [" << _YMin << "; " << _YMax << "]" << endl;
 }
 
 void CreateDat(int _N, int _M1, int _M2, int _M3)
@@ -48,8 +50,11 @@ void SetDat(int F_Num, bool system)
       double Qmin, Qmax;
       criteria QQ;
       double hx = (XMax - XMin) / N; // вычисление шага по x
-      double hy = (YMax - YMin) / N; // вычисление шага по y
+      double hy; // вычисление шага по y
       std::vector<double> x(2);
+
+      if (calc_in_modified_variables == false)
+        hy = (YMax - YMin) / N;
 
       // обход сетки
       Qmin = 1.7976931348623158e+308;
@@ -61,15 +66,30 @@ void SetDat(int F_Num, bool system)
 
       F.Set_func_index(F_Num);
       for (int i = 0; i <= N; i++)
+      {
+        if (calc_in_modified_variables)
+        {
+          YMin = -alpha * (abs(XMin) + XMin + hx * i);
+          YMax = -sigma * (XMin + hx * i);
+          hy = (YMax - YMin) / N;
+        }
+
         for (int j = 0; j <= N; j++)
         {
           // заполнение структуры сетки
           // координаты узла сетки
           x[0] = pDat[(N + 1) * i + j].x = XMin + hx * i;
-          x[1] = pDat[(N + 1) * i + j].y = YMin + hy * j;
+          if (calc_in_modified_variables)
+          {
+            double U2 = YMin + hy * j;
+            x[1] = (U2 + alpha * (abs(XMin) + x[0])) / (alpha * (abs(XMin) + x[0]) - sigma * x[0])
+              * alpha * (abs(XMin) - abs(XMax)) + sigma * abs(XMax);
+          }
+          else
+            x[1] = pDat[(N + 1) * i + j].y = YMin + hy * j;
 
           QQ = pDat[(N + 1) * i + j].Q = F.Get_value(x, system); // schitaem znachenie v (x,y)
-          
+
           fout << criteria_count << ") ";
           fout << "(" << x[0] << ", " << x[1] << ") " <<
             "(" << x[0] << ", " << -1. * x[1] << ") " << endl;
@@ -79,6 +99,7 @@ void SetDat(int F_Num, bool system)
 
           criteria_count++;
         }
+      }
     }
   }
 }
@@ -151,4 +172,24 @@ void Get_pDat_and_pQ(TAllDrawPoints<criteria>* ptr)
     criteria temp(pQ[i * 5], pQ[i * 5 + 1], pQ[i * 5 + 2], pQ[i * 5 + 3], pQ[i * 5 + 4]);
     ptr->allDrawPoints[(N + 1) * (N + 1) + count++] = temp;
   }
+}
+
+void Set_calc_in_init_variables()
+{
+  calc_in_modified_variables = false;
+}
+
+void Set_calc_in_modified_variables()
+{
+  calc_in_modified_variables = true;
+}
+
+void Set_alpha(double _alpha)
+{
+  alpha = _alpha;
+}
+
+void Set_sigma(double _sigma)
+{
+  sigma = _sigma;
 }

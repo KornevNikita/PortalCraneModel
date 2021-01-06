@@ -13,6 +13,8 @@ struct Node
 };
 
 double XMin, XMax, YMin, YMax; // calculation area
+double alpha, sigma;
+bool calc_in_modified_variables = false;
 
 Node<criteria>* pDat;
 double* pQ;
@@ -36,3 +38,15 @@ void SetSubLevels(int shift);
 
 extern "C" __declspec(dllexport)
 void Get_pDat_and_pQ(TAllDrawPoints<criteria>* ptr);
+
+extern "C" __declspec(dllexport)
+void Set_calc_in_init_variables();
+
+extern "C" __declspec(dllexport)
+void Set_calc_in_modified_variables();
+
+extern "C" __declspec(dllexport)
+void Set_alpha(double _alpha);
+
+extern "C" __declspec(dllexport)
+void Set_sigma(double _sigma);
