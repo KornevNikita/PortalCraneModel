@@ -198,9 +198,6 @@ namespace PortalCraneModel
     public static extern void GetAllDrawPoints(IntPtr ptrAllDrawPoints, bool system, bool reg);
 
     [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
-    public static extern void Calc_criteria();
-
-    [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
     public static extern void Calc_criteria_eque_lines(IntPtr ptrAllDrawPoints, bool system);
 
     [DllImport(dll, CallingConvention = CallingConvention.Cdecl)]
@@ -2283,11 +2280,29 @@ namespace PortalCraneModel
       // T
       for (int i = 0; i <= N; ++i)
       {
+        double temp_YMin = 0, temp_YMax = 0;
+        if (cBox_calc_in_init_variables.Checked == false)
+        {
+          temp_YMin = -alpha * (Math.Abs(XMin) + XMin + hx * i);
+          temp_YMax = -sigma * (XMin + hx * i);
+          hy = (temp_YMax - temp_YMin) / N;
+        }
+
         for (int j = 0; j <= N; ++j)
         {
           eque_lines.pDat[(N + 1) * i + j].Q = DrawCriteria[(i * (N + 1) + j) * 5];
           eque_lines.pDat[(N + 1) * i + j].x = XMin + hx * i;
-          eque_lines.pDat[(N + 1) * i + j].y = YMin + hy * j;
+
+          if (cBox_calc_in_init_variables.Checked == false)
+          {
+            double U2 = YMin + hy * j;
+            double X = eque_lines.pDat[(N + 1) * i + j].x;
+            eque_lines.pDat[(N + 1) * i + j].y = (U2 + alpha * (Math.Abs(XMin) + X))
+              / (alpha * (Math.Abs(XMin) + X) - sigma * X)
+              * alpha * (Math.Abs(XMin) - Math.Abs(XMax)) + sigma * Math.Abs(XMax);
+          }
+          else
+            eque_lines.pDat[(N + 1) * i + j].y = YMin + hy * j;
         }
       }
       for (int i = 0; i < M; ++i)
