@@ -24,12 +24,12 @@ void calc_quality_criteria(criteria& c)
 void calc_T_criterion(double& T)
 {
   point* back = &all_points.back();
-  if (back->x > delta) // t.e. sistema tak i ne voshla v delta-okrestnost
+  if (abs(back->x) > delta) // t.e. sistema tak i ne voshla v delta-okrestnost
     T = t_stop;
   else
   {
     size_t i = all_points.size() - 2;
-    while (all_points[i].x <= delta && i > 0)
+    while (abs(all_points[i].x) <= delta && i > 0)
       i--;
 
     T = all_points[i].t;
