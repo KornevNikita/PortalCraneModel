@@ -450,18 +450,18 @@ namespace PortalCraneModel
 
     private void InitializeComponent()
     {
-      System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-      System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-      System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
-      System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea6 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-      System.Windows.Forms.DataVisualization.Charting.Legend legend6 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-      System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
-      System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea7 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-      System.Windows.Forms.DataVisualization.Charting.Legend legend7 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-      System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
-      System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea8 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-      System.Windows.Forms.DataVisualization.Charting.Legend legend8 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-      System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
+      System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+      System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+      System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+      System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+      System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+      System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+      System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+      System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+      System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+      System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+      System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+      System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
       tabControl1 = new System.Windows.Forms.TabControl();
       tabPage1 = new System.Windows.Forms.TabPage();
       chart2 = new System.Windows.Forms.DataVisualization.Charting.Chart();
@@ -629,17 +629,17 @@ namespace PortalCraneModel
       // chart2
       // 
       chart2.BackColor = System.Drawing.SystemColors.Control;
-      chartArea5.Name = "ChartArea1";
-      chart2.ChartAreas.Add(chartArea5);
-      legend5.Enabled = false;
-      legend5.Name = "Legend1";
-      chart2.Legends.Add(legend5);
+      chartArea1.Name = "ChartArea1";
+      chart2.ChartAreas.Add(chartArea1);
+      legend1.Enabled = false;
+      legend1.Name = "Legend1";
+      chart2.Legends.Add(legend1);
       chart2.Location = new System.Drawing.Point(949, 8);
       chart2.Name = "chart2";
-      series5.ChartArea = "ChartArea1";
-      series5.Legend = "Legend1";
-      series5.Name = "Series1";
-      chart2.Series.Add(series5);
+      series1.ChartArea = "ChartArea1";
+      series1.Legend = "Legend1";
+      series1.Name = "Series1";
+      chart2.Series.Add(series1);
       chart2.Size = new System.Drawing.Size(600, 410);
       chart2.TabIndex = 55;
       chart2.Text = "chart2";
@@ -647,18 +647,18 @@ namespace PortalCraneModel
       // chart4
       // 
       chart4.BackColor = System.Drawing.SystemColors.Control;
-      chartArea6.Name = "ChartArea1";
-      chart4.ChartAreas.Add(chartArea6);
-      legend6.Enabled = false;
-      legend6.Name = "Legend1";
-      chart4.Legends.Add(legend6);
+      chartArea2.Name = "ChartArea1";
+      chart4.ChartAreas.Add(chartArea2);
+      legend2.Enabled = false;
+      legend2.Name = "Legend1";
+      chart4.Legends.Add(legend2);
       chart4.Location = new System.Drawing.Point(949, 424);
       chart4.Name = "chart4";
-      series6.ChartArea = "ChartArea1";
-      series6.Legend = "Legend1";
-      series6.Name = "Series1";
-      series6.XAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
-      chart4.Series.Add(series6);
+      series2.ChartArea = "ChartArea1";
+      series2.Legend = "Legend1";
+      series2.Name = "Series1";
+      series2.XAxisType = System.Windows.Forms.DataVisualization.Charting.AxisType.Secondary;
+      chart4.Series.Add(series2);
       chart4.Size = new System.Drawing.Size(600, 410);
       chart4.TabIndex = 52;
       chart4.Text = "chart1";
@@ -666,17 +666,17 @@ namespace PortalCraneModel
       // chart3
       // 
       chart3.BackColor = System.Drawing.SystemColors.Control;
-      chartArea7.Name = "ChartArea1";
-      chart3.ChartAreas.Add(chartArea7);
-      legend7.Enabled = false;
-      legend7.Name = "Legend1";
-      chart3.Legends.Add(legend7);
+      chartArea3.Name = "ChartArea1";
+      chart3.ChartAreas.Add(chartArea3);
+      legend3.Enabled = false;
+      legend3.Name = "Legend1";
+      chart3.Legends.Add(legend3);
       chart3.Location = new System.Drawing.Point(343, 424);
       chart3.Name = "chart3";
-      series7.ChartArea = "ChartArea1";
-      series7.Legend = "Legend1";
-      series7.Name = "Series1";
-      chart3.Series.Add(series7);
+      series3.ChartArea = "ChartArea1";
+      series3.Legend = "Legend1";
+      series3.Name = "Series1";
+      chart3.Series.Add(series3);
       chart3.Size = new System.Drawing.Size(600, 410);
       chart3.TabIndex = 53;
       chart3.Text = "chart1";
@@ -684,17 +684,17 @@ namespace PortalCraneModel
       // chart1
       // 
       chart1.BackColor = System.Drawing.SystemColors.Control;
-      chartArea8.Name = "ChartArea1";
-      chart1.ChartAreas.Add(chartArea8);
-      legend8.Enabled = false;
-      legend8.Name = "Legend1";
-      chart1.Legends.Add(legend8);
+      chartArea4.Name = "ChartArea1";
+      chart1.ChartAreas.Add(chartArea4);
+      legend4.Enabled = false;
+      legend4.Name = "Legend1";
+      chart1.Legends.Add(legend4);
       chart1.Location = new System.Drawing.Point(343, 8);
       chart1.Name = "chart1";
-      series8.ChartArea = "ChartArea1";
-      series8.Legend = "Legend1";
-      series8.Name = "Series1";
-      chart1.Series.Add(series8);
+      series4.ChartArea = "ChartArea1";
+      series4.Legend = "Legend1";
+      series4.Name = "Series1";
+      chart1.Series.Add(series4);
       chart1.Size = new System.Drawing.Size(600, 410);
       chart1.TabIndex = 54;
       chart1.Text = "chart1";
@@ -1526,10 +1526,10 @@ namespace PortalCraneModel
       label5.ForeColor = System.Drawing.SystemColors.ControlText;
       label5.Location = new System.Drawing.Point(6, 275);
       label5.Name = "label5";
-      label5.Size = new System.Drawing.Size(282, 62);
+      label5.Size = new System.Drawing.Size(293, 62);
       label5.TabIndex = 24;
-      label5.Text = "-mu2 < Re(lambda_i) < -mu1;\r\n|Im(lambda_i)| < -sigma*Re(lambda_i),\r\ni = (1, ..., " +
-    "4);";
+      label5.Text = "-eta2 < Re(lambda_i) < -eta1;\r\n|Im(lambda_i)| < -gamma*Re(lambda_i),\r\ni = (1, ..." +
+    ", 4);";
       // 
       // groupBox4
       // 
@@ -1662,9 +1662,9 @@ namespace PortalCraneModel
       label_mu1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       label_mu1.Location = new System.Drawing.Point(6, 16);
       label_mu1.Name = "label_mu1";
-      label_mu1.Size = new System.Drawing.Size(44, 20);
+      label_mu1.Size = new System.Drawing.Size(45, 20);
       label_mu1.TabIndex = 16;
-      label_mu1.Text = "mu1:";
+      label_mu1.Text = "eta1:";
       // 
       // xmin_t
       // 
@@ -1710,9 +1710,9 @@ namespace PortalCraneModel
       label_mu2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       label_mu2.Location = new System.Drawing.Point(6, 42);
       label_mu2.Name = "label_mu2";
-      label_mu2.Size = new System.Drawing.Size(44, 20);
+      label_mu2.Size = new System.Drawing.Size(45, 20);
       label_mu2.TabIndex = 17;
-      label_mu2.Text = "mu2:";
+      label_mu2.Text = "eta2:";
       // 
       // label_M1
       // 
@@ -1768,9 +1768,9 @@ namespace PortalCraneModel
       label_sigma.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       label_sigma.Location = new System.Drawing.Point(6, 68);
       label_sigma.Name = "label_sigma";
-      label_sigma.Size = new System.Drawing.Size(55, 20);
+      label_sigma.Size = new System.Drawing.Size(66, 20);
       label_sigma.TabIndex = 18;
-      label_sigma.Text = "sigma:";
+      label_sigma.Text = "gamma:";
       // 
       // DL_N
       // 
