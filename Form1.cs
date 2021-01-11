@@ -2207,13 +2207,13 @@ namespace PortalCraneModel
       Draw_Line.CreateDat(N, _M1, _M2, _M3);
       CreateDat(N, _M1, _M2, _M3);
 
+      double alpha = double.Parse(tBox_alpha.Text);
+
       XMin = System.Convert.ToDouble(xmin_t.Text);
       XMax = System.Convert.ToDouble(xmax_t.Text);
       double sigma = double.Parse(tbox_sigma.Text);
       YMin = 0;
-      YMax = -sigma * XMin;
-
-      double alpha = double.Parse(tBox_alpha.Text);
+      YMax = alpha*(Math.Abs(XMin) - Math.Abs(XMax)) + sigma * Math.Abs(XMax);
 
       if (cBox_calc_in_init_variables.Checked == false)
       {
